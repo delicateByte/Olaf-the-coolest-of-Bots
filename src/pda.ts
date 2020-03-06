@@ -24,6 +24,28 @@ dashboard.listen(process.env.PORT, () => {
 telegramBot.on('message', (msg) => {
   const chatId = msg.chat.id;
 
-  // send a message to the chat acknowledging receipt of their message
-  telegramBot.sendMessage(chatId, 'Received your message');
+  console.log(msg);
+
+  if (msg.text) {
+    // Text
+    telegramBot.sendMessage(chatId, `Received text: ${msg.text}`);
+  } else if (msg.photo) {
+    // Photo
+    const fileId = msg.photo[msg.photo.length - 1].file_id;
+
+    telegramBot.getFile(fileId).then((data) => {
+      const url = `https://api.telegram.org/file/bot${process.env.BOT_TOKEN}/${data.file_path}`;
+
+      telegramBot.sendMessage(chatId, `Received photo: ${url}`);
+    });
+  } else if (msg.voice) {
+    // Voice
+    const fileId = msg.voice.file_id;
+
+    telegramBot.getFile(fileId).then((data) => {
+      const url = `https://api.telegram.org/file/bot${process.env.BOT_TOKEN}/${data.file_path}`;
+
+      telegramBot.sendMessage(chatId, `Received voice: ${url}`);
+    });
+  }
 });
