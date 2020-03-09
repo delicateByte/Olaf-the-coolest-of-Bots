@@ -8,6 +8,7 @@
     "dev": "nodemon",
     "build": "tsc",
     "lint": "./node_modules/.bin/eslint"
+    
   },
   "author": "",
   "license": "ISC",
