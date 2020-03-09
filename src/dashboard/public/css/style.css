@@ -1,0 +1,32 @@
+* {
+  -webkit-tap-highlight-color: transparent;
+  box-sizing: border-box;
+  flex: 0 0 auto;
+}
+
+h1,h2,h3,h4,h5,h6 {
+  font-family: 'Questrial', sans-serif;
+}
+
+body {
+  font-family: 'Lato', sans-serif;
+}
+
+#main {
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+  width: 100%;
+}
+
+.section {
+  display: flex;
+  flex-flow: column nowrap;
+}
+
+.row {
+  display: flex;
+  flex-flow: row nowrap;
+}
+
+

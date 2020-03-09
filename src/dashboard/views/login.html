@@ -1,0 +1,13 @@
+{{> parts/header}}
+
+<form id="login-form" class="section" action="/login" method="POST">
+  <div class="row">
+    <label for="input-password">Password</label>
+    <input id="input-password" class="input-text" name="password" type="password" autocomplete="current-password">
+  </div>
+  <div class="row">
+    <button type="submit">Login</button>
+  </div>
+</form>
+
+{{> parts/footer}}
