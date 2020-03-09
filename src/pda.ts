@@ -24,6 +24,7 @@ dashboard.listen(process.env.PORT, () => {
 telegramBot.on('message', (msg) => {
   const chatId = msg.chat.id;
 
+  
   // send a message to the chat acknowledging receipt of their message
   telegramBot.sendMessage(chatId, 'Received your message');
 });
