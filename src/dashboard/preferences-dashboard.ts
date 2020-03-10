@@ -1,10 +1,9 @@
 import * as express from 'express';
 import * as session from 'express-session';
 import * as mustache from 'mustache-express';
-import * as bcrypt from 'bcryptjs';
 
 // eslint-disable-next-line import/no-unresolved, import/extensions
-import isAuthenticated from './auth';
+import Auth from './auth';
 
 const app = express();
 
@@ -26,7 +25,7 @@ app.set('views', `${__dirname}/views`);
 
 // Routes
 // Dashboard
-app.get('/', isAuthenticated, (req, res) => {
+app.get('/', Auth.isAuthenticated, (req, res) => {
   res.render('index');
 });
 
@@ -41,10 +40,13 @@ app.get('/login', (req, res) => {
 });
 
 app.post('/login', (req, res) => {
-  console.log('post');
-  console.log(req.body);
-
+  Auth.authenticate(req.sessionID, req.body.password);
   res.redirect('/');
+});
+
+app.get('/logout', (req, res) => {
+  Auth.logout();
+  res.redirect('login');
 });
 
 export default app;
