@@ -1,11 +1,13 @@
 import * as express from 'express';
 import * as session from 'express-session';
 import * as mustache from 'mustache-express';
+import { LocalStorage } from 'node-localstorage';
 
 // eslint-disable-next-line import/no-unresolved, import/extensions
 import Auth from './auth';
 
 const app = express();
+const localStorage = new LocalStorage('./localstorage/settings');
 
 app.use(session({
   secret: 'keyboard cat',
@@ -26,12 +28,30 @@ app.set('views', `${__dirname}/views`);
 // Routes
 // Dashboard
 app.get('/', Auth.isAuthenticated, (req, res) => {
-  res.render('index');
+  // Get saved values
+  const unsplash = JSON.parse(localStorage.getItem('unsplashValues'));
+
+  // Parse values for check/radiobox display
+  unsplash.isRandom = (unsplash.imgSource === 'random') ? 'checked' : '';
+  unsplash.isKeywords = (unsplash.imgSource === 'keywords') ? 'checked' : '';
+
+  // Return all values
+  const options = {
+    unsplash,
+  };
+  res.render('index', options);
 });
 
-// Register
-app.get('/register', (req, res) => {
-  res.send('Register');
+// Get dashboard data
+app.get('/json/dashboard', Auth.isAuthenticated, (req, res) => {
+  res.json({ test: true });
+});
+
+app.post('/data/unsplash', (req, res) => {
+  console.log('POST', req.body);
+
+  localStorage.setItem('unsplashValues', JSON.stringify(req.body));
+  res.sendStatus(200);
 });
 
 // Login
@@ -45,7 +65,7 @@ app.post('/login', (req, res) => {
 });
 
 app.get('/logout', (req, res) => {
-  Auth.logout();
+  Auth.logout(req.sessionID);
   res.redirect('login');
 });
 

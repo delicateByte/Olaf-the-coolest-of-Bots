@@ -1,13 +1,18 @@
 {{> parts/header}}
 
-<form id="login-form" class="section" action="/login" method="POST">
-  <div class="row">
-    <label for="input-password">Password</label>
-    <input id="input-password" class="input-text" name="password" type="password" autocomplete="current-password">
-  </div>
-  <div class="row">
-    <button type="submit">Login</button>
-  </div>
-</form>
+<main id="login" class="container">
+  <form id="login-form" class="content-cell" action="/login" method="POST">
+    <div class="content-cell-row">
+      <div class="input-wrapper">
+        <label for="input-password" class="label">Password</label>
+        <input id="input-password" class="input-text" name="password" type="password" autocomplete="current-password"
+          required value="test123">
+      </div>
+    </div>
+    <div class="content-cell-row">
+      <button class="button button-primary" type="submit">Login</button>
+    </div>
+  </form>
+</main>
 
 {{> parts/footer}}
