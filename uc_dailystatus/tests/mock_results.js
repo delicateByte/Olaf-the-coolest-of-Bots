@@ -37,4 +37,22 @@ const ratesDefault2020March09 = {
   date: '2020-03-09',
 };
 
+const coinGeckoPing = {
+  gecko_says: '(V3) To the Moon!',
+};
+
+const coinGeckoMockResponse = {
+  bitcoin: {
+    eur: 6575.43,
+  },
+};
+
+const favCurrenciesER = ['USD', 'JPY', 'GBP', 'CHF'];
+
+const favCurrenciesCG = ['eur'];
+
 exports.ratesDefault2020March09 = ratesDefault2020March09;
+exports.coinGeckoPing = coinGeckoPing;
+exports.coinGeckoMockResponse = coinGeckoMockResponse;
+exports.favCurrenciesER = favCurrenciesER;
+exports.favCurrenciesCG = favCurrenciesCG;
