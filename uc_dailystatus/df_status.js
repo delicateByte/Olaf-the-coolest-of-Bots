@@ -68,6 +68,7 @@ exports.arrayContainsKey = arrayContainsKey;
 exports.getCurrenciesER = getCurrenciesER;
 exports.getCurrenciesCG = getCurrenciesCG;
 
+// most recent data (exchange rate for 1 euro to all other currencies) from exchangerates API
 fetchDataFrom(`${urlInitER}/latest`)
   .then((receivedResponse) => checkStatusCode(receivedResponse))
   .then((checkedResponse) => parseToJSON(checkedResponse))
@@ -75,6 +76,7 @@ fetchDataFrom(`${urlInitER}/latest`)
   .then((data) => console.log(data))
   .catch((error) => console.log(error));
 
+// most recent data (value of 1 bitcoin in euro) from Coin Gecko API
 fetchDataFrom(`${urlInitCG}/simple/price?ids=bitcoin&vs_currencies=eur`)
   .then((receivedResponse) => checkStatusCode(receivedResponse))
   .then((checkedResponse) => parseToJSON(checkedResponse))
