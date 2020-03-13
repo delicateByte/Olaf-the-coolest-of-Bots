@@ -1,4 +1,4 @@
-import LocalStorage from 'node-localstorage';
+import { LocalStorage } from 'node-localstorage';
 
 const localStorage = new LocalStorage('./localstorage/settings');
 
