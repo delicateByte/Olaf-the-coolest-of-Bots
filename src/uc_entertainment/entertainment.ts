@@ -1,12 +1,13 @@
-/* eslint-disable no-continue */
+/* eslint-disable import/extensions, import/no-unresolved, no-continue */
 import Axios from 'axios';
 import { LocalStorage } from 'node-localstorage';
+import Preferences from '../preferences';
 
 const localStorage = new LocalStorage('./localstorage/uc_entertainment');
 
 export default class Entertainment {
   static async getMeme() {
-    const postJson = await Axios.get('https://www.reddit.com/r/memes.json?limit=50').then((res) => {
+    const postJson = await Axios.get(`https://www.reddit.com/${Preferences.get('redditMemes', 'subName')}.json?limit=50`).then((res) => {
       const posts = res.data.data.children.map((post) => post.data);
 
       do {

@@ -7,7 +7,8 @@
     "start": "node -r ts-node/register ./src/pda.ts",
     "dev": "nodemon",
     "build": "tsc",
-    "lint": "./node_modules/.bin/eslint"
+    "lint": "./node_modules/.bin/eslint",
+    "test": "jest --coverage"
   },
   "author": "",
   "license": "ISC",
@@ -27,10 +28,12 @@
     "node-telegram-bot-api": "^0.40.0"
   },
   "devDependencies": {
+    "@types/jest": "^25.1.4",
     "@types/node": "^13.7.7",
     "eslint": "^6.8.0",
     "eslint-config-airbnb-base": "^14.0.0",
     "eslint-plugin-import": "^2.20.1",
+    "jest": "^25.1.0",
     "nodemon": "^2.0.2",
     "ts-node": "^8.6.2",
     "typescript": "^3.8.3"
