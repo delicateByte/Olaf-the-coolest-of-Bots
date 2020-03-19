@@ -1,13 +1,14 @@
 import * as express from 'express';
 import * as session from 'express-session';
 import * as mustache from 'mustache-express';
-import { LocalStorage } from 'node-localstorage';
+
+// eslint-disable-next-line import/no-unresolved, import/extensions
+import Preferences from '../preferences';
 
 // eslint-disable-next-line import/no-unresolved, import/extensions
 import Auth from './auth';
 
 const app = express();
-const localStorage = new LocalStorage('./localstorage/settings');
 
 app.use(session({
   secret: 'keyboard cat',
@@ -29,28 +30,50 @@ app.set('views', `${__dirname}/views`);
 // Dashboard
 app.get('/', Auth.isAuthenticated, (req, res) => {
   // Get saved values
-  const unsplash = JSON.parse(localStorage.getItem('unsplashValues'));
+  const unsplash = {
+    imgSource: Preferences.get('unsplash', 'imgSource'),
+    keywords: Preferences.get('unsplash', 'keywords'),
+    isRandom: (Preferences.get('unsplash', 'imgSource') === 'random') ? 'checked' : '',
+    isKeywords: (Preferences.get('unsplash', 'imgSource') === 'keywords') ? 'checked' : '',
+  };
+
+  const redditMemes = {
+    subName: Preferences.get('redditMemes', 'subName'),
+    isMemes: (Preferences.get('redditMemes', 'subName') === 'r/memes') ? 'selected' : '',
+    isPewdiepieSubmissions: (Preferences.get('redditMemes', 'subName') === 'r/PewdiepieSubmissions') ? 'selected' : '',
+    isFunny: (Preferences.get('redditMemes', 'subName') === 'r/funny') ? 'selected' : '',
+    isDankmemes: (Preferences.get('redditMemes', 'subName') === 'r/dankmemes') ? 'selected' : '',
+    isIch_iel: (Preferences.get('redditMemes', 'subName') === 'r/ich_iel') ? 'selected' : '',
+    isMe_irl: (Preferences.get('redditMemes', 'subName') === 'r/me_irl') ? 'selected' : '',
+    isProgrammerHumor: (Preferences.get('redditMemes', 'subName') === 'r/ProgrammerHumor') ? 'selected' : '',
+  };
 
   // Parse values for check/radiobox display
-  unsplash.isRandom = (unsplash.imgSource === 'random') ? 'checked' : '';
-  unsplash.isKeywords = (unsplash.imgSource === 'keywords') ? 'checked' : '';
 
   // Return all values
   const options = {
     unsplash,
+    redditMemes,
   };
   res.render('index', options);
 });
 
-// Get dashboard data
-app.get('/json/dashboard', Auth.isAuthenticated, (req, res) => {
-  res.json({ test: true });
+// Unsplash
+app.post('/data/unsplash', (req, res) => {
+  const { imgSource } = req.body;
+  const { keywords } = req.body;
+
+  Preferences.set('unsplash', 'imgSource', imgSource);
+  Preferences.set('unsplash', 'keywords', keywords);
+  // localStorage.setItem('unsplashValues', JSON.stringify(req.body));
+  res.sendStatus(200);
 });
 
-app.post('/data/unsplash', (req, res) => {
-  console.log('POST', req.body);
+// Reddit Memes
+app.post('/data/redditMemes', (req, res) => {
+  const { subName } = req.body;
 
-  localStorage.setItem('unsplashValues', JSON.stringify(req.body));
+  Preferences.set('redditMemes', 'subName', subName);
   res.sendStatus(200);
 });
 

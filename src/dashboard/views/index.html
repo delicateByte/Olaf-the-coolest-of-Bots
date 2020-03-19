@@ -40,6 +40,32 @@
       </div>
     </form>
 
+    <form id="form-reddit-memes" action="/api/redditMemes" method="POST" class="content-cell">
+      <div class="content-cell-row">
+        <h2 class="content-cell-heading">Reddit Memes</h2>
+      </div>
+      <div class="content-cell-row">
+        <div class="content-cell-col">
+          <div class="input-wrapper">
+            <label for="select-redditMemes-subName">Meme Source:</label>
+            <select name="subName" id="select-redditMemes-subName" class="input-select">
+              <option value="r/memes" {{ redditMemes.isMemes }}>r/memes</option>
+              <option value="r/PewdiepieSubmissions" {{ redditMemes.isPewdiepieSubmissions }}>r/PewdiepieSubmissions
+              </option>
+              <option value="r/funny" {{ redditMemes.isFunny }}>r/funny</option>
+              <option value="r/dankmemes" {{ redditMemes.isDankmemes }}>r/dankmemes</option>
+              <option value="r/ich_iel" {{ redditMemes.isIch_iel }}>r/ich_iel</option>
+              <option value="r/me_irl" {{ redditMemes.isMe_irl }}>r/me_irl</option>
+              <option value="r/ProgrammerHumor" {{ redditMemes.isProgrammerHumor }}>r/ProgrammerHumor</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="content-cell-row">
+        <button class="button button-primary" type="submit">Save</button>
+      </div>
+    </form>
+
     <div class="content-cell">
       <div class="content-cell-row">
         <h2 class="content-cell-heading">Google</h2>
