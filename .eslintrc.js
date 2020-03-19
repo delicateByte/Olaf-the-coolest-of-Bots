@@ -1,5 +1,8 @@
 module.exports = {
-  extends: "airbnb-base",
+  extends: 'airbnb-typescript/base',
+  parserOptions: {
+    project: './tsconfig.json',
+  },
   rules: {
     'linebreak-style': 0,
   }
