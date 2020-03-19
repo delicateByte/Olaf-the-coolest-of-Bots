@@ -1,7 +1,7 @@
 # Modest-Ninja
 PDA for ASE
 
-# Setup
+## Setup
 1.  Install dependencies using `npm i`
 
 2.  Install the ESLint extension for your Editor  
@@ -23,3 +23,26 @@ PDA for ASE
     `npm start`: Compiles and starts the PDA  
     `npm run dev`: Same as start but also re-compiles on changes
 
+
+## Folder Structure
+
+We use a common folder structure for all use cases and API connectors. Files are named in `lowerCamelCase`.
+
+```
+src/
+├──pda.ts
+├──preferences.ts
+├──usecases/
+│  ├──dailystatus/
+│  │  ├──dailystatus.ts
+│  │  └──otherFile.ts
+│  └──imageoftheday/
+│     ├──imageoftheday.ts
+│     └──otherFile.ts
+├──connectors/
+│  ├──reddit.ts
+│  ├──googleCalendar.ts
+│  └──googleMaps.ts
+└──interfaces/
+   └──gatewayInterface.ts
+```
