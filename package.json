@@ -7,25 +7,29 @@
     "start": "node -r ts-node/register ./src/pda.ts",
     "dev": "nodemon",
     "build": "tsc",
-    "lint": "./node_modules/.bin/eslint"
-    "test": "jest --coverage"
+    "lint": "./node_modules/.bin/eslint",
+    "test": "jest"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@ibm-watson/speech-to-text-nodejs": "^2.9.0",
     "@types/express": "^4.17.3",
     "@types/node-telegram-bot-api": "^0.40.2",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
+    "ibm-watson": "^5.4.0",
     "node-telegram-bot-api": "^0.40.0"
   },
   "devDependencies": {
+    "@types/jest": "^25.1.4",
     "@types/node": "^13.7.7",
     "eslint": "^6.8.0",
     "eslint-config-airbnb-base": "^14.0.0",
     "eslint-plugin-import": "^2.20.1",
     "jest": "^25.1.0",
     "nodemon": "^2.0.2",
+    "ts-jest": "^25.2.1",
     "ts-node": "^8.6.2",
     "typescript": "^3.8.3"
   },
