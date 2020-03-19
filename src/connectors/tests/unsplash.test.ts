@@ -1,18 +1,18 @@
-import * as dotenv from 'dotenv';
 import axios from 'axios';
-import { UnsplashConnectorImplementation } from '../unsplash';
+import { UnsplashConnector, UnsplashConnectorImplementation } from '../unsplash';
 
-dotenv.config();
 jest.mock('axios');
 
-// @ts-ignore
-axios.create.mockReturnValue({
-  get: () => Promise.resolve({ data: { urls: { regular: 'url' } } }),
-});
-let connector = new UnsplashConnectorImplementation(process.env.UNSPLASH_TOKEN);
+function getMockConnector(returnValue) : UnsplashConnector {
+  // @ts-ignore
+  axios.create.mockReturnValue({
+    get: () => Promise.resolve(returnValue),
+  });
+  return new UnsplashConnectorImplementation('');
+}
 
 test('get random image', async () => {
-  const actual = await connector.getRandomImage();
-  console.log(actual);
-  expect(actual).toBeDefined();
+  const expected = 'http://example.com/image.jpg';
+  const actual = await getMockConnector({ data: { urls: { regular: expected } } }).getRandomImage();
+  expect(actual).toBe(expected);
 });

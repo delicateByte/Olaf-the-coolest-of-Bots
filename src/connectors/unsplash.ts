@@ -5,7 +5,6 @@ export interface UnsplashConnector {
 }
 
 export class UnsplashConnectorImplementation implements UnsplashConnector {
-
   private axios;
 
   constructor(accessToken: string) {
