@@ -11,11 +11,20 @@ export default class UnsplashConnector {
     });
   }
 
-  async getRandomImage(): Promise<UnsplashImage> {
-    const randomPhoto = await this.axios.get('https://api.unsplash.com/photos/random?featured');
-    const photoData = (await this.axios.get(`https://api.unsplash.com/photos/${randomPhoto.data.id}`)).data;
+  async getRandomImage(query: string = ''): Promise<UnsplashImage> {
+    // TODO trigger photo.links.download_location on download to conform with API guidelines
+    // https://help.unsplash.com/en/articles/2511258-guideline-triggering-a-download
 
-    const tags = photoData.tags.map((tag) => tag.title);
+    // Get a random featured photo matching the query
+    const randomPhoto = await this.axios.get('/photos/random', {
+      params: {
+        featured: '',
+        query,
+      },
+    });
+    // Get all metadata for that photo
+    const photoData = (await this.axios.get(`/photos/${randomPhoto.data.id}`)).data;
+
     let location;
     if (!photoData.location.position.latitude) {
       location = null;
@@ -23,9 +32,13 @@ export default class UnsplashConnector {
       location = [photoData.location.position.latitude, photoData.location.position.longitude];
     }
 
-    return new UnsplashImage(photoData.links.html, photoData.urls.full, photoData.user.name,
-      tags, location);
-
-    // TODO trigger photo.links.download_location on download
+    return new UnsplashImage(
+      photoData.description || photoData.alt_description,
+      photoData.links.html,
+      photoData.urls.full,
+      photoData.user.name,
+      photoData.tags.map((tag) => tag.title),
+      location,
+    );
   }
 }

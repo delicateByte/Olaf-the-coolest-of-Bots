@@ -14,6 +14,7 @@ function getMockConnector(returnValue) : UnsplashConnector {
 
 test('get random image', async () => {
   const expected = new UnsplashImage(
+    'Some description',
     'https://unsplash.com/photos/abc',
     'https://images.unsplash.com/photo-abc',
     'John Doe',
@@ -23,6 +24,7 @@ test('get random image', async () => {
   const actual = await getMockConnector({
     data: {
       id: 'abc',
+      description: expected.description,
       links: { html: expected.postUrl },
       urls: { full: expected.imageUrl },
       user: { name: expected.userName },

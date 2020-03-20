@@ -1,5 +1,6 @@
 export default class UnsplashImage {
   constructor(
+    readonly description: string,
     readonly postUrl: string,
     readonly imageUrl: string,
     readonly userName: string,
