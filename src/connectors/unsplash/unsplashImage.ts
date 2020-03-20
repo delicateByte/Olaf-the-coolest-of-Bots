@@ -5,6 +5,7 @@ export default class UnsplashImage {
     readonly imageUrl: string,
     readonly userName: string,
     readonly tags: Array<string>,
-    readonly location: [number, number],
+    readonly location: string,
+    readonly coordinates: [number, number],
   ) { }
 }

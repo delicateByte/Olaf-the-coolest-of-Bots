@@ -25,11 +25,11 @@ export default class UnsplashConnector {
     // Get all metadata for that photo
     const photoData = (await this.axios.get(`/photos/${randomPhoto.data.id}`)).data;
 
-    let location;
+    let coordinates;
     if (!photoData.location.position.latitude) {
-      location = null;
+      coordinates = null;
     } else {
-      location = [photoData.location.position.latitude, photoData.location.position.longitude];
+      coordinates = [photoData.location.position.latitude, photoData.location.position.longitude];
     }
 
     return new UnsplashImage(
@@ -38,7 +38,8 @@ export default class UnsplashConnector {
       photoData.urls.full,
       photoData.user.name,
       photoData.tags.map((tag) => tag.title),
-      location,
+      photoData.location.title,
+      coordinates,
     );
   }
 }

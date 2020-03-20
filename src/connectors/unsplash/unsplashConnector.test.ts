@@ -19,6 +19,7 @@ test('get random image', async () => {
     'https://images.unsplash.com/photo-abc',
     'John Doe',
     ['first tag', 'second tag'],
+    'Some location',
     [42.123, 12.45],
   );
   const actual = await getMockConnector({
@@ -29,7 +30,10 @@ test('get random image', async () => {
       urls: { full: expected.imageUrl },
       user: { name: expected.userName },
       tags: expected.tags.map((tag) => ({ title: tag })),
-      location: { position: { latitude: expected.location[0], longitude: expected.location[1] } },
+      location: {
+        title: expected.location,
+        position: { latitude: expected.coordinates[0], longitude: expected.coordinates[1] },
+      },
     },
   }).getRandomImage();
 
