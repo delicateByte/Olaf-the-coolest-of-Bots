@@ -7,7 +7,7 @@ import * as TelegramBot from 'node-telegram-bot-api';
 import preferencesDashboard from './dashboard/preferences-dashboard';
 
 // eslint-disable-next-line import/no-unresolved, import/extensions
-import Entertainment from './uc_entertainment/entertainment';
+import Entertainment from './usecases/entertainment/entertainment';
 
 Entertainment.getMeme();
 
