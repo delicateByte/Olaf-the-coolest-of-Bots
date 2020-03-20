@@ -7,7 +7,7 @@
     "start": "node -r ts-node/register ./src/pda.ts",
     "dev": "nodemon",
     "build": "tsc",
-    "lint": "./node_modules/.bin/eslint",
+    "lint": "eslint ./src/**/*.ts",
     "test": "jest --coverage"
   },
   "author": "",
