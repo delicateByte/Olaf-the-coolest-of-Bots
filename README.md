@@ -34,15 +34,22 @@ src/
 ├──preferences.ts
 ├──usecases/
 │  ├──dailystatus/
-│  │  ├──dailystatus.ts
+│  │  ├──dailystatusUsecase.ts
+│  │  ├──dailystatusUsecase.test.ts
 │  │  └──otherFile.ts
 │  └──imageoftheday/
-│     ├──imageoftheday.ts
+│     ├──imageofthedayUsecase.ts
+│     ├──imageofthedayUsecase.test.ts
 │     └──otherFile.ts
 ├──connectors/
-│  ├──reddit.ts
-│  ├──googleCalendar.ts
-│  └──googleMaps.ts
+│  ├──reddit/
+│  │  ├──redditConnector.ts
+│  │  ├──redditConnector.test.ts
+│  │  └──otherFile.ts
+│  ├──googleMaps/
+│  │  ├──googleMapsConnector.ts
+│  │  ├──googleMapsConnector.test.ts
+│  │  └──otherFile.ts
 └──interfaces/
    └──gatewayInterface.ts
 ```
