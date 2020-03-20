@@ -11,9 +11,11 @@ export namespace WatsonSpeechToText {
       url: process.env.SPEECH_TO_TEXT_URL
     });
     return new Promise((resolve, reject) => {
-      resolve(voiceRecordingStream
-        .pipe(speechToText.recognizeUsingWebSocket({ contentType: 'audio/ogg; rate=44100' }))
-        .pipe(console.log()));
+      let result = '';
+      let translation = voiceRecordingStream.pipe(speechToText.recognizeUsingWebSocket({ contentType: 'audio/ogg; rate=44100' }));
+      translation.on('data', (chunk) => { result += chunk; resolve(result); });
+
+
     })
 
 
