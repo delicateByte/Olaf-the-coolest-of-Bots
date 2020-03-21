@@ -24,7 +24,6 @@ async function getArticleForImage(image: UnsplashImage) : Promise<string> {
     let query = image.location;
 
     do {
-      console.log(`Using location ${query}`);
       // eslint-disable-next-line no-await-in-loop
       const results = await wikipedia.search(query);
       if (results.length) {
@@ -41,7 +40,6 @@ async function getArticleForImage(image: UnsplashImage) : Promise<string> {
   if (!pageid) {
     // eslint-disable-next-line no-restricted-syntax
     for (const tag of image.tags) {
-      console.log(`Using tag ${tag}`);
       // eslint-disable-next-line no-await-in-loop
       const results = await wikipedia.search(tag);
       if (results.length) {
@@ -74,7 +72,7 @@ function drawRandomItem<T>(array: T[]): T {
 }
 
 (async () => {
-  Preferences.set('usecase/imageoftheday', 'tags', 'forest, ocean, flowers');
+  Preferences.set('usecase/imageoftheday', 'tags', 'forest, ocean, city');
 
   const imageTags = Preferences.get('usecase/imageoftheday', 'tags');
   let query;
@@ -92,13 +90,15 @@ function drawRandomItem<T>(array: T[]): T {
   const mapImagePath = await downloadMap(image);
 
   console.log();
-  console.log('Image by ', image.userName);
-  console.log('URL: ', image.postUrl);
-  console.log('Local image path: ', imagePath);
-  console.log('Description: ', image.description);
+  console.log('Image by', image.userName);
+  console.log('URL:', image.postUrl);
+  console.log('Local image path:', imagePath);
+  console.log('Description:', image.description);
   if (image.location || image.coordinates) {
     console.log(`Location: ${image.location} (${image.coordinates})`);
-    console.log('Local map path: ', mapImagePath);
+    console.log('Local map path:', mapImagePath);
+  } else {
+    console.log('No location given');
   }
 
   console.log();
