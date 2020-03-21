@@ -26,7 +26,7 @@ export default class GoogleMapsStaticConnector {
       params: {
         center: locationString,
         markers: locationString,
-        zoom: 10,
+        zoom: 13,
         size: '500x500',
         scale: 2,
         maptype: 'hybrid',

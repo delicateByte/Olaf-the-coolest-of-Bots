@@ -1,21 +1,39 @@
 import axios from 'axios';
+
 import WikipediaConnector from './wikipediaConnector';
+
 
 jest.mock('axios');
 
-function getMockConnector(returnValue) : WikipediaConnector {
+function getMockConnector(response) : WikipediaConnector {
   // @ts-ignore
   axios.create.mockReturnValue({
-    get: () => Promise.resolve({ data: returnValue }),
+    get: () => Promise.resolve({ data: response }),
   });
   return new WikipediaConnector();
 }
 
-test('search', async () => {
-  const expected = [12345, 23456, 345678];
+test('search by page name', async () => {
+  const searchResults = [
+    {
+      pageid: 12345,
+      snippet: 'First search result',
+    },
+    {
+      pageid: 23456,
+      snippet: 'Second search result may refer to',
+    },
+    {
+      pageid: 345678,
+      snippet: 'Third search result',
+    },
+  ];
+
+  // Second result should be omitted because it is a disambiguation page
+  const expected = [12345, 345678];
   const actual = await getMockConnector({
     query: {
-      search: expected.map((id) => ({ pageid: id })),
+      search: searchResults,
     },
   }).search('my query');
 

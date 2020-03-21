@@ -1,9 +1,13 @@
 import UnsplashConnector from '../../connectors/unsplash/unsplashConnector';
 import UnsplashImage from '../../connectors/unsplash/unsplashImage';
 import WikipediaConnector from '../../connectors/wikipedia/wikipediaConnector';
+import GoogleMapsStaticConnector from '../../connectors/googleMapsStaticConnector/googleMapsStaticConnector';
+import Preferences from '../../preferences';
+
 
 const unsplash = new UnsplashConnector(process.env.UNSPLASH_TOKEN);
 const wikipedia = new WikipediaConnector();
+const maps = new GoogleMapsStaticConnector(process.env.GOOGLE_TOKEN);
 
 async function getArticleForImage(image: UnsplashImage) : Promise<string> {
   let pageid;
@@ -28,7 +32,7 @@ async function getArticleForImage(image: UnsplashImage) : Promise<string> {
         break;
       }
 
-      query = query.substring(query.indexOf(',') + 1);
+      query = query.substring(query.indexOf(',') + 1).trim();
     } while (query.includes(','));
   }
 
@@ -55,8 +59,49 @@ async function getArticleForImage(image: UnsplashImage) : Promise<string> {
   return wikipedia.getFirstParagraph(pageid);
 }
 
+async function downloadMap(image: UnsplashImage) : Promise<string> {
+  if (image.coordinates) {
+    return maps.getMapImage(image.coordinates);
+  }
+  if (image.location) {
+    return maps.getMapImage(image.location);
+  }
+  return Promise.resolve(null);
+}
+
+function drawRandomItem<T>(array: T[]): T {
+  return array[Math.floor(Math.random() * array.length)];
+}
+
 (async () => {
-  const image = await unsplash.getRandomImage('nature');
-  console.log('Image:', image);
-  console.log(await getArticleForImage(image));
+  Preferences.set('usecase/imageoftheday', 'tags', 'forest, ocean, flowers');
+
+  const imageTags = Preferences.get('usecase/imageoftheday', 'tags');
+  let query;
+  if (imageTags && imageTags.length) {
+    query = drawRandomItem<string>(imageTags.split(',')).trim();
+    console.log(`Choosing random image using tag "${query}"`);
+  } else {
+    query = '';
+    console.log('Choosing random image');
+  }
+
+  const image = await unsplash.getRandomImage(query);
+  const article = await getArticleForImage(image);
+  const imagePath = await unsplash.downloadImage(image);
+  const mapImagePath = await downloadMap(image);
+
+  console.log();
+  console.log('Image by ', image.userName);
+  console.log('URL: ', image.postUrl);
+  console.log('Local image path: ', imagePath);
+  console.log('Description: ', image.description);
+  if (image.location || image.coordinates) {
+    console.log(`Location: ${image.location} (${image.coordinates})`);
+    console.log('Local map path: ', mapImagePath);
+  }
+
+  console.log();
+  console.log('Wikipedia Article:');
+  console.log(article);
 })();

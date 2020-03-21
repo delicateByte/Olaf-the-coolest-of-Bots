@@ -20,7 +20,9 @@ export default class WikipediaConnector {
     });
 
     const results = response.data.query.search;
-    return results.map((result) => result.pageid);
+    return results
+      .filter((page) => !page.snippet.includes('may refer to')) // Filter disambiguation pages
+      .map((page) => page.pageid);
   }
 
   async getFirstParagraph(page: number | string): Promise<string> {
