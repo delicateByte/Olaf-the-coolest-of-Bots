@@ -1,12 +1,12 @@
+/* eslint-disable import/no-unresolved, import/extensions */
 import * as express from 'express';
 import * as session from 'express-session';
 import * as mustache from 'mustache-express';
 
-// eslint-disable-next-line import/no-unresolved, import/extensions
 import Preferences from '../preferences';
 
-// eslint-disable-next-line import/no-unresolved, import/extensions
 import Auth from './auth';
+import Spotify from '../connectors/spotify/spotify';
 
 const app = express();
 
@@ -48,8 +48,6 @@ app.get('/', Auth.isAuthenticated, (req, res) => {
     isProgrammerHumor: (Preferences.get('redditMemes', 'subName') === 'r/ProgrammerHumor') ? 'selected' : '',
   };
 
-  // Parse values for check/radiobox display
-
   // Return all values
   const options = {
     unsplash,
@@ -76,6 +74,10 @@ app.post('/data/redditMemes', (req, res) => {
   Preferences.set('redditMemes', 'subName', subName);
   res.sendStatus(200);
 });
+
+// Spotify
+app.get('/auth/spotify', Spotify.authRoute);
+app.get('/callback/spotify', Spotify.callbackRoute);
 
 // Login
 app.get('/login', (req, res) => {
