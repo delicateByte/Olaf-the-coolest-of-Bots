@@ -15,6 +15,8 @@
   </header>
 
   <div class="content">
+    <h1 class="content-heading">Preferences</h1>
+
     <!-- Unsplash -->
     <form id="form-unsplash" action="/data/unsplash" method="POST" class="content-cell">
       <div class="content-cell-row">
@@ -84,20 +86,27 @@
       </div>
     </form>
 
-
     <!-- API Connectors -->
+    <h1 class="content-heading">Authentication</h1>
     <!-- Spotify -->
     <div id="auth-spotify" class="content-cell">
       <div class="content-cell-row">
         <h2 class="content-cell-heading">Spotify</h2>
       </div>
+      {{ #spotify.userInfo }}
       <div class="content-cell-row">
         <span>User: <a href="{{ spotify.userInfo.external_urls.spotify }}"
             target="_blank">{{ spotify.userInfo.display_name }}</a></span>
       </div>
+      {{ /spotify.userInfo }}
+      {{ ^spotify.userInfo }}
       <div class="content-cell-row">
-        <a href="/auth/spotify" class="button button-primary">Connect</a>
+        <span>Not signed in</span>
       </div>
+      <div class="content-cell-row">
+        <a href="/auth/spotify" class="button button-primary">Authenticate</a>
+      </div>
+      {{ /spotify.userInfo }}
     </div>
   </div>
 </main>

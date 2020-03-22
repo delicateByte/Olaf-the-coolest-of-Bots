@@ -12,7 +12,6 @@ export default class Spotify {
     clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
     redirectUri: process.env.SPOTIFY_REDIRECT_URI,
   });
-
   private static tokenRefresher: CronJob;
 
   static isAuthorized() {
@@ -48,7 +47,7 @@ export default class Spotify {
     }).catch((err) => console.log(err));
   }
 
-  static authRoute(req: express.Request, res: express.Response) {    
+  static authRoute(req: express.Request, res: express.Response) {
     return res.redirect(Spotify.spotifyApi.createAuthorizeURL(['user-read-private', 'user-top-read']));
   }
 
