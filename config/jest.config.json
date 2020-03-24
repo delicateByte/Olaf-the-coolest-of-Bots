@@ -4,6 +4,7 @@
   "bail":5,
   "verbose": true,
   "rootDir":"../src",
+  "coveragePathIgnorePatterns" :["/node_modules/","/src/classes"],
   "coverageThreshold": {
       "global": {
         "branches": 80,
