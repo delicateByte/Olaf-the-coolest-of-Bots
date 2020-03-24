@@ -1,5 +1,5 @@
 
 export class UseCaseResponse {
-  MessageResponseType: MessageResponseType;
+  messageResponseType: MessageResponseType;
 
 }
