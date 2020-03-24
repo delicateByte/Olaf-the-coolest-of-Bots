@@ -3,5 +3,6 @@ enum MessageResponseType {
   text,
   voice,
   picture,
-  video
+  video,
+  endUseCase
 }

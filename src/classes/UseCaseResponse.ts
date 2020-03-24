@@ -1,7 +1,5 @@
 
-class UseCaseResponse {
-  textForSpeechConversion?: String;
-  textResponse?: String;
+export class UseCaseResponse {
   MessageResponseType: MessageResponseType;
 
 }
