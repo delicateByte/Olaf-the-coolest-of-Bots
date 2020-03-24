@@ -19,7 +19,8 @@
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "ibm-watson": "^5.4.0",
-    "node-telegram-bot-api": "^0.40.0"
+    "node-telegram-bot-api": "^0.40.0",
+    "tempy": "^0.5.0"
   },
   "devDependencies": {
     "@types/jest": "^25.1.4",
