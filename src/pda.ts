@@ -3,7 +3,7 @@ import * as dotenv from 'dotenv';
 import * as TelegramBot from 'node-telegram-bot-api';
 // Importing prefe
 // eslint-disable-next-line import/no-unresolved, import/extensions
-import preferencesDashboard from './preferences-dashboard';
+import preferencesDashboard from './dashboard/preferences-dashboard';
 import { MessageHandler } from './controller/messageHandler';
 
 
