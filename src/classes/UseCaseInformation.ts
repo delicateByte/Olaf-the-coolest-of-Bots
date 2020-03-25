@@ -1,6 +1,13 @@
 
 export class UseCaseInformation {
   originalMessage: Object;
-  useCase: UseCaseEnum;
-  text: String;
+  messageType: string;
+  text: string;
+  lattitude?: number;
+  longitude?: number;
+
+
+  constructor(originalMessage: any) {
+    this.originalMessage = originalMessage;
+  }
 }
