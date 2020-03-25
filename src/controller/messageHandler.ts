@@ -40,7 +40,7 @@ export namespace MessageHandler {
       }
     });
     promise.then(() => {
-      Router.routeMessages(infoForUseCase);
+      Router.routeMessageToUseCase(infoForUseCase);
     }).catch((err) => {
       console.log(err)
     });
