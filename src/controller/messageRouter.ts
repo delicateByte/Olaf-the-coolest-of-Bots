@@ -6,22 +6,18 @@
 // Import 5
 import { MessageHandler } from "./messageHandler"
 import * as BrainState from "./brainState"
-
+import { UseCaseInformation } from "../classes/UseCaseInformation";
+import { MessageResponseType } from "../classes/messageResponseTypeEnum";
 
 
 
 export function extractUseCase(telegramMessageContent) {
 
 }
-export function routeMessages() {
-  if (!BrainState.interruptUseCase) {
-
-
-  } else {
-    BrainState.reset();
-  }
+export function routeMessageToUseCase(message: UseCaseInformation) {
 
 }
+
 
 export function useCaseResponse(useCaseResponse) {
   switch (useCaseResponse) {
@@ -37,14 +33,7 @@ export function useCaseResponse(useCaseResponse) {
     case MessageResponseType.picture:
       MessageHandler.sendImageMessage(useCaseResponse)
       break;
-    case MessageResponseType.video:
-      MessageHandler.sendVideoMessage(useCaseResponse)
-      break;
     default:
       break;
   }
-}
-
-function sendMessageToUser() {
-
 }
