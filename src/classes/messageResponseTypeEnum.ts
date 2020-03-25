@@ -1,4 +1,4 @@
-enum MessageResponseType {
+export enum MessageResponseType {
   location,
   text,
   voice,

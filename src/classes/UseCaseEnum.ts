@@ -1,4 +1,4 @@
-enum UseCaseEnum {
+export enum UseCaseEnum {
   news,
   finance,
   entertainment
