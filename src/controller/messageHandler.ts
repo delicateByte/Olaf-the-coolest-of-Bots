@@ -3,7 +3,7 @@
 // internal Modules
 import { convertSpeechToText } from './controllerSpeechToText';
 import { textToSpeech } from './controllerTextToSpeech';
-import * as BrainState from './brainState';
+import * as BrainState from './BrainState';
 import LocationResponse from '../classes/LocationResponse';
 import ImageResponse from '../classes/ImageResponse';
 import VoiceResponse from '../classes/VoiceResponse';
