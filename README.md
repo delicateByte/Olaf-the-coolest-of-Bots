@@ -18,8 +18,11 @@ PDA for ASE
     # Dashboard password
     DASHBOARD_PASSWORD=$2a$10$KqDExovM4hv8cAtuxWkzSOWko6RIG.uRbS2g9hPH9UqYOxNDWsV/6
     
-    # Dashboard password
+    # Unsplash API token
     UNSPLASH_TOKEN=<UNSPLASH-ACCESS-TOKEN>
+    
+    # Google APIs token
+    GOOGLE_TOKEN=<GOOGLE-ACCESS-TOKEN>
     ```
 
 4.  Run the application using one of the following scripts  
