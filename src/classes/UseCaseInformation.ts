@@ -1,9 +1,13 @@
 
-export class UseCaseInformation {
+class UseCaseInformation {
   originalMessage: Object;
+
   messageType: string;
-  text: string;
+
+  text: string | void;
+
   lattitude?: number;
+
   longitude?: number;
 
 
@@ -11,3 +15,4 @@ export class UseCaseInformation {
     this.originalMessage = originalMessage;
   }
 }
+export default UseCaseInformation;

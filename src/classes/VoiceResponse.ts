@@ -1,7 +1,7 @@
 
-import { UseCaseResponse } from "./UseCaseResponse";
+import UseCaseResponse from './UseCaseResponse';
 
-export class VoiceResponse extends UseCaseResponse {
+class VoiceResponse extends UseCaseResponse {
   textforVoiceMessage: String;
-
 }
+export default VoiceResponse;

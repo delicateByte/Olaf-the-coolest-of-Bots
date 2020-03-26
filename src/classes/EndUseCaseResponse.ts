@@ -1,8 +1,10 @@
 
-import { UseCaseResponse } from "./UseCaseResponse";
+import UseCaseResponse from './UseCaseResponse';
+import MessageResponseType from './messageResponseTypeEnum';
 
-export class TextResponse extends UseCaseResponse {
+class TextResponse extends UseCaseResponse {
   messageResponseType: MessageResponseType;
-  useCaseToEnd: string;
 
+  useCaseToEnd: string;
 }
+export default TextResponse;

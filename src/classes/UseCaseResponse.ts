@@ -1,5 +1,6 @@
+import MessageResponseType from './messageResponseTypeEnum';
 
-export class UseCaseResponse {
+class UseCaseResponse {
   messageResponseType: MessageResponseType;
-
 }
+export default UseCaseResponse;

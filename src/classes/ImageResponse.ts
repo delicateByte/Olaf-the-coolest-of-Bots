@@ -1,7 +1,7 @@
 
-import { UseCaseResponse } from "./UseCaseResponse";
+import UseCaseResponse from './UseCaseResponse';
 
-export class ImageResponse extends UseCaseResponse {
+class ImageResponse extends UseCaseResponse {
   imagePath: string;
-
 }
+export default ImageResponse;

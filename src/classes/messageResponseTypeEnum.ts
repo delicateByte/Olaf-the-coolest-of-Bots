@@ -1,4 +1,4 @@
-export enum MessageResponseType {
+enum MessageResponseType {
   location,
   text,
   voice,
@@ -6,3 +6,4 @@ export enum MessageResponseType {
   video,
   endUseCase
 }
+export default MessageResponseType;

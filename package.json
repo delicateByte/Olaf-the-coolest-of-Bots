@@ -8,7 +8,7 @@
     "dev": "nodemon",
     "build": "tsc",
     "lint": "eslint ./src/**/*.ts",
-    "test": "jest"
+    "test": "jest --config config/jest.config.json "
   },
   "author": "",
   "license": "ISC",
@@ -28,9 +28,7 @@
     "node-localstorage": "^2.1.5",
     "node-telegram-bot-api": "^0.40.0",
     "tempy": "^0.5.0",
-    "ibm-watson": "^5.4.0",
-
-
+    "ibm-watson": "^5.4.0"
   },
   "devDependencies": {
     "@types/jest": "^25.1.4",

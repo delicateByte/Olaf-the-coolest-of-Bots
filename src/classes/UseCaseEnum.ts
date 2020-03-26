@@ -1,5 +1,6 @@
-export enum UseCaseEnum {
+enum UseCaseEnum {
   news,
   finance,
   entertainment
 }
+export default UseCaseEnum;
