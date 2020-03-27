@@ -8,5 +8,6 @@ module.exports = {
   },
   rules: {
     'linebreak-style': 0,
+    'no-console': "off",
   }
 };
