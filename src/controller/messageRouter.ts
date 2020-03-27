@@ -2,13 +2,18 @@
 // Import 1
 // Import 2
 // Import 3
+
 // Import 4
 // Import 5
 import {
   sendImageMessage, sendLocationMessage, sendTextMessage, sendVoiceMessage,
 } from './messageHandler';
 import UseCaseInformation from '../classes/UseCaseInformation';
-import MessageResponseType from '../classes/messageResponseTypeEnum';
+import TextResponse from '../classes/TextResponse';
+import VoiceResponse from '../classes/VoiceResponse';
+import LocationResponse from '../classes/LocationResponse';
+import ImageResponse from '../classes/ImageResponse';
+import EndUseCaseResponse from '../classes/EndUseCaseResponse';
 
 
 export function extractUseCase(telegramMessageContent) {
@@ -20,17 +25,20 @@ export function routeMessageToUseCase(message: UseCaseInformation) {
 
 
 function handleUseCaseResponse(useCaseResponse) {
-  switch (useCaseResponse) {
-    case MessageResponseType.text:
+  switch (true) {
+    case useCaseResponse instanceof TextResponse:
       sendTextMessage(useCaseResponse);
       break;
-    case MessageResponseType.voice:
+    case useCaseResponse instanceof VoiceResponse:
       sendVoiceMessage(useCaseResponse);
       break;
-    case MessageResponseType.location:
+    case useCaseResponse instanceof LocationResponse:
       sendLocationMessage(useCaseResponse);
       break;
-    case MessageResponseType.picture:
+    case useCaseResponse instanceof ImageResponse:
+      sendImageMessage(useCaseResponse);
+      break;
+    case useCaseResponse instanceof EndUseCaseResponse:
       sendImageMessage(useCaseResponse);
       break;
     default:
