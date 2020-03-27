@@ -4,7 +4,7 @@ import * as TelegramBot from 'node-telegram-bot-api';
 let telegramBot;
 
 export function initializeTelegramBot() {
-  telegramBot = new TelegramBot(process.env.BOT_TOKEN_TEST, { polling: true });
+  telegramBot = new TelegramBot(process.env.BOT_TOKEN, { polling: true });
 }
 
 
