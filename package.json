@@ -2,9 +2,9 @@
   "name": "bot-ich",
   "version": "0.0.1",
   "description": "",
-  "main": "./src/pda.ts",
+  "main": "src/core/olaf.ts",
   "scripts": {
-    "start": "node -r ts-node/register ./src/pda.ts",
+    "start": "node -r ts-node/register -r dotenv/config src/main.ts",
     "dev": "nodemon",
     "build": "tsc",
     "lint": "eslint ./src/**/*.ts",
