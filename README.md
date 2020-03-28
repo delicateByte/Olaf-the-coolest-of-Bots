@@ -14,6 +14,7 @@ PDA for ASE
 
     # Telegram bot settings
     BOT_TOKEN=<TELEGRAM-BOT-TOKEN>
+    BOT_TOKEN_TEST=<YOUR TELEGRAM BOT USED FOR TESTING>
 
     # Dashboard password
     DASHBOARD_PASSWORD=$2a$10$KqDExovM4hv8cAtuxWkzSOWko6RIG.uRbS2g9hPH9UqYOxNDWsV/6
@@ -23,8 +24,18 @@ PDA for ASE
     
     # Google APIs token
     GOOGLE_TOKEN=<GOOGLE-ACCESS-TOKEN>
+    
+    #Watson Token 
+    SPEECH_TO_TEXT_IAM_APIKEY=<STT-IAM-APIKEY>
+    SPEECH_TO_TEXT_URL=<STT-URL>
+    SPEECH_TO_TEXT_APIKEY=<STT-APIKEY>
+    TEXT_TO_SPEECH_APIKEY=<TTS-APIKEY>
+    TEXT_TO_SPEECH_IAM_APIKEY=<TTS_IAM_API-KEY>
+    TEXT_TO_SPEECH_URL=<TTS-URL>
+    TEXT_TO_SPEECH_AUTH_TYPE=iam
     ```
-
+    
+    
 4.  Run the application using one of the following scripts  
     `npm start`: Compiles and starts the PDA  
     `npm run dev`: Same as start but also re-compiles on changes
@@ -40,15 +51,22 @@ src/
 ├──preferences.ts
 ├──usecases/
 │  ├──dailystatus/
-│  │  ├──dailystatus.ts
+│  │  ├──dailystatusUsecase.ts
+│  │  ├──dailystatusUsecase.test.ts
 │  │  └──otherFile.ts
 │  └──imageoftheday/
-│     ├──imageoftheday.ts
+│     ├──imageofthedayUsecase.ts
+│     ├──imageofthedayUsecase.test.ts
 │     └──otherFile.ts
 ├──connectors/
-│  ├──reddit.ts
-│  ├──googleCalendar.ts
-│  └──googleMaps.ts
+│  ├──reddit/
+│  │  ├──redditConnector.ts
+│  │  ├──redditConnector.test.ts
+│  │  └──otherFile.ts
+│  ├──googleMaps/
+│  │  ├──googleMapsConnector.ts
+│  │  ├──googleMapsConnector.test.ts
+│  │  └──otherFile.ts
 └──interfaces/
    └──gatewayInterface.ts
 ```
