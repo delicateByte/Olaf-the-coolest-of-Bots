@@ -20,7 +20,15 @@ export default class MessageSender {
     this.chatId = chatId;
   }
 
-  async sendResponse(response: UseCaseResponse | string): Promise<Message> {
+  async sendResponses(responses: UseCaseResponse[]): Promise<void> {
+    // eslint-disable-next-line no-restricted-syntax
+    for (const response of responses) {
+      // eslint-disable-next-line no-await-in-loop
+      await this.sendResponse(response);
+    }
+}
+
+  async sendResponse(response: UseCaseResponse): Promise<Message> {
     if (response instanceof TextResponse) {
       return this.telegramBot.sendMessage(this.chatId, response.text,
         { disable_web_page_preview: true });

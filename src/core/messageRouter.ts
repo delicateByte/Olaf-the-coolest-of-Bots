@@ -24,4 +24,10 @@ export default class MessageRouter {
 
     return null;
   }
+
+  findUseCaseByName(name: string): UseCase {
+    // Remove spaces and convert to lower case
+    const unify = (t: string) => t.replace(/\s/g, '').toLowerCase();
+    return this.useCases.find((useCase) => unify(useCase.name) === unify(name)) || null;
+  }
 }
