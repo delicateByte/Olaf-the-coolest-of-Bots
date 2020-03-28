@@ -21,12 +21,8 @@ export default class TextToSpeechConnector {
       const synthesizeStream = this.api.synthesizeUsingWebSocket({ text, accept: 'audio/ogg;codecs=opus' });
       synthesizeStream.pipe(fs.createWriteStream(ttsFile));
 
-      // synthesizeStream.on('message', (message, data) =>  console.log(data));
       synthesizeStream.on('error', (err) => reject(err));
-      synthesizeStream.on('close', (code) => {
-        console.log(code);
-        resolve(ttsFile);
-      });
+      synthesizeStream.on('close', () => resolve(ttsFile));
     });
   }
 }

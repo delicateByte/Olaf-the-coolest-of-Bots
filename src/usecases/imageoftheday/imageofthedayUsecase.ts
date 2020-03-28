@@ -9,52 +9,60 @@ import TextResponse from '../../classes/TextResponse';
 import Preferences from '../../core/preferences';
 import ImageResponse from '../../classes/ImageResponse';
 import EndUseCaseResponse from '../../classes/EndUseCaseResponse';
+import VoiceResponse from '../../classes/VoiceResponse';
 
 
 export default class ImageofthedayUsecase implements UseCase {
   name = 'Image of the Day';
-
-  triggers = ['image'];
+  triggers = ['image', 'photo'];
 
   private unsplash = new UnsplashConnector(process.env.UNSPLASH_TOKEN);
-
   private wikipedia = new WikipediaConnector();
-
   private maps = new GoogleMapsStaticConnector(process.env.GOOGLE_TOKEN);
 
   async receiveMessage(message: TelegramMessage): Promise<UseCaseResponse[]> {
-    Preferences.set('imageoftheday', 'imageofthedayRandom', false);
-    Preferences.set('imageoftheday', 'imageofthedayTags', 'forest, ocean, city');
-
+    // Create query based on preferences
     const chooseRandomImage = Preferences.get('imageoftheday', 'imageofthedayRandom');
     const imageTags = Preferences.get('imageoftheday', 'imageofthedayTags');
     let query;
     if (!chooseRandomImage && imageTags && imageTags.length) {
       query = ImageofthedayUsecase.drawRandomItem<string>(imageTags.split(',')).trim();
-      console.log(`Choosing random image using tag "${query}"`);
     } else {
       query = '';
-      console.log('Choosing random image');
     }
 
+    // Get data from APIs
     const image = await this.unsplash.getRandomImage(query);
-    const article = await this.getArticleForImage(image);
+    const [,article] = await this.getArticleForImage(image);
     const imagePath = await this.unsplash.downloadImage(image);
     const mapImagePath = await this.downloadMap(image);
 
-    const responses: UseCaseResponse[] = [new ImageResponse(imagePath)];
+    // Assemble response
+    const responses: UseCaseResponse[] = [];
+
+    if (!message) {
+      // Send extra message if use case was triggered proactively
+      responses.push(new TextResponse('Here\'s your image of the day'));
+    }
+
+    responses.push(new ImageResponse(imagePath));
 
     let text = '';
+    text += `"${image.description}"\n\n`;
     text += `Image by ${image.userName}\n`;
-    text += `URL: ${image.postUrl}\n`;
     if (image.location) {
-      text += `Location: ${image.location}\n`;
+      text += `Shot in ${image.location}\n`;
     }
-    text += `Description: ${image.description}\n\n`;
-    text += article;
+    text += `${image.postUrl}`;
     responses.push(new TextResponse(text));
 
+    if (article) {
+      // Read Wikipedia article if available
+      responses.push(new VoiceResponse(article));
+    }
+
     if (mapImagePath) {
+      // Show map excerpt if location was given
       responses.push(new ImageResponse(mapImagePath));
     }
 
@@ -63,8 +71,9 @@ export default class ImageofthedayUsecase implements UseCase {
     return responses;
   }
 
-  private async getArticleForImage(image: UnsplashImage) : Promise<string> {
+  private async getArticleForImage(image: UnsplashImage) : Promise<[string, string]> {
     let pageid;
+    let title;
 
     // Try to find a suitable article using the location name
     // The first part that returns an article will be used
@@ -81,7 +90,7 @@ export default class ImageofthedayUsecase implements UseCase {
         // eslint-disable-next-line no-await-in-loop
         const results = await this.wikipedia.search(query);
         if (results.length) {
-          [pageid] = results;
+          [[title, pageid]] = results;
           break;
         }
 
@@ -97,7 +106,7 @@ export default class ImageofthedayUsecase implements UseCase {
         // eslint-disable-next-line no-await-in-loop
         const results = await this.wikipedia.search(tag);
         if (results.length) {
-          [pageid] = results;
+          [[title, pageid]] = results;
           break;
         }
       }
@@ -105,10 +114,11 @@ export default class ImageofthedayUsecase implements UseCase {
 
     // No suitable article was found
     if (!pageid) {
-      return 'No description found';
+      return null;
     }
 
-    return this.wikipedia.getFirstParagraph(pageid);
+    const article = await this.wikipedia.getFirstParagraph(pageid);
+    return [title, article];
   }
 
   private async downloadMap(image: UnsplashImage) : Promise<string> {

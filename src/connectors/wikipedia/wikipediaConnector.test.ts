@@ -16,21 +16,24 @@ function getMockConnector(response) : WikipediaConnector {
 test('search by page name', async () => {
   const searchResults = [
     {
+      title: 'First Title',
       pageid: 12345,
       snippet: 'First search result',
     },
     {
+      title: 'Second Title',
       pageid: 23456,
       snippet: 'Second search result may refer to',
     },
     {
+      title: 'Third Title',
       pageid: 345678,
       snippet: 'Third search result',
     },
   ];
 
   // Second result should be omitted because it is a disambiguation page
-  const expected = [12345, 345678];
+  const expected = [['First Title', 12345], ['Third Title', 345678]];
   const actual = await getMockConnector({
     query: {
       search: searchResults,

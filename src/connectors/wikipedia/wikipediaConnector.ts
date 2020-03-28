@@ -9,7 +9,7 @@ export default class WikipediaConnector {
     });
   }
 
-  async search(query: string): Promise<Array<number>> {
+  async search(query: string): Promise<[string, number][]> {
     const response = await this.axios.get('api.php', {
       params: {
         format: 'json',
@@ -22,7 +22,7 @@ export default class WikipediaConnector {
     const results = response.data.query.search;
     return results
       .filter((page) => !page.snippet.includes('may refer to')) // Filter disambiguation pages
-      .map((page) => page.pageid);
+      .map((page) => [page.title, page.pageid]);
   }
 
   async getFirstParagraph(page: number | string): Promise<string> {
