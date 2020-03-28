@@ -1,10 +1,10 @@
-import UseCaseEnum from './UseCaseEnum';
+import UseCase from '../interfaces/useCase';
 
 class BrainState {
   chatId:number;
 
   interruptedUseCase:Boolean;
 
-  activeUseCase:UseCaseEnum;
+  activeUseCase: UseCase;
 }
 export default BrainState;

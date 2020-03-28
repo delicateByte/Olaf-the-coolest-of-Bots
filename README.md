@@ -14,7 +14,6 @@ PDA for ASE
 
     # Telegram bot settings
     BOT_TOKEN=<TELEGRAM-BOT-TOKEN>
-    BOT_TOKEN_TEST=<YOUR TELEGRAM BOT USED FOR TESTING>
 
     # Dashboard password
     DASHBOARD_PASSWORD=$2a$10$KqDExovM4hv8cAtuxWkzSOWko6RIG.uRbS2g9hPH9UqYOxNDWsV/6
@@ -68,5 +67,5 @@ src/
 │  │  ├──googleMapsConnector.test.ts
 │  │  └──otherFile.ts
 └──interfaces/
-   └──gatewayInterface.ts
+   └──useCase.ts
 ```
