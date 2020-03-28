@@ -1,6 +1,8 @@
 import { LocalStorage } from 'node-localstorage';
+import { EventEmitter } from 'events';
 
 const localStorage = new LocalStorage('./localstorage/settings');
+const eventEmitter = new EventEmitter();
 
 class Preferences {
   private static readonly defaults: Array<[string, string, any]> = [
@@ -44,6 +46,11 @@ class Preferences {
 
     serviceObject[property] = value;
     localStorage.setItem(service, JSON.stringify(serviceObject));
+    eventEmitter.emit('changed', service, property);
+  }
+
+  static events(): EventEmitter {
+    return eventEmitter;
   }
 }
 export default Preferences;

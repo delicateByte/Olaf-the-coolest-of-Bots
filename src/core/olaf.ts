@@ -1,5 +1,6 @@
 import * as TelegramBot from 'node-telegram-bot-api';
 import { Message } from 'node-telegram-bot-api';
+import { CronJob } from 'cron';
 
 import MessageSender from './messageSender';
 import IncomingMessageHandler from './incomingMessageHandler';
@@ -18,6 +19,7 @@ class Olaf {
   private readonly messageSender;
 
   private activeUseCase: UseCase;
+  private cronJobs: {[key: string]: CronJob} = [];
 
   constructor() {
     this.telegramBot = new TelegramBot(process.env.BOT_TOKEN, { polling: true });
@@ -32,6 +34,12 @@ class Olaf {
 
   start() {
     this.telegramBot.on('message', (msg) => this.handleTelegramMessage(msg));
+
+    Preferences.events().on('changed', (service, property) => {
+      if (property.includes('Proactive')) {
+        this.handleProactivePreferenceChange(service);
+      }
+    });
   }
 
   private async handleTelegramMessage(originalMessage: Message): Promise<void> {
@@ -74,6 +82,31 @@ class Olaf {
     }
     // Let use case handle the message
     yield* this.activeUseCase.receiveMessage(message);
+  }
+
+  private handleProactivePreferenceChange(service: string) {
+    const enableProactivity = Preferences.get(service, `${service}Proactive`);
+
+    if (service in this.cronJobs) {
+      this.cronJobs[service].stop();
+    }
+
+    if (enableProactivity) {
+      const time = Preferences.get(service, `${service}ProactiveTime`).split(':');
+      const hour = time[0];
+      const minute = time[1];
+
+      const job = new CronJob(`0 ${minute} ${hour} * * *`, async () => {
+        console.log(`Running scheduled use case ${service}`);
+        const useCase = this.messageRouter.findUseCaseByName(service);
+        const responses = await useCase.receiveMessage(null);
+        await this.messageSender.sendResponses(responses);
+      });
+      this.cronJobs[service] = job;
+      job.start();
+
+      console.log(`Scheduled use case ${service} at ${hour}:${minute}`);
+    }
   }
 }
 export default Olaf;
