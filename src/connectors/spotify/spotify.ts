@@ -63,7 +63,7 @@ export default class Spotify {
   }
 
   static async getTrack(category: string) {    
-    const track = Spotify.spotifyApi.getPlaylistsForCategory(category, {
+    const track = await Spotify.spotifyApi.getPlaylistsForCategory(category, {
       country: 'DE',
       limit : 50,
       offset : 0,

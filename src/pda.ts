@@ -9,7 +9,7 @@ import preferencesDashboard from './dashboard/preferences-dashboard';
 // eslint-disable-next-line import/no-unresolved, import/extensions
 import Entertainment from './usecases/entertainment/entertainment';
 
-Entertainment.getMeme();
+Entertainment.test();
 
 // Setup dotenv config
 dotenv.config();
