@@ -31,7 +31,6 @@ PDA for ASE
     TEXT_TO_SPEECH_APIKEY=<TTS-APIKEY>
     TEXT_TO_SPEECH_IAM_APIKEY=<TTS_IAM_API-KEY>
     TEXT_TO_SPEECH_URL=<TTS-URL>
-    TEXT_TO_SPEECH_AUTH_TYPE=iam
     ```
     
     
@@ -46,8 +45,7 @@ We use a common folder structure for all use cases and API connectors. Files are
 
 ```
 src/
-├──pda.ts
-├──preferences.ts
+├──main.ts
 ├──usecases/
 │  ├──dailystatus/
 │  │  ├──dailystatusUsecase.ts

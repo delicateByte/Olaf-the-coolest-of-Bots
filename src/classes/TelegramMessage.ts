@@ -6,7 +6,7 @@ class TelegramMessage {
 
   type: TelegramMessageType;
 
-  text: string | void;
+  text?: string;
 
   latitude?: number;
 

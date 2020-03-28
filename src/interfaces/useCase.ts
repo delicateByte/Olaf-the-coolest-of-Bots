@@ -2,11 +2,12 @@ import UseCaseResponse from '../classes/UseCaseResponse';
 import TelegramMessage from '../classes/TelegramMessage';
 
 interface UseCase {
-  readonly useCaseName: string;
+  readonly name: string;
+  readonly triggers: string[];
 
-  receiveMessage(arg: TelegramMessage | void): Promise<UseCaseResponse[]>;
+  receiveMessage(message: TelegramMessage): Promise<UseCaseResponse[]>;
 
-  // Core Application calls this method on the UseCase to end & reset the UseCase
-  resetUseCase(): void;
+  // Core application calls this method to end and reset the UseCase
+  reset(): void;
 }
 export default UseCase;

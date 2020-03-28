@@ -1,6 +1,6 @@
 import UseCaseResponse from './UseCaseResponse';
 
-export class AudioResponse extends UseCaseResponse {
-  audioPath: string;
+class AudioResponse implements UseCaseResponse {
+  constructor(readonly audioPath: string) {}
 }
 export default AudioResponse;
