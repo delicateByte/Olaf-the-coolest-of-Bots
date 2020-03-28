@@ -1,4 +1,3 @@
-
 import UseCaseResponse from './UseCaseResponse';
 
 class TextResponse extends UseCaseResponse {

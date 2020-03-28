@@ -7,11 +7,12 @@ import * as BrainState from './BrainState';
 import LocationResponse from '../classes/LocationResponse';
 import ImageResponse from '../classes/ImageResponse';
 import VoiceResponse from '../classes/VoiceResponse';
-import UseCaseInformation from '../classes/UseCaseInformation';
+import TelegramMessage from '../classes/TelegramMessage';
 // constants
 import { getTelegrambotInstance } from '../TelegramBotManager';
 import TextResponse from '../classes/TextResponse';
 import { routeMessageToUseCase } from './messageRouter';
+import TelegramMessageType from '../classes/TelegramMessageType';
 
 
 export function retrieveAudio(telegrambot, telegramMessage) {
@@ -52,28 +53,28 @@ export function sendImageMessage(imageResponse: ImageResponse) {
 export function sendVoiceMessage(voiceResponse: VoiceResponse) {
   const bot = getTelegrambotInstance();
 
-  textToSpeech(voiceResponse.textforVoiceMessage).catch((err) => {
+  textToSpeech(voiceResponse.textForVoiceMessage).catch((err) => {
     console.log(err);
   }).then((speechFilePath) => {
     console.log(speechFilePath + typeof speechFilePath);
     bot.sendVoice(BrainState.getChatId(), String(speechFilePath));
   });
 }
-export function classifyMessage(telegramBot, telegramMessage) {
-  BrainState.setChatId(telegramMessage.from.id);
-  const infoForUseCase = new UseCaseInformation(telegramMessage);
+export function classifyMessage(telegramBot, originalMessage) {
+  BrainState.setChatId(originalMessage.from.id);
+  const telegramMessage = new TelegramMessage(originalMessage);
   const promise = new Promise((resolve, reject) => {
-    if (telegramMessage.hasOwnProperty('voice')) {
-      speechToTextConversionManager(telegramBot, telegramMessage).then((translatedText) => {
-        infoForUseCase.text = translatedText;
-        infoForUseCase.messageType = 'voice';
+    if (originalMessage.hasOwnProperty('voice')) {
+      speechToTextConversionManager(telegramBot, originalMessage).then((translatedText) => {
+        telegramMessage.text = translatedText;
+        telegramMessage.type = TelegramMessageType.VOICE;
       }).catch((err) => { console.log(err); });
-    } else if (telegramMessage.hasOwnProperty('location')) {
-      infoForUseCase.lattitude = telegramMessage.lattitude;
-      infoForUseCase.longitude = telegramMessage.longitude;
-      infoForUseCase.messageType = 'location';
-    } else if (telegramMessage.hasOwnProperty('text')) {
-      infoForUseCase.messageType = 'text';
+    } else if (originalMessage.hasOwnProperty('location')) {
+      telegramMessage.latitude = originalMessage.latitude;
+      telegramMessage.longitude = originalMessage.longitude;
+      telegramMessage.type = TelegramMessageType.LOCATION;
+    } else if (originalMessage.hasOwnProperty('text')) {
+      telegramMessage.type = TelegramMessageType.TEXT;
     } else {
       console.log('Message not classified');
       reject();
@@ -81,7 +82,7 @@ export function classifyMessage(telegramBot, telegramMessage) {
     resolve();
   });
   promise.then(() => {
-    routeMessageToUseCase(infoForUseCase);
+    routeMessageToUseCase(telegramMessage);
   }).catch((err) => {
     console.log(err);
   });

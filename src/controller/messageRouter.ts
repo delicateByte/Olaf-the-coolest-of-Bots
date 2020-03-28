@@ -8,7 +8,7 @@
 import {
   sendImageMessage, sendLocationMessage, sendTextMessage, sendVoiceMessage,
 } from './messageHandler';
-import UseCaseInformation from '../classes/UseCaseInformation';
+import TelegramMessage from '../classes/TelegramMessage';
 import TextResponse from '../classes/TextResponse';
 import VoiceResponse from '../classes/VoiceResponse';
 import LocationResponse from '../classes/LocationResponse';
@@ -19,7 +19,7 @@ import EndUseCaseResponse from '../classes/EndUseCaseResponse';
 export function extractUseCase(telegramMessageContent) {
   console.log(telegramMessageContent);
 }
-export function routeMessageToUseCase(message: UseCaseInformation) {
+export function routeMessageToUseCase(message: TelegramMessage) {
   console.log(message);
 }
 
