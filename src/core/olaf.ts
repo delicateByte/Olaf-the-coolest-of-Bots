@@ -7,6 +7,7 @@ import MessageHandler from './messageHandler';
 import MessageRouter from './messageRouter';
 import EndUseCaseResponse from '../classes/EndUseCaseResponse';
 import UseCase from '../interfaces/useCase';
+import ImageofthedayUsecase from '../usecases/imageoftheday/imageofthedayUsecase';
 
 export default class Olaf {
   private telegramBot;
@@ -31,6 +32,7 @@ export default class Olaf {
 
     // TODO register all use cases here
     // this.messageRouter.registerUseCase(new XUseCase())
+    this.messageRouter.registerUseCase(new ImageofthedayUsecase());
   }
 
   start() {
@@ -57,7 +59,11 @@ export default class Olaf {
       // Let use case handle the message
       const responses = await this.activeUseCase.receiveMessage(message);
       // Send responses back to user
-      responses.forEach((response) => this.messageSender.sendResponse(response));
+      // eslint-disable-next-line no-restricted-syntax
+      for (const response of responses) {
+        // eslint-disable-next-line no-await-in-loop
+        await this.messageSender.sendResponse(response);
+      }
       // Reset active use case if it is done
       if (responses.some((response) => response instanceof EndUseCaseResponse)) {
         this.activeUseCase.reset();

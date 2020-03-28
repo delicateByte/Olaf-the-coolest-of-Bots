@@ -2,15 +2,19 @@ import UnsplashConnector from '../../connectors/unsplash/unsplashConnector';
 import UnsplashImage from '../../connectors/unsplash/unsplashImage';
 import WikipediaConnector from '../../connectors/wikipedia/wikipediaConnector';
 import GoogleMapsStaticConnector from '../../connectors/googleMapsStaticConnector/googleMapsStaticConnector';
-import Preferences from '../../preferences';
 import UseCase from '../../interfaces/useCase';
 import TelegramMessage from '../../classes/TelegramMessage';
 import UseCaseResponse from '../../classes/UseCaseResponse';
 import TextResponse from '../../classes/TextResponse';
+import Preferences from '../../core/preferences';
+import ImageResponse from '../../classes/ImageResponse';
+import EndUseCaseResponse from '../../classes/EndUseCaseResponse';
 
 
 export default class ImageofthedayUsecase implements UseCase {
-  useCaseName = 'Image of the Day';
+  name = 'Image of the Day';
+
+  triggers = ['image'];
 
   private unsplash = new UnsplashConnector(process.env.UNSPLASH_TOKEN);
 
@@ -18,7 +22,7 @@ export default class ImageofthedayUsecase implements UseCase {
 
   private maps = new GoogleMapsStaticConnector(process.env.GOOGLE_TOKEN);
 
-  async receiveMessage(arg: TelegramMessage | void): Promise<UseCaseResponse[]> {
+  async receiveMessage(message: TelegramMessage): Promise<UseCaseResponse[]> {
     Preferences.set('imageoftheday', 'imageofthedayRandom', false);
     Preferences.set('imageoftheday', 'imageofthedayTags', 'forest, ocean, city');
 
@@ -38,25 +42,25 @@ export default class ImageofthedayUsecase implements UseCase {
     const imagePath = await this.unsplash.downloadImage(image);
     const mapImagePath = await this.downloadMap(image);
 
-    console.log();
-    console.log('Image by', image.userName);
-    console.log('URL:', image.postUrl);
-    console.log('Local image path:', imagePath);
-    console.log('Description:', image.description);
-    if (image.location || image.coordinates) {
-      console.log(`Location: ${image.location} (${image.coordinates})`);
-      console.log('Local map path:', mapImagePath);
-    } else {
-      console.log('No location given');
+    const responses: UseCaseResponse[] = [new ImageResponse(imagePath)];
+
+    let text = '';
+    text += `Image by ${image.userName}\n`;
+    text += `URL: ${image.postUrl}\n`;
+    if (image.location) {
+      text += `Location: ${image.location}\n`;
+    }
+    text += `Description: ${image.description}\n\n`;
+    text += article;
+    responses.push(new TextResponse(text));
+
+    if (mapImagePath) {
+      responses.push(new ImageResponse(mapImagePath));
     }
 
-    console.log();
-    console.log('Wikipedia Article:');
-    console.log(article);
+    responses.push(new EndUseCaseResponse());
 
-    const response = new TextResponse();
-    response.responseMessage = image.description;
-    return [response];
+    return responses;
   }
 
   private async getArticleForImage(image: UnsplashImage) : Promise<string> {
@@ -122,5 +126,5 @@ export default class ImageofthedayUsecase implements UseCase {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  resetUseCase(): void { }
+  reset(): void { }
 }
