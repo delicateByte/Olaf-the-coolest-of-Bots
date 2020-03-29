@@ -7,8 +7,9 @@ function getMockUseCase(name: string, triggers: string[]): UseCase {
   return {
     name,
     triggers,
-    receiveMessage: async () => [],
-    reset(): void {},
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    async* receiveMessage() {},
+    reset() {},
   };
 }
 
