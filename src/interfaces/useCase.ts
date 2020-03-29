@@ -17,10 +17,10 @@ interface UseCase {
 
   /**
    * Receives a Telegram message from core application, handles it and creates appropriate responses
-   * @param {ProcessedTelegramMessage} message - The processed Telegram message, or null if the use case
-   * was triggered proactively without user interaction.
+   * @param {ProcessedTelegramMessage} message - The processed Telegram message, or null if the
+   *    use case was triggered proactively without user interaction.
    * @returns {Promise<UseCaseResponse[]>} The responses that will be sent to the user. Must include
-   * an {@link EndUseCaseResponse} if the use case is finished.
+   *    an {@link EndUseCaseResponse} if the use case is finished.
    */
   receiveMessage(message: ProcessedTelegramMessage): Promise<UseCaseResponse[]>;
 
