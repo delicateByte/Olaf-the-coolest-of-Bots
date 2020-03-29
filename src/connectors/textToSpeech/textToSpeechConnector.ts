@@ -9,7 +9,7 @@ class TextToSpeechConnector {
 
   constructor() {
     this.api = new TextToSpeechV1({
-      authenticator: new IamAuthenticator({ apikey: process.env.TEXT_TO_SPEECH_APIKEY, }),
+      authenticator: new IamAuthenticator({ apikey: process.env.TEXT_TO_SPEECH_APIKEY }),
       url: process.env.TEXT_TO_SPEECH_URL,
     });
   }

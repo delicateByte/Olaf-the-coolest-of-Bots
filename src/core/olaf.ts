@@ -6,6 +6,10 @@ import IncomingMessageHandler from './incomingMessageHandler';
 import MessageRouter from './messageRouter';
 import EndUseCaseResponse from '../classes/EndUseCaseResponse';
 import UseCase from '../interfaces/useCase';
+import TelegramMessage from '../classes/TelegramMessage';
+import UseCaseResponse from '../classes/UseCaseResponse';
+import TelegramMessageType from '../classes/TelegramMessageType';
+import TextResponse from '../classes/TextResponse';
 
 class Olaf {
   private telegramBot;
@@ -39,12 +43,8 @@ class Olaf {
     try {
       // Extract message, including speech recognition
       const message = await this.messageHandler.extractMessage(originalMessage);
-      // Find matching use case
-      if (!this.activeUseCase) {
-        this.activeUseCase = this.messageRouter.findUseCaseByTrigger(message);
-      }
-      // Let use case handle the message
-      const responses = await this.activeUseCase.receiveMessage(message);
+      // Get responses to send to the user
+      const responses = await this.getResponses(message);
       // Send responses back to user
       responses.forEach((response) => this.messageSender.sendResponse(response));
       // Reset active use case if it is done
@@ -53,8 +53,23 @@ class Olaf {
         this.activeUseCase = null;
       }
     } catch (err) {
+      console.log(err);
       this.messageSender.sendResponse(err.toString());
     }
+  }
+
+  private async getResponses(message: TelegramMessage): Promise<UseCaseResponse[]> {
+    // Cancel active use case if user sends "stop"
+    if (message.type === TelegramMessageType.TEXT && message.text.toLowerCase().includes('stop')) {
+      return [new TextResponse('Use case stopped'), new EndUseCaseResponse()];
+    }
+
+    // Find matching use case
+    if (!this.activeUseCase) {
+      this.activeUseCase = this.messageRouter.findUseCaseByTrigger(message);
+    }
+    // Let use case handle the message
+    return this.activeUseCase.receiveMessage(message);
   }
 }
 export default Olaf;
