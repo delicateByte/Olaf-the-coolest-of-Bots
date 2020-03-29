@@ -53,15 +53,13 @@ class Olaf {
       // Extract message, including speech recognition
       const message = await this.messageHandler.extractMessage(originalMessage);
       // Get responses to send to the user
-      const responses = await this.getResponses(message);
+      const responses = this.getResponses(message);
       // Send responses back to user
-      await this.messageSender.sendResponses(responses);
+      const endUseCase = await this.messageSender.sendResponses(responses);
       // Reset active use case if it is done
-      if (responses.some((response) => response instanceof EndUseCaseResponse)) {
-        if (this.activeUseCase) {
-          this.activeUseCase.reset();
-          this.activeUseCase = null;
-        }
+      if (endUseCase && this.activeUseCase) {
+        this.activeUseCase.reset();
+        this.activeUseCase = null;
       }
     } catch (err) {
       console.log(err);
@@ -69,10 +67,12 @@ class Olaf {
     }
   }
 
-  private async getResponses(message: ProcessedTelegramMessage): Promise<UseCaseResponse[]> {
+  private async* getResponses(message: ProcessedTelegramMessage): AsyncGenerator<UseCaseResponse> {
     // Cancel active use case if user sends "stop"
     if ('text' in message && message.text.toLowerCase().includes('stop')) {
-      return [new TextResponse('Use case stopped'), new EndUseCaseResponse()];
+      yield new TextResponse('Use case stopped');
+      yield new EndUseCaseResponse();
+      return;
     }
 
     // Find matching use case
@@ -80,7 +80,7 @@ class Olaf {
       this.activeUseCase = this.messageRouter.findUseCaseByTrigger(message);
     }
     // Let use case handle the message
-    return this.activeUseCase.receiveMessage(message);
+    yield* this.activeUseCase.receiveMessage(message);
   }
 
   private handleProactivePreferenceChange(service: string) {
