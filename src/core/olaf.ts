@@ -8,12 +8,10 @@ import MessageRouter from './messageRouter';
 import EndUseCaseResponse from '../classes/EndUseCaseResponse';
 import UseCase from '../interfaces/useCase';
 import ImageofthedayUsecase from '../usecases/imageoftheday/imageofthedayUsecase';
+import UseCaseResponse from '../classes/UseCaseResponse';
+import TelegramMessageType from '../classes/TelegramMessageType';
 import Preferences from './preferences';
 import TextResponse from '../classes/TextResponse';
-
-export default class Olaf {
-  private readonly telegramBot;
-  private readonly dashboard;
 import ProcessedTelegramMessage from '../classes/ProcessedTelegramMessage';
 import UseCaseResponse from '../classes/UseCaseResponse';
 import TextResponse from '../classes/TextResponse';
@@ -71,6 +69,22 @@ class Olaf {
     }
   }
 
+  private async* getResponses(message: ProcessedTelegramMessage): AsyncGenerator<UseCaseResponse> {
+    // Cancel active use case if user sends "stop"
+    if ('text' in message && message.text.toLowerCase().includes('stop')) {
+      yield new TextResponse('Use case stopped');
+      yield new EndUseCaseResponse();
+      return;
+    }
+
+    // Find matching use case
+    if (!this.activeUseCase) {
+      this.activeUseCase = this.messageRouter.findUseCaseByTrigger(message);
+    }
+    // Let use case handle the message
+    yield* this.activeUseCase.receiveMessage(message);
+  }
+
   private handleProactivePreferenceChange(service: string) {
     const enableProactivity = Preferences.get(service, `${service}Proactive`);
 
@@ -94,22 +108,6 @@ class Olaf {
 
       console.log(`Scheduled use case ${service} at ${hour}:${minute}`);
     }
-  }
-
-  private async* getResponses(message: ProcessedTelegramMessage): AsyncGenerator<UseCaseResponse> {
-    // Cancel active use case if user sends "stop"
-    if ('text' in message && message.text.toLowerCase().includes('stop')) {
-      yield new TextResponse('Use case stopped');
-      yield new EndUseCaseResponse();
-      return;
-    }
-
-    // Find matching use case
-    if (!this.activeUseCase) {
-      this.activeUseCase = this.messageRouter.findUseCaseByTrigger(message);
-    }
-    // Let use case handle the message
-    yield* this.activeUseCase.receiveMessage(message);
   }
 }
 export default Olaf;

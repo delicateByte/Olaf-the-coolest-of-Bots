@@ -3,68 +3,85 @@ import UnsplashImage from '../../connectors/unsplash/unsplashImage';
 import WikipediaConnector from '../../connectors/wikipedia/wikipediaConnector';
 import GoogleMapsStaticConnector from '../../connectors/googleMapsStaticConnector/googleMapsStaticConnector';
 import UseCase from '../../interfaces/useCase';
-import TelegramMessage from '../../classes/TelegramMessage';
 import UseCaseResponse from '../../classes/UseCaseResponse';
 import TextResponse from '../../classes/TextResponse';
 import Preferences from '../../core/preferences';
 import ImageResponse from '../../classes/ImageResponse';
 import EndUseCaseResponse from '../../classes/EndUseCaseResponse';
+import VoiceResponse from '../../classes/VoiceResponse';
+import ProcessedTelegramMessage from '../../classes/ProcessedTelegramMessage';
 
 
-export default class ImageofthedayUsecase implements UseCase {
+class ImageofthedayUsecase implements UseCase {
   name = 'Image of the Day';
-
-  triggers = ['image'];
+  triggers = ['image', 'photo', 'picture'];
 
   private unsplash = new UnsplashConnector(process.env.UNSPLASH_TOKEN);
-
   private wikipedia = new WikipediaConnector();
-
   private maps = new GoogleMapsStaticConnector(process.env.GOOGLE_TOKEN);
 
-  async receiveMessage(message: TelegramMessage): Promise<UseCaseResponse[]> {
-    Preferences.set('imageoftheday', 'imageofthedayRandom', false);
-    Preferences.set('imageoftheday', 'imageofthedayTags', 'forest, ocean, city');
-
-    const chooseRandomImage = Preferences.get('imageoftheday', 'imageofthedayRandom');
-    const imageTags = Preferences.get('imageoftheday', 'imageofthedayTags');
-    let query;
-    if (!chooseRandomImage && imageTags && imageTags.length) {
-      query = ImageofthedayUsecase.drawRandomItem<string>(imageTags.split(',')).trim();
-      console.log(`Choosing random image using tag "${query}"`);
-    } else {
-      query = '';
-      console.log('Choosing random image');
+  constructor() {
+    if (!('UNSPLASH_TOKEN' in process.env)) {
+      throw new Error('Missing API key for Unsplash');
     }
-
-    const image = await this.unsplash.getRandomImage(query);
-    const article = await this.getArticleForImage(image);
-    const imagePath = await this.unsplash.downloadImage(image);
-    const mapImagePath = await this.downloadMap(image);
-
-    const responses: UseCaseResponse[] = [new ImageResponse(imagePath)];
-
-    let text = '';
-    text += `Image by ${image.userName}\n`;
-    text += `URL: ${image.postUrl}\n`;
-    if (image.location) {
-      text += `Location: ${image.location}\n`;
+    if (!('GOOGLE_TOKEN' in process.env)) {
+      throw new Error('Missing API key for Google');
     }
-    text += `Description: ${image.description}\n\n`;
-    text += article;
-    responses.push(new TextResponse(text));
-
-    if (mapImagePath) {
-      responses.push(new ImageResponse(mapImagePath));
-    }
-
-    responses.push(new EndUseCaseResponse());
-
-    return responses;
   }
 
-  private async getArticleForImage(image: UnsplashImage) : Promise<string> {
+  async* receiveMessage(message: ProcessedTelegramMessage): AsyncGenerator<UseCaseResponse> {
+    if (message) {
+      yield new TextResponse('Here\'s your image');
+    } else {
+      // Send this in case the use case was triggered proactively
+      yield new TextResponse('Here\'s your image of the day');
+    }
+
+    // Show image and description
+    const image = await this.unsplash.getRandomImage(ImageofthedayUsecase.getUnsplashQuery());
+    const imagePath = await this.unsplash.downloadImage(image);
+    yield new ImageResponse(imagePath);
+    yield new TextResponse(ImageofthedayUsecase.assembleImageDescription(image));
+
+    // Read Wikipedia article if available
+    const [,article] = await this.getArticleForImage(image);
+    if (article) {
+      yield new VoiceResponse(article);
+    }
+
+    // Show map excerpt if location was given
+    const mapImagePath = await this.downloadMap(image);
+    if (mapImagePath) {
+      yield new ImageResponse(mapImagePath);
+    }
+
+    yield new EndUseCaseResponse();
+  }
+
+  private static getUnsplashQuery(): string {
+    // Create query based on preferences
+    const chooseRandomImage = Preferences.get('imageoftheday', 'imageofthedayRandom');
+    const imageTags = Preferences.get('imageoftheday', 'imageofthedayTags');
+    if (!chooseRandomImage && imageTags && imageTags.length) {
+      return ImageofthedayUsecase.drawRandomItem<string>(imageTags.split(',')).trim();
+    }
+    return '';
+  }
+
+  private static assembleImageDescription(image: UnsplashImage): string {
+    let text = '';
+    text += `"${image.description}"\n\n`;
+    text += `Image by ${image.userName}\n`;
+    if (image.location) {
+      text += `Shot in ${image.location}\n`;
+    }
+    text += `From ${image.postUrl}`;
+    return text;
+  }
+
+  private async getArticleForImage(image: UnsplashImage) : Promise<[string, string]> {
     let pageid;
+    let title;
 
     // Try to find a suitable article using the location name
     // The first part that returns an article will be used
@@ -81,7 +98,7 @@ export default class ImageofthedayUsecase implements UseCase {
         // eslint-disable-next-line no-await-in-loop
         const results = await this.wikipedia.search(query);
         if (results.length) {
-          [pageid] = results;
+          [[title, pageid]] = results;
           break;
         }
 
@@ -97,7 +114,7 @@ export default class ImageofthedayUsecase implements UseCase {
         // eslint-disable-next-line no-await-in-loop
         const results = await this.wikipedia.search(tag);
         if (results.length) {
-          [pageid] = results;
+          [[title, pageid]] = results;
           break;
         }
       }
@@ -105,10 +122,11 @@ export default class ImageofthedayUsecase implements UseCase {
 
     // No suitable article was found
     if (!pageid) {
-      return 'No description found';
+      return null;
     }
 
-    return this.wikipedia.getFirstParagraph(pageid);
+    const article = await this.wikipedia.getFirstParagraph(pageid);
+    return [title, article];
   }
 
   private async downloadMap(image: UnsplashImage) : Promise<string> {
@@ -128,3 +146,5 @@ export default class ImageofthedayUsecase implements UseCase {
   // eslint-disable-next-line class-methods-use-this
   reset(): void { }
 }
+
+export default ImageofthedayUsecase;
