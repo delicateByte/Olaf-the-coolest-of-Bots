@@ -1,17 +1,17 @@
 import * as TelegramBot from 'node-telegram-bot-api';
 
-import TelegramMessage from '../classes/TelegramMessage';
+import ProcessedTelegramMessage from '../classes/ProcessedTelegramMessage';
 import TelegramMessageType from '../classes/TelegramMessageType';
 import SpeechToTextConnector from '../connectors/speechToText/speechToTextConnector';
 
 
-export default class MessageHandler {
+class IncomingMessageHandler {
   private speechToText = new SpeechToTextConnector();
 
   constructor(private telegramBot: TelegramBot) {
   }
 
-  async extractMessage(originalMessage): Promise<TelegramMessage> {
+  async extractMessage(originalMessage): Promise<ProcessedTelegramMessage> {
     const telegramMessage = new TelegramMessage(originalMessage);
     if ('voice' in originalMessage) {
       telegramMessage.type = TelegramMessageType.VOICE;
@@ -35,3 +35,4 @@ export default class MessageHandler {
     return this.speechToText.recognize(audioStream);
   }
 }
+export default IncomingMessageHandler;

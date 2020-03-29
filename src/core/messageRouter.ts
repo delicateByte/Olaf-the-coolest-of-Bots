@@ -1,15 +1,15 @@
-import TelegramMessage from '../classes/TelegramMessage';
+import ProcessedTelegramMessage from '../classes/ProcessedTelegramMessage';
 import UseCase from '../interfaces/useCase';
 import TelegramMessageType from '../classes/TelegramMessageType';
 
-export default class MessageRouter {
+class MessageRouter {
   private useCases: UseCase[] = [];
 
   registerUseCase(useCase: UseCase): void {
     this.useCases.push(useCase);
   }
 
-  findUseCase(message: TelegramMessage): UseCase {
+  findUseCaseByTrigger(message: ProcessedTelegramMessage): UseCase {
     if (message.type === TelegramMessageType.LOCATION) {
       // TODO return Michi's use case by name
     }
@@ -22,7 +22,7 @@ export default class MessageRouter {
       }
     }
 
-    return null;
+    throw new Error('Invalid use case');
   }
 
   findUseCaseByName(name: string): UseCase {
@@ -31,3 +31,4 @@ export default class MessageRouter {
     return this.useCases.find((useCase) => unify(useCase.name) === unify(name)) || null;
   }
 }
+export default MessageRouter;

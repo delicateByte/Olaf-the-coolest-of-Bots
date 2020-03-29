@@ -5,6 +5,7 @@ import UnsplashImage from './unsplashImage';
 
 
 export default class UnsplashConnector {
+class UnsplashConnector {
   private axios;
 
   constructor(accessToken: string) {
@@ -60,3 +61,4 @@ export default class UnsplashConnector {
     return tempy.write(response.data, { extension: 'png' });
   }
 }
+export default UnsplashConnector;

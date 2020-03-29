@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-export default class WikipediaConnector {
+class WikipediaConnector {
   private axios;
 
   constructor() {
@@ -53,3 +53,4 @@ export default class WikipediaConnector {
     return pages[pageId].extract.split('\n')[0];
   }
 }
+export default WikipediaConnector;
