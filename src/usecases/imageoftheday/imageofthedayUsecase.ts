@@ -14,61 +14,72 @@ import VoiceResponse from '../../classes/VoiceResponse';
 
 export default class ImageofthedayUsecase implements UseCase {
   name = 'Image of the Day';
-  triggers = ['image', 'photo'];
+  triggers = ['image', 'photo', 'picture'];
 
   private unsplash = new UnsplashConnector(process.env.UNSPLASH_TOKEN);
   private wikipedia = new WikipediaConnector();
   private maps = new GoogleMapsStaticConnector(process.env.GOOGLE_TOKEN);
 
-  async receiveMessage(message: TelegramMessage): Promise<UseCaseResponse[]> {
-    // Create query based on preferences
-    const chooseRandomImage = Preferences.get('imageoftheday', 'imageofthedayRandom');
-    const imageTags = Preferences.get('imageoftheday', 'imageofthedayTags');
-    let query;
-    if (!chooseRandomImage && imageTags && imageTags.length) {
-      query = ImageofthedayUsecase.drawRandomItem<string>(imageTags.split(',')).trim();
-    } else {
-      query = '';
+  constructor() {
+    if (!('UNSPLASH_TOKEN' in process.env)) {
+      throw new Error('Missing API key for Unsplash');
     }
+    if (!('GOOGLE_TOKEN' in process.env)) {
+      throw new Error('Missing API key for Google');
+    }
+  }
 
+  async receiveMessage(message: TelegramMessage): Promise<UseCaseResponse[]> {
     // Get data from APIs
-    const image = await this.unsplash.getRandomImage(query);
+    const image = await this.unsplash.getRandomImage(ImageofthedayUsecase.getUnsplashQuery());
     const [,article] = await this.getArticleForImage(image);
     const imagePath = await this.unsplash.downloadImage(image);
     const mapImagePath = await this.downloadMap(image);
 
     // Assemble response
-    const responses: UseCaseResponse[] = [];
+    const responses: UseCaseResponse[] = [new EndUseCaseResponse()];
 
+    // Send extra message if use case was triggered proactively
     if (!message) {
-      // Send extra message if use case was triggered proactively
       responses.push(new TextResponse('Here\'s your image of the day'));
     }
 
+    // Show image and description
     responses.push(new ImageResponse(imagePath));
+    responses.push(new TextResponse(ImageofthedayUsecase.assembleImageDescription(image)));
 
+    // Read Wikipedia article if available
+    if (article) {
+      responses.push(new VoiceResponse(article));
+    }
+
+    // Show map excerpt if location was given
+    if (mapImagePath) {
+      responses.push(new ImageResponse(mapImagePath));
+    }
+
+    return responses;
+  }
+
+  private static getUnsplashQuery(): string {
+    // Create query based on preferences
+    const chooseRandomImage = Preferences.get('imageoftheday', 'imageofthedayRandom');
+    const imageTags = Preferences.get('imageoftheday', 'imageofthedayTags');
+    if (!chooseRandomImage && imageTags && imageTags.length) {
+      return ImageofthedayUsecase.drawRandomItem<string>(imageTags.split(',')).trim();
+    }
+    return '';
+  }
+
+  private static assembleImageDescription(image: UnsplashImage): string {
     let text = '';
     text += `"${image.description}"\n\n`;
     text += `Image by ${image.userName}\n`;
     if (image.location) {
       text += `Shot in ${image.location}\n`;
     }
-    text += `${image.postUrl}`;
-    responses.push(new TextResponse(text));
-
-    if (article) {
-      // Read Wikipedia article if available
-      responses.push(new VoiceResponse(article));
-    }
-
-    if (mapImagePath) {
-      // Show map excerpt if location was given
-      responses.push(new ImageResponse(mapImagePath));
-    }
-
-    responses.push(new EndUseCaseResponse());
-
-    return responses;
+    text += `From ${image.postUrl}`;
+    return text;
   }
 
   private async getArticleForImage(image: UnsplashImage) : Promise<[string, string]> {

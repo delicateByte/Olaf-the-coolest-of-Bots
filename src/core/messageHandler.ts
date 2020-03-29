@@ -13,15 +13,15 @@ export default class MessageHandler {
 
   async extractMessage(originalMessage): Promise<TelegramMessage> {
     const telegramMessage = new TelegramMessage(originalMessage);
-    if (originalMessage.hasOwnProperty('voice')) {
+    if ('voice' in originalMessage) {
       telegramMessage.type = TelegramMessageType.VOICE;
       telegramMessage.text = await this.convertAudioStreamToText(originalMessage);
       console.log(`Recognized text: ${telegramMessage.text}`);
-    } else if (originalMessage.hasOwnProperty('location')) {
+    } else if ('location' in originalMessage) {
       telegramMessage.type = TelegramMessageType.LOCATION;
       telegramMessage.latitude = originalMessage.latitude;
       telegramMessage.longitude = originalMessage.longitude;
-    } else if (originalMessage.hasOwnProperty('text')) {
+    } else if ('text' in originalMessage) {
       telegramMessage.type = TelegramMessageType.TEXT;
       telegramMessage.text = originalMessage.text;
     } else {
