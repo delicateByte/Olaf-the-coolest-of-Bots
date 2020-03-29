@@ -8,10 +8,7 @@ import MessageRouter from './messageRouter';
 import EndUseCaseResponse from '../classes/EndUseCaseResponse';
 import UseCase from '../interfaces/useCase';
 import ImageofthedayUsecase from '../usecases/imageoftheday/imageofthedayUsecase';
-import UseCaseResponse from '../classes/UseCaseResponse';
-import TelegramMessageType from '../classes/TelegramMessageType';
 import Preferences from './preferences';
-import TextResponse from '../classes/TextResponse';
 import ProcessedTelegramMessage from '../classes/ProcessedTelegramMessage';
 import UseCaseResponse from '../classes/UseCaseResponse';
 import TextResponse from '../classes/TextResponse';
@@ -24,7 +21,9 @@ class Olaf {
   private readonly messageSender;
 
   private activeUseCase: UseCase;
-  private cronJobs: {[key: string]: CronJob} = [];
+  private proactiveJobs: {[key: string]: CronJob} = {
+    imageoftheday: null,
+  };
 
   constructor() {
     this.telegramBot = new TelegramBot(process.env.BOT_TOKEN, { polling: true });
@@ -41,9 +40,10 @@ class Olaf {
   start() {
     this.telegramBot.on('message', (msg) => this.handleTelegramMessage(msg));
 
+    Object.keys(this.proactiveJobs).forEach((service) => this.scheduleProactivity(service));
     Preferences.events().on('changed', (service, property) => {
       if (property.includes('Proactive')) {
-        this.handleProactivePreferenceChange(service);
+        this.scheduleProactivity(service);
       }
     });
   }
@@ -85,11 +85,12 @@ class Olaf {
     yield* this.activeUseCase.receiveMessage(message);
   }
 
-  private handleProactivePreferenceChange(service: string) {
+  private scheduleProactivity(service: string) {
     const enableProactivity = Preferences.get(service, `${service}Proactive`);
 
-    if (service in this.cronJobs) {
-      this.cronJobs[service].stop();
+    if (this.proactiveJobs[service]) {
+      this.proactiveJobs[service].stop();
+      this.proactiveJobs[service] = null;
     }
 
     if (enableProactivity) {
@@ -103,7 +104,7 @@ class Olaf {
         const responses = await useCase.receiveMessage(null);
         await this.messageSender.sendResponses(responses);
       });
-      this.cronJobs[service] = job;
+      this.proactiveJobs[service] = job;
       job.start();
 
       console.log(`Scheduled use case ${service} at ${hour}:${minute}`);
