@@ -5,7 +5,23 @@ const localStorage = new LocalStorage('./localstorage/settings');
 const eventEmitter = new EventEmitter();
 
 class Preferences {
-  static get(service, property) {
+  private static readonly defaults: Array<[string, string, any]> = [
+    ['imageoftheday', 'imageofthedayProactive', false],
+    ['imageoftheday', 'imageofthedayProactiveTime', '08:00'],
+    ['imageoftheday', 'imageofthedayRandom', true],
+    ['imageoftheday', 'imageofthedayTags', ''],
+  ];
+
+  static initialize(): void {
+    Preferences.defaults.forEach((preference) => {
+      const [service, property, value] = preference;
+      if (!this.get(service, property)) {
+        this.set(service, property, value);
+      }
+    });
+  }
+
+  static get(service: string, property: string): any {
     const serviceString = localStorage.getItem(service);
 
     if (serviceString !== null) {
@@ -13,10 +29,10 @@ class Preferences {
       return serviceObject[property];
     }
 
-    return undefined;
+    return null;
   }
 
-  static set(service, property, value) {
+  static set(service: string, property: string, value: any): void {
     const serviceString = localStorage.getItem(service);
     let serviceObject;
 
