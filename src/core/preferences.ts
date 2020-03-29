@@ -4,7 +4,7 @@ import { EventEmitter } from 'events';
 const localStorage = new LocalStorage('./localstorage/settings');
 const eventEmitter = new EventEmitter();
 
-export default class Preferences {
+class Preferences {
   static get(service, property) {
     const serviceString = localStorage.getItem(service);
 
@@ -37,3 +37,4 @@ export default class Preferences {
     return eventEmitter;
   }
 }
+export default Preferences;

@@ -1,6 +1,5 @@
 import MessageRouter from './messageRouter';
-import TelegramMessage from '../classes/TelegramMessage';
-import UseCaseResponse from '../classes/UseCaseResponse';
+import ProcessedTelegramMessage from '../classes/ProcessedTelegramMessage';
 import UseCase from '../interfaces/useCase';
 import TelegramMessageType from '../classes/TelegramMessageType';
 
@@ -8,14 +7,13 @@ function getMockUseCase(name: string, triggers: string[]): UseCase {
   return {
     name,
     triggers,
-    receiveMessage(message: TelegramMessage): Promise<UseCaseResponse[]> {
-      return null;
-    },
-    reset(): void { },
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    async* receiveMessage() {},
+    reset() {},
   };
 }
 
-function getTelegramTextMessage(text: string): TelegramMessage {
+function getTelegramTextMessage(text: string): ProcessedTelegramMessage {
   return {
     originalMessage: null,
     type: TelegramMessageType.TEXT,
@@ -31,10 +29,10 @@ test('get use case by trigger phrase', () => {
   router.registerUseCase(barUseCase);
 
   expect(fooUseCase).not.toBe(barUseCase);
-  expect(router.findUseCase(getTelegramTextMessage('foo'))).toBe(fooUseCase);
-  expect(router.findUseCase(getTelegramTextMessage('bar'))).toBe(barUseCase);
-  expect(router.findUseCase(getTelegramTextMessage('mango'))).toBe(barUseCase);
-  expect(router.findUseCase(getTelegramTextMessage('other'))).toBeNull();
+  expect(router.findUseCaseByTrigger(getTelegramTextMessage('foo'))).toBe(fooUseCase);
+  expect(router.findUseCaseByTrigger(getTelegramTextMessage('bar'))).toBe(barUseCase);
+  expect(router.findUseCaseByTrigger(getTelegramTextMessage('mango'))).toBe(barUseCase);
+  expect(() => router.findUseCaseByTrigger(getTelegramTextMessage('other'))).toThrow();
 });
 
 test('get use case by name', () => {
