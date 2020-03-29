@@ -35,7 +35,8 @@ class MessageSender {
 
   async sendResponse(response: UseCaseResponse): Promise<Message> {
     if (response instanceof TextResponse) {
-      return this.telegramBot.sendMessage(this.chatId, response.text);
+      return this.telegramBot.sendMessage(this.chatId, response.text,
+        { disable_web_page_preview: true });
     }
     if (response instanceof VoiceResponse) {
       const audioPath = await this.textToSpeech.synthesize(response.text);
