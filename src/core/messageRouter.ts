@@ -9,7 +9,7 @@ class MessageRouter {
     this.useCases.push(useCase);
   }
 
-  findUseCase(message: TelegramMessage): UseCase {
+  findUseCaseByTrigger(message: TelegramMessage): UseCase {
     if (message.type === TelegramMessageType.LOCATION) {
       // TODO return Michi's use case by name
     }

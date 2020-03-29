@@ -41,7 +41,7 @@ class Olaf {
       const message = await this.messageHandler.extractMessage(originalMessage);
       // Find matching use case
       if (!this.activeUseCase) {
-        this.activeUseCase = this.messageRouter.findUseCase(message);
+        this.activeUseCase = this.messageRouter.findUseCaseByTrigger(message);
       }
       // Let use case handle the message
       const responses = await this.activeUseCase.receiveMessage(message);

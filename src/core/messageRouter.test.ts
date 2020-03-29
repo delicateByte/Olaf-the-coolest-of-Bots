@@ -31,8 +31,8 @@ test('trigger works', () => {
   router.registerUseCase(barUseCase);
 
   expect(fooUseCase).not.toBe(barUseCase);
-  expect(router.findUseCase(getTelegramTextMessage('foo'))).toBe(fooUseCase);
-  expect(router.findUseCase(getTelegramTextMessage('bar'))).toBe(barUseCase);
-  expect(router.findUseCase(getTelegramTextMessage('mango'))).toBe(barUseCase);
-  expect(router.findUseCase(getTelegramTextMessage('other'))).toBeNull();
+  expect(router.findUseCaseByTrigger(getTelegramTextMessage('foo'))).toBe(fooUseCase);
+  expect(router.findUseCaseByTrigger(getTelegramTextMessage('bar'))).toBe(barUseCase);
+  expect(router.findUseCaseByTrigger(getTelegramTextMessage('mango'))).toBe(barUseCase);
+  expect(router.findUseCaseByTrigger(getTelegramTextMessage('other'))).toBeNull();
 });
