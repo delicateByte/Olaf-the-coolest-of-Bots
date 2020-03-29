@@ -4,7 +4,7 @@ import * as fs from 'fs';
 const TextToSpeechV1 = require('ibm-watson/text-to-speech/v1');
 const { IamAuthenticator } = require('ibm-watson/auth');
 
-export default class TextToSpeechConnector {
+class TextToSpeechConnector {
   private api;
 
   constructor() {
@@ -30,3 +30,4 @@ export default class TextToSpeechConnector {
     });
   }
 }
+export default TextToSpeechConnector;

@@ -1,7 +1,7 @@
 import axios from 'axios';
 import * as tempy from 'tempy';
 
-export default class GoogleMapsStaticConnector {
+class GoogleMapsStaticConnector {
   private accessToken;
 
   private axios;
@@ -37,3 +37,4 @@ export default class GoogleMapsStaticConnector {
     return tempy.write(response.data, { extension: 'png' });
   }
 }
+export default GoogleMapsStaticConnector;

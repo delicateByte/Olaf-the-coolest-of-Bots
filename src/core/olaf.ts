@@ -8,7 +8,7 @@ import MessageRouter from './messageRouter';
 import EndUseCaseResponse from '../classes/EndUseCaseResponse';
 import UseCase from '../interfaces/useCase';
 
-export default class Olaf {
+class Olaf {
   private telegramBot;
 
   private dashboard;
@@ -65,3 +65,4 @@ export default class Olaf {
     }
   }
 }
+export default Olaf;

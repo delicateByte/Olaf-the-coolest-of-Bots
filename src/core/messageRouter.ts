@@ -2,7 +2,7 @@ import TelegramMessage from '../classes/TelegramMessage';
 import UseCase from '../interfaces/useCase';
 import TelegramMessageType from '../classes/TelegramMessageType';
 
-export default class MessageRouter {
+class MessageRouter {
   private useCases: UseCase[] = [];
 
   registerUseCase(useCase: UseCase): void {
@@ -25,3 +25,4 @@ export default class MessageRouter {
     throw new Error('Invalid use case');
   }
 }
+export default MessageRouter;

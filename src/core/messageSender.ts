@@ -8,7 +8,7 @@ import VoiceResponse from '../classes/VoiceResponse';
 import UseCaseResponse from '../classes/UseCaseResponse';
 import TextToSpeechConnector from '../connectors/textToSpeech/textToSpeechConnector';
 
-export default class MessageSender {
+class MessageSender {
   private textToSpeech = new TextToSpeechConnector();
 
   private chatId: number;
@@ -40,3 +40,4 @@ export default class MessageSender {
     return Promise.resolve(null);
   }
 }
+export default MessageSender;
