@@ -1,5 +1,6 @@
-const SpeechToTextV1 = require('ibm-watson/speech-to-text/v1');
-const { IamAuthenticator } = require('ibm-watson/auth');
+import * as SpeechToTextV1 from 'ibm-watson/speech-to-text/v1';
+import { IamAuthenticator } from 'ibm-watson/auth';
+
 
 class SpeechToTextConnector {
   private api;

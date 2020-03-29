@@ -1,8 +1,8 @@
 import * as tempy from 'tempy';
 import * as fs from 'fs';
+import * as TextToSpeechV1 from 'ibm-watson/text-to-speech/v1';
+import { IamAuthenticator } from 'ibm-watson/auth';
 
-const TextToSpeechV1 = require('ibm-watson/text-to-speech/v1');
-const { IamAuthenticator } = require('ibm-watson/auth');
 
 class TextToSpeechConnector {
   private api;
