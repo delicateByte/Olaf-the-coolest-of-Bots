@@ -1,9 +1,14 @@
 module.exports = {
+  extends: 'airbnb-typescript/base',
+  parserOptions: {
+    project: './tsconfig.json',
+  },
   env: {
     jest: true
   },
-  extends: "airbnb-base",
   rules: {
     'linebreak-style': 0,
+    'no-console': "off",
+    'no-prototype-builtins': "off"
   }
 };
