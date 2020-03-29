@@ -1,7 +1,6 @@
 import * as TelegramBot from 'node-telegram-bot-api';
 import { Message } from 'node-telegram-bot-api';
 
-import preferencesDashboard from '../dashboard/preferences-dashboard';
 import MessageSender from './messageSender';
 import IncomingMessageHandler from './incomingMessageHandler';
 import MessageRouter from './messageRouter';
@@ -10,8 +9,6 @@ import UseCase from '../interfaces/useCase';
 
 class Olaf {
   private telegramBot;
-
-  private dashboard;
 
   private messageHandler;
 
@@ -23,7 +20,6 @@ class Olaf {
 
   constructor() {
     this.telegramBot = new TelegramBot(process.env.BOT_TOKEN, { polling: true });
-    this.dashboard = preferencesDashboard;
     this.messageHandler = new IncomingMessageHandler(this.telegramBot);
     this.messageRouter = new MessageRouter();
     this.messageSender = new MessageSender(this.telegramBot);
@@ -34,10 +30,6 @@ class Olaf {
   }
 
   start() {
-    this.dashboard.listen(process.env.PORT, () => {
-      console.log(`Dashboard is running in http://localhost:${process.env.PORT}`);
-    });
-
     this.telegramBot.on('message', (msg) => this.handleTelegramMessage(msg));
   }
 
