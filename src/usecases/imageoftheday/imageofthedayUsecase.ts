@@ -30,8 +30,10 @@ class ImageofthedayUsecase implements UseCase {
   }
 
   async* receiveMessage(message: ProcessedTelegramMessage): AsyncGenerator<UseCaseResponse> {
-    // Send extra message if use case was triggered proactively
-    if (!message) {
+    if (message) {
+      yield new TextResponse('Here\'s your image');
+    } else {
+      // Send this in case the use case was triggered proactively
       yield new TextResponse('Here\'s your image of the day');
     }
 
