@@ -29,36 +29,31 @@ class ImageofthedayUsecase implements UseCase {
     }
   }
 
-  async receiveMessage(message: ProcessedTelegramMessage): Promise<UseCaseResponse[]> {
-    // Get data from APIs
-    const image = await this.unsplash.getRandomImage(ImageofthedayUsecase.getUnsplashQuery());
-    const [,article] = await this.getArticleForImage(image);
-    const imagePath = await this.unsplash.downloadImage(image);
-    const mapImagePath = await this.downloadMap(image);
-
-    // Assemble response
-    const responses: UseCaseResponse[] = [new EndUseCaseResponse()];
-
+  async* receiveMessage(message: ProcessedTelegramMessage): AsyncGenerator<UseCaseResponse> {
     // Send extra message if use case was triggered proactively
     if (!message) {
-      responses.push(new TextResponse('Here\'s your image of the day'));
+      yield new TextResponse('Here\'s your image of the day');
     }
 
     // Show image and description
-    responses.push(new ImageResponse(imagePath));
-    responses.push(new TextResponse(ImageofthedayUsecase.assembleImageDescription(image)));
+    const image = await this.unsplash.getRandomImage(ImageofthedayUsecase.getUnsplashQuery());
+    const imagePath = await this.unsplash.downloadImage(image);
+    yield new ImageResponse(imagePath);
+    yield new TextResponse(ImageofthedayUsecase.assembleImageDescription(image));
 
     // Read Wikipedia article if available
+    const [,article] = await this.getArticleForImage(image);
     if (article) {
-      responses.push(new VoiceResponse(article));
+      yield new VoiceResponse(article);
     }
 
     // Show map excerpt if location was given
+    const mapImagePath = await this.downloadMap(image);
     if (mapImagePath) {
-      responses.push(new ImageResponse(mapImagePath));
+      yield new ImageResponse(mapImagePath);
     }
 
-    return responses;
+    yield new EndUseCaseResponse();
   }
 
   private static getUnsplashQuery(): string {
