@@ -12,6 +12,7 @@ export default class Spotify {
     clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
     redirectUri: process.env.SPOTIFY_REDIRECT_URI,
   });
+
   private static tokenRefresher: CronJob;
 
   static isAuthorized() {
@@ -22,28 +23,27 @@ export default class Spotify {
   }
 
   static async callbackRoute(req: express.Request, res: express.Response) {
-    Spotify.spotifyApi.authorizationCodeGrant(req.query.code).then((data) => {
-      if (data.statusCode === 200) {
+    Spotify.spotifyApi.authorizationCodeGrant(req.query.code).then((authData) => {
+      if (authData.statusCode === 200) {
         // Received access and refresh token
-        Spotify.spotifyApi.setAccessToken(data.body.access_token);
-        Spotify.spotifyApi.setRefreshToken(data.body.refresh_token);
+        Spotify.spotifyApi.setAccessToken(authData.body.access_token);
+        Spotify.spotifyApi.setRefreshToken(authData.body.refresh_token);
 
         if (Spotify.tokenRefresher) {
           Spotify.tokenRefresher.stop();
         }
 
         Spotify.tokenRefresher = new CronJob('*/5 * * * *', () => {
-          Spotify.spotifyApi.refreshAccessToken().then((data) => {
-              Spotify.spotifyApi.setAccessToken(data.body['access_token']);
-            }).catch((err) => {
-              console.log(err);
-              return {}
-            });
+          Spotify.spotifyApi.refreshAccessToken().then((refreshData) => {
+            Spotify.spotifyApi.setAccessToken(refreshData.body.access_token);
+          }).catch((err) => {
+            console.log(err);
+            return {};
+          });
         }, null);
         Spotify.tokenRefresher.start();
-
-        return res.redirect('/');
       }
+      return res.redirect('/');
     }).catch((err) => console.log(err));
   }
 
@@ -53,25 +53,27 @@ export default class Spotify {
 
   static getUserInfo() {
     if (Spotify.isAuthorized()) {
-      const userInfo = Spotify.spotifyApi.getMe().then((data) => data.body).catch(err => {
+      const userInfo = Spotify.spotifyApi.getMe().then((data) => data.body).catch((err) => {
         console.log(err);
-        return {}; 
+        return {};
       });
       return userInfo;
     }
     return {};
   }
 
-  static async getTrack(category: string) {    
+  static async getTrack(category: string) {
     const track = await Spotify.spotifyApi.getPlaylistsForCategory(category, {
       country: 'DE',
-      limit : 50,
-      offset : 0,
+      limit: 50,
+      offset: 0,
     }).then((data) => {
       const playlists = data.body.playlists.items;
 
-      return Spotify.spotifyApi.getPlaylistTracks(playlists[Math.round(Math.random() * (playlists.length - 1))].id);
-    }).then((data) => {      
+      return Spotify.spotifyApi.getPlaylistTracks(
+        playlists[Math.round(Math.random() * (playlists.length - 1))].id,
+      );
+    }).then((data) => {
       const tracks = data.body.items;
       const trackRaw = tracks[Math.round(Math.random() * (tracks.length - 1))].track;
       const trackParsed = {
@@ -83,7 +85,7 @@ export default class Spotify {
       return trackParsed;
     }).catch((err) => {
       console.log(err);
-      return {}
+      return {};
     });
 
     return track;

@@ -34,9 +34,6 @@ export default class RedditMemes {
         title: postJson.title,
       };
 
-      console.log(memeJson);
-
-
       return memeJson;
     }
 
