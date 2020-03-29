@@ -49,10 +49,7 @@ export default class Olaf {
       const message = await this.messageHandler.extractMessage(originalMessage);
       // Find matching use case
       if (!this.activeUseCase) {
-        this.activeUseCase = await this.messageRouter.findUseCase(message);
-      }
-      if (!this.activeUseCase) {
-        throw new Error('Invalid use case');
+        this.activeUseCase = this.messageRouter.findUseCase(message);
       }
       // Let use case handle the message
       const responses = await this.activeUseCase.receiveMessage(message);

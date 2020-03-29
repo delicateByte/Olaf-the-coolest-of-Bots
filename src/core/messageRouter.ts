@@ -22,6 +22,6 @@ export default class MessageRouter {
       }
     }
 
-    return null;
+    throw new Error('Invalid use case');
   }
 }
