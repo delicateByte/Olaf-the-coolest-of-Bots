@@ -7,6 +7,7 @@ import ImageResponse from '../classes/ImageResponse';
 import VoiceResponse from '../classes/VoiceResponse';
 import UseCaseResponse from '../classes/UseCaseResponse';
 import TextToSpeechConnector from '../connectors/textToSpeech/textToSpeechConnector';
+import EndUseCaseResponse from '../classes/EndUseCaseResponse';
 
 class MessageSender {
   private textToSpeech = new TextToSpeechConnector();
@@ -20,10 +21,19 @@ class MessageSender {
     this.chatId = chatId;
   }
 
-  async sendResponse(response: UseCaseResponse | string): Promise<Message> {
-    if (typeof response === 'string') {
-      return this.telegramBot.sendMessage(this.chatId, response);
+  async sendResponses(responses: AsyncGenerator<UseCaseResponse>): Promise<boolean> {
+    let endUseCase = false;
+    // eslint-disable-next-line no-restricted-syntax
+    for await (const response of responses) {
+      if (response instanceof EndUseCaseResponse) {
+        endUseCase = true;
+      }
+      await this.sendResponse(response);
     }
+    return endUseCase;
+  }
+
+  async sendResponse(response: UseCaseResponse): Promise<Message> {
     if (response instanceof TextResponse) {
       return this.telegramBot.sendMessage(this.chatId, response.text);
     }
