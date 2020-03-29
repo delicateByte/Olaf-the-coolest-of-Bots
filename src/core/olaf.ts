@@ -58,8 +58,10 @@ class Olaf {
       await this.messageSender.sendResponses(responses);
       // Reset active use case if it is done
       if (responses.some((response) => response instanceof EndUseCaseResponse)) {
-        this.activeUseCase.reset();
-        this.activeUseCase = null;
+        if (this.activeUseCase) {
+          this.activeUseCase.reset();
+          this.activeUseCase = null;
+        }
       }
     } catch (err) {
       console.log(err);
@@ -69,7 +71,7 @@ class Olaf {
 
   private async getResponses(message: ProcessedTelegramMessage): Promise<UseCaseResponse[]> {
     // Cancel active use case if user sends "stop"
-    if (message.type === TelegramMessageType.TEXT && message.text.toLowerCase().includes('stop')) {
+    if ('text' in message && message.text.toLowerCase().includes('stop')) {
       return [new TextResponse('Use case stopped'), new EndUseCaseResponse()];
     }
 
