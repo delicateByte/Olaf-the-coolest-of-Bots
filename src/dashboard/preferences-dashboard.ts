@@ -1,13 +1,11 @@
 import * as express from 'express';
 import * as session from 'express-session';
 import * as mustache from 'mustache-express';
-import { LocalStorage } from 'node-localstorage';
+import Preferences from '../preferences';
 
-// eslint-disable-next-line import/no-unresolved, import/extensions
 import Auth from './auth';
 
 const app = express();
-const localStorage = new LocalStorage('./localstorage/settings');
 
 app.use(session({
   secret: 'keyboard cat',
@@ -29,16 +27,20 @@ app.set('views', `${__dirname}/views`);
 // Dashboard
 app.get('/', Auth.isAuthenticated, (req, res) => {
   // Get saved values
-  const unsplash = JSON.parse(localStorage.getItem('unsplashValues'));
-
-  // Parse values for check/radiobox display
-  unsplash.isRandom = (unsplash.imgSource === 'random') ? 'checked' : '';
-  unsplash.isKeywords = (unsplash.imgSource === 'keywords') ? 'checked' : '';
+  const imageoftheday = {
+    imageofthedayProactive: Preferences.get('imageoftheday', 'imageofthedayProactive'),
+    imageofthedayProactiveTime: Preferences.get('imageoftheday', 'imageofthedayProactiveTime'),
+    imageofthedayRandom: Preferences.get('imageoftheday', 'imageofthedayRandom'),
+    imageofthedayTags: Preferences.get('imageoftheday', 'imageofthedayTags'),
+  };
 
   // Return all values
   const options = {
-    unsplash,
+    imageoftheday,
   };
+
+  console.log('options: ', options);
+
   res.render('index', options);
 });
 
@@ -47,10 +49,13 @@ app.get('/json/dashboard', Auth.isAuthenticated, (req, res) => {
   res.json({ test: true });
 });
 
-app.post('/data/unsplash', (req, res) => {
-  console.log('POST', req.body);
+app.post('/data/imageoftheday', (req, res) => {
+  const data = JSON.parse(req.body.data);
 
-  localStorage.setItem('unsplashValues', JSON.stringify(req.body));
+  Preferences.set('imageoftheday', 'imageofthedayProactive', data.imageofthedayProactive);
+  Preferences.set('imageoftheday', 'imageofthedayProactiveTime', data.imageofthedayProactiveTime);
+  Preferences.set('imageoftheday', 'imageofthedayRandom', data.imageofthedayRandom);
+  Preferences.set('imageoftheday', 'imageofthedayTags', data.imageofthedayTags);
   res.sendStatus(200);
 });
 
