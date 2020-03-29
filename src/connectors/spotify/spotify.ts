@@ -63,31 +63,34 @@ export default class Spotify {
   }
 
   static async getTrack(category: string) {
-    const track = await Spotify.spotifyApi.getPlaylistsForCategory(category, {
-      country: 'DE',
-      limit: 50,
-      offset: 0,
-    }).then((data) => {
-      const playlists = data.body.playlists.items;
+    if (Spotify.isAuthorized()) {
+      const track = await Spotify.spotifyApi.getPlaylistsForCategory(category, {
+        country: 'DE',
+        limit: 50,
+        offset: 0,
+      }).then((data) => {
+        const playlists = data.body.playlists.items;
 
-      return Spotify.spotifyApi.getPlaylistTracks(
-        playlists[Math.round(Math.random() * (playlists.length - 1))].id,
-      );
-    }).then((data) => {
-      const tracks = data.body.items;
-      const trackRaw = tracks[Math.round(Math.random() * (tracks.length - 1))].track;
-      const trackParsed = {
-        name: trackRaw.name,
-        artist: trackRaw.artists.map((artist) => artist.name).join(', '),
-        url: trackRaw.external_urls.spotify,
-      };
+        return Spotify.spotifyApi.getPlaylistTracks(
+          playlists[Math.round(Math.random() * (playlists.length - 1))].id,
+        );
+      }).then((data) => {
+        const tracks = data.body.items;
+        const trackRaw = tracks[Math.round(Math.random() * (tracks.length - 1))].track;
+        const trackParsed = {
+          name: trackRaw.name,
+          artist: trackRaw.artists.map((artist) => artist.name).join(', '),
+          url: trackRaw.external_urls.spotify,
+        };
 
-      return trackParsed;
-    }).catch((err) => {
-      console.log(err);
-      return {};
-    });
+        return trackParsed;
+      }).catch((err) => {
+        console.log(err);
+        return {};
+      });
 
-    return track;
+      return track;
+    }
+    return {};
   }
 }
