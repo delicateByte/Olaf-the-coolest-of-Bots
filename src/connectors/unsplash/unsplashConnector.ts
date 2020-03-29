@@ -4,7 +4,6 @@ import * as tempy from 'tempy';
 import UnsplashImage from './unsplashImage';
 
 
-export default class UnsplashConnector {
 class UnsplashConnector {
   private axios;
 

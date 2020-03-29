@@ -7,13 +7,12 @@ import IncomingMessageHandler from './incomingMessageHandler';
 import MessageRouter from './messageRouter';
 import EndUseCaseResponse from '../classes/EndUseCaseResponse';
 import UseCase from '../interfaces/useCase';
-import ProcessedTelegramMessage from '../classes/ProcessedTelegramMessage';
 import UseCaseResponse from '../classes/UseCaseResponse';
 import TelegramMessageType from '../classes/TelegramMessageType';
-import TextResponse from '../classes/TextResponse';
-import ImageofthedayUsecase from '../usecases/imageoftheday/imageofthedayUsecase';
 import Preferences from './preferences';
 import TextResponse from '../classes/TextResponse';
+import ProcessedTelegramMessage from '../classes/ProcessedTelegramMessage';
+import ImageofthedayUsecase from '../usecases/imageoftheday/imageofthedayUsecase';
 
 class Olaf {
   private readonly telegramBot;
@@ -64,7 +63,7 @@ class Olaf {
       }
     } catch (err) {
       console.log(err);
-      this.messageSender.sendResponse(new TextResponse(err.toString());
+      this.messageSender.sendResponse(new TextResponse(err.toString()));
     }
   }
 

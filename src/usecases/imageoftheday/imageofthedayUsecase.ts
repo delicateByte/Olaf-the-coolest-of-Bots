@@ -3,16 +3,16 @@ import UnsplashImage from '../../connectors/unsplash/unsplashImage';
 import WikipediaConnector from '../../connectors/wikipedia/wikipediaConnector';
 import GoogleMapsStaticConnector from '../../connectors/googleMapsStaticConnector/googleMapsStaticConnector';
 import UseCase from '../../interfaces/useCase';
-import TelegramMessage from '../../classes/TelegramMessage';
 import UseCaseResponse from '../../classes/UseCaseResponse';
 import TextResponse from '../../classes/TextResponse';
 import Preferences from '../../core/preferences';
 import ImageResponse from '../../classes/ImageResponse';
 import EndUseCaseResponse from '../../classes/EndUseCaseResponse';
 import VoiceResponse from '../../classes/VoiceResponse';
+import ProcessedTelegramMessage from '../../classes/ProcessedTelegramMessage';
 
 
-export default class ImageofthedayUsecase implements UseCase {
+class ImageofthedayUsecase implements UseCase {
   name = 'Image of the Day';
   triggers = ['image', 'photo', 'picture'];
 
@@ -29,7 +29,7 @@ export default class ImageofthedayUsecase implements UseCase {
     }
   }
 
-  async receiveMessage(message: TelegramMessage): Promise<UseCaseResponse[]> {
+  async receiveMessage(message: ProcessedTelegramMessage): Promise<UseCaseResponse[]> {
     // Get data from APIs
     const image = await this.unsplash.getRandomImage(ImageofthedayUsecase.getUnsplashQuery());
     const [,article] = await this.getArticleForImage(image);
@@ -149,3 +149,5 @@ export default class ImageofthedayUsecase implements UseCase {
   // eslint-disable-next-line class-methods-use-this
   reset(): void { }
 }
+
+export default ImageofthedayUsecase;

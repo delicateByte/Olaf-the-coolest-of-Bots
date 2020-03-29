@@ -26,7 +26,7 @@ class MessageSender {
       // eslint-disable-next-line no-await-in-loop
       await this.sendResponse(response);
     }
-}
+  }
 
   async sendResponse(response: UseCaseResponse): Promise<Message> {
     if (response instanceof TextResponse) {
