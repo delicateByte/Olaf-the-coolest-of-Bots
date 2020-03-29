@@ -1,6 +1,5 @@
 import MessageRouter from './messageRouter';
 import ProcessedTelegramMessage from '../classes/ProcessedTelegramMessage';
-import UseCaseResponse from '../classes/UseCaseResponse';
 import UseCase from '../interfaces/useCase';
 import TelegramMessageType from '../classes/TelegramMessageType';
 
@@ -8,10 +7,8 @@ function getMockUseCase(name: string, triggers: string[]): UseCase {
   return {
     name,
     triggers,
-    receiveMessage(message: ProcessedTelegramMessage): Promise<UseCaseResponse[]> {
-      return null;
-    },
-    reset(): void { },
+    receiveMessage: async () => [],
+    reset(): void {},
   };
 }
 
@@ -34,5 +31,5 @@ test('trigger works', () => {
   expect(router.findUseCaseByTrigger(getTelegramTextMessage('foo'))).toBe(fooUseCase);
   expect(router.findUseCaseByTrigger(getTelegramTextMessage('bar'))).toBe(barUseCase);
   expect(router.findUseCaseByTrigger(getTelegramTextMessage('mango'))).toBe(barUseCase);
-  expect(router.findUseCaseByTrigger(getTelegramTextMessage('other'))).toBeNull();
+  expect(() => router.findUseCaseByTrigger(getTelegramTextMessage('other'))).toThrow();
 });

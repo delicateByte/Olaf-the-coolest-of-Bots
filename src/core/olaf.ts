@@ -8,7 +8,6 @@ import EndUseCaseResponse from '../classes/EndUseCaseResponse';
 import UseCase from '../interfaces/useCase';
 import ProcessedTelegramMessage from '../classes/ProcessedTelegramMessage';
 import UseCaseResponse from '../classes/UseCaseResponse';
-import TelegramMessageType from '../classes/TelegramMessageType';
 import TextResponse from '../classes/TextResponse';
 
 class Olaf {
