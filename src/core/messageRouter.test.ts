@@ -1,5 +1,5 @@
 import MessageRouter from './messageRouter';
-import TelegramMessage from '../classes/TelegramMessage';
+import ProcessedTelegramMessage from '../classes/ProcessedTelegramMessage';
 import UseCaseResponse from '../classes/UseCaseResponse';
 import UseCase from '../interfaces/useCase';
 import TelegramMessageType from '../classes/TelegramMessageType';
@@ -8,14 +8,14 @@ function getMockUseCase(name: string, triggers: string[]): UseCase {
   return {
     name,
     triggers,
-    receiveMessage(message: TelegramMessage): Promise<UseCaseResponse[]> {
+    receiveMessage(message: ProcessedTelegramMessage): Promise<UseCaseResponse[]> {
       return null;
     },
     reset(): void { },
   };
 }
 
-function getTelegramTextMessage(text: string): TelegramMessage {
+function getTelegramTextMessage(text: string): ProcessedTelegramMessage {
   return {
     originalMessage: null,
     type: TelegramMessageType.TEXT,

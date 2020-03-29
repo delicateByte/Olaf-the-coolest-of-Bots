@@ -1,4 +1,4 @@
-import TelegramMessage from '../classes/TelegramMessage';
+import ProcessedTelegramMessage from '../classes/ProcessedTelegramMessage';
 import UseCase from '../interfaces/useCase';
 import TelegramMessageType from '../classes/TelegramMessageType';
 
@@ -9,7 +9,7 @@ class MessageRouter {
     this.useCases.push(useCase);
   }
 
-  findUseCaseByTrigger(message: TelegramMessage): UseCase {
+  findUseCaseByTrigger(message: ProcessedTelegramMessage): UseCase {
     if (message.type === TelegramMessageType.LOCATION) {
       // TODO return Michi's use case by name
     }

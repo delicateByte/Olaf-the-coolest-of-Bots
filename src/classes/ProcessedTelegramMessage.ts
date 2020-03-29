@@ -1,7 +1,7 @@
 import { Message } from 'node-telegram-bot-api';
 import TelegramMessageType from './TelegramMessageType';
 
-class TelegramMessage {
+class ProcessedTelegramMessage {
   originalMessage: Message;
 
   type: TelegramMessageType;
@@ -16,4 +16,4 @@ class TelegramMessage {
     this.originalMessage = originalMessage;
   }
 }
-export default TelegramMessage;
+export default ProcessedTelegramMessage;

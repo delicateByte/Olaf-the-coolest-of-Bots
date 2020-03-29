@@ -1,6 +1,6 @@
 import * as TelegramBot from 'node-telegram-bot-api';
 
-import TelegramMessage from '../classes/TelegramMessage';
+import ProcessedTelegramMessage from '../classes/ProcessedTelegramMessage';
 import TelegramMessageType from '../classes/TelegramMessageType';
 import SpeechToTextConnector from '../connectors/speechToText/speechToTextConnector';
 
@@ -11,8 +11,8 @@ class IncomingMessageHandler {
   constructor(private telegramBot: TelegramBot) {
   }
 
-  async extractMessage(originalMessage): Promise<TelegramMessage> {
-    const telegramMessage = new TelegramMessage(originalMessage);
+  async extractMessage(originalMessage): Promise<ProcessedTelegramMessage> {
+    const telegramMessage = new ProcessedTelegramMessage(originalMessage);
     if (originalMessage.hasOwnProperty('voice')) {
       telegramMessage.type = TelegramMessageType.VOICE;
       telegramMessage.text = await this.convertAudioStreamToText(originalMessage);
