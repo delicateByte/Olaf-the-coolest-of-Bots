@@ -5,7 +5,7 @@ import TelegramMessageType from '../classes/TelegramMessageType';
 import SpeechToTextConnector from '../connectors/speechToText/speechToTextConnector';
 
 
-export default class MessageHandler {
+export default class IncomingMessageHandler {
   private speechToText = new SpeechToTextConnector();
 
   constructor(private telegramBot: TelegramBot) {

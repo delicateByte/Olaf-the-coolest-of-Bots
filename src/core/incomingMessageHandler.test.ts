@@ -1,4 +1,4 @@
-import messageHandler = require('./messageHandler');
+import messageHandler = require('./incomingMessageHandler');
 
 const voiceMessage = {
   message_id: 101,

@@ -3,7 +3,7 @@ import { Message } from 'node-telegram-bot-api';
 
 import preferencesDashboard from '../dashboard/preferences-dashboard';
 import MessageSender from './messageSender';
-import MessageHandler from './messageHandler';
+import IncomingMessageHandler from './incomingMessageHandler';
 import MessageRouter from './messageRouter';
 import EndUseCaseResponse from '../classes/EndUseCaseResponse';
 import UseCase from '../interfaces/useCase';
@@ -24,7 +24,7 @@ export default class Olaf {
   constructor() {
     this.telegramBot = new TelegramBot(process.env.BOT_TOKEN, { polling: true });
     this.dashboard = preferencesDashboard;
-    this.messageHandler = new MessageHandler(this.telegramBot);
+    this.messageHandler = new IncomingMessageHandler(this.telegramBot);
     this.messageRouter = new MessageRouter();
     this.messageSender = new MessageSender(this.telegramBot);
     this.activeUseCase = null;
