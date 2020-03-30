@@ -1,13 +1,13 @@
-const dfStatus = require('../df_status');
+const dfStatus = require('../df_status.ts');
 const mockResults = require('./mock_results');
 
 test('get JSON response for results of 09th March 2020 from currencyexchange API', () => dfStatus.fetchDataFrom(`${dfStatus.urlInitER}/2020-03-09`)
-  .then((data) => dfStatus.parseToJSON(data))
-  .then((result) => expect(result).toStrictEqual(mockResults.ratesDefault2020March09)));
+  // .then((data) => dfStatus.parseToJSON(data))
+  .then((result) => expect(result.data).toStrictEqual(mockResults.ratesDefault2020March09)));
 
 test('get response from Coin Gecko API', () => dfStatus.fetchDataFrom(`${dfStatus.urlInitCG}/ping`)
-  .then((data) => dfStatus.parseToJSON(data))
-  .then((result) => expect(result).toStrictEqual(mockResults.coinGeckoPing)));
+  // .then((data) => dfStatus.parseToJSON(data))
+  .then((result) => expect(result.data).toStrictEqual(mockResults.coinGeckoPing)));
 
 test('check if array contains a value', () => {
   expect(dfStatus.arrayContainsKey(['a', 'b', 'c', 'd'], 'c')).toBe(true);
