@@ -1,7 +1,7 @@
 import * as express from 'express';
 import * as session from 'express-session';
 import * as mustache from 'mustache-express';
-import Preferences from '../preferences';
+import Preferences from '../core/preferences';
 
 import Auth from './auth';
 

@@ -53,7 +53,7 @@ class Olaf {
 
     try {
       // Extract message, including speech recognition
-      const message = await this.messageHandler.extractMessage(originalMessage);
+      const message = await this.messageHandler.extractAndProcessMessage(originalMessage);
       // Get responses to send to the user
       const responses = this.getResponses(message);
       // Send responses back to user
