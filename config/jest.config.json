@@ -1,19 +1,17 @@
 {
-
-"moduleFileExtensions": ["ts", "tsx", "js"],
-  "bail":5,
+  "moduleFileExtensions": ["ts", "tsx", "js"],
   "testEnvironment": "node",
   "preset": "ts-jest",
   "verbose": true,
-  "rootDir":"../src",
-  "coveragePathIgnorePatterns" :["/node_modules/","/src/classes"],
+  "rootDir": "../src",
+  "collectCoverage": true,
+  "coveragePathIgnorePatterns": ["/node_modules/", "/src/classes"],
   "coverageThreshold": {
-      "global": {
-        "branches": 80,
-        "functions": 80,
-        "lines": 80,
-        "statements": -50
-      }
-},
-"notify": true
+    "global": {
+      "branches": 80,
+      "functions": 80,
+      "lines": 80,
+      "statements": -50
+    }
+  }
 }

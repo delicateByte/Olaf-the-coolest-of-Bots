@@ -1,9 +1,6 @@
-
 import UseCaseResponse from './UseCaseResponse';
 
-class LocationResponse extends UseCaseResponse {
-  latitude: number;
-
-  longitude: number;
+class LocationResponse implements UseCaseResponse {
+  constructor(readonly latitude: number, readonly longitude: number) {}
 }
 export default LocationResponse;

@@ -1,7 +1,6 @@
-
 import UseCaseResponse from './UseCaseResponse';
 
-class TextResponse extends UseCaseResponse {
-  responseMessage: String;
+class TextResponse implements UseCaseResponse {
+  constructor(readonly text: string) {}
 }
 export default TextResponse;

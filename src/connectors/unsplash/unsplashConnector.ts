@@ -1,7 +1,7 @@
 import axios from 'axios';
 import UnsplashImage from './unsplashImage';
 
-export default class UnsplashConnector {
+class UnsplashConnector {
   private axios;
 
   constructor(accessToken: string) {
@@ -43,3 +43,4 @@ export default class UnsplashConnector {
     );
   }
 }
+export default UnsplashConnector;
