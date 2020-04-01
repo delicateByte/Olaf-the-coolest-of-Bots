@@ -2,7 +2,7 @@ import { LocalStorage } from 'node-localstorage';
 
 const localStorage = new LocalStorage('./localstorage/settings');
 
-export default class Preferences {
+class Preferences {
   static get(service, property) {
     const serviceString = localStorage.getItem(service);
 
@@ -30,3 +30,4 @@ export default class Preferences {
     localStorage.setItem(service, JSON.stringify(serviceObject));
   }
 }
+export default Preferences;
