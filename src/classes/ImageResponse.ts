@@ -1,7 +1,6 @@
-
 import UseCaseResponse from './UseCaseResponse';
 
-class ImageResponse extends UseCaseResponse {
-  imagePath: string;
+class ImageResponse implements UseCaseResponse {
+  constructor(readonly imagePath: string) {}
 }
 export default ImageResponse;
