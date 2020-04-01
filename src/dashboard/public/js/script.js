@@ -19,7 +19,7 @@ $(document).ready(() => {
 
       // Convert array to object
       let formData = {};
-      formDataArray.map((x) => {
+      formDataArray.forEach((x) => {
         formData[x.name] = x.value;
       });
       
