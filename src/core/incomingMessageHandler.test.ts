@@ -1,60 +1,50 @@
-import messageHandler = require('./incomingMessageHandler');
+import IncomingMessageHandler from './incomingMessageHandler';
+import TelegramMessageType from '../classes/TelegramMessageType';
 
-const voiceMessage = {
-  message_id: 101,
-  from: {
-    id: 1095064575,
-    is_bot: false,
-    first_name: 'Phillip',
-    username: 'kiephil',
-    language_code: 'de',
-  },
-  chat: {
-    id: 1095064575,
-    first_name: 'Phillip',
-    username: 'kiephil',
-    type: 'private',
-  },
-  date: 1583835649,
-  voice: {
-    duration: 1,
-    mime_type: 'audio/ogg',
-    file_id: 'AwACAgIAAxkBAANlXmdqAXw4bC5mAAGlG-8t1lFug7pOAALYBQACmek5S90SK43fmyS_GAQ',
-    file_unique_id: 'AgAD2AUAApnpOUs',
-    file_size: 3461,
-  },
-};
-const textMessage = {
-  message_id: 3,
-  from: {
-    id: 1095064575,
-    is_bot: false,
-    first_name: 'Phillip',
-    username: 'kiephil',
-    language_code: 'en',
-  },
-  chat: {
-    id: 1095064575,
-    first_name: 'Phillip',
-    username: 'kiephil',
-    type: 'private',
-  },
-  date: 1583338611,
-  text: 'test',
-};
-const otherMessage = {};
-const locationMessage = {
-  message_id: 14,
-  from: {
-    id: 857438551,
-    is_bot: false,
-    first_name: 'Jan',
-    language_code: 'en',
-  },
-  chat: { id: 857438551, first_name: 'Jan', type: 'private' },
-  date: 1583940257,
-  location: { latitude: 48.773573, longitude: 9.170805 },
-};
-test(' noneemptytest - Voice2', () => {
-  expect((2 + 2)).toBe(4);
+
+jest.mock('../connectors/speechToText/speechToTextConnector', () => ({
+  default: jest.fn().mockImplementation(() => ({
+    recognize: () => 'foo bar',
+  })),
+}));
+const mockTelegramBot = { getFileStream: () => null };
+
+test('test text message', async () => {
+  const handler = new IncomingMessageHandler(null);
+
+  const expectedText = 'foo bar';
+  const actual = await handler.extractAndProcessMessage({
+    text: expectedText,
+  });
+  expect(actual.text).toBe(expectedText);
+  expect(actual.latitude).toBeUndefined();
+  expect(actual.longitude).toBeUndefined();
+  expect(actual.type).toBe(TelegramMessageType.TEXT);
+});
+
+test('test location message', async () => {
+  const handler = new IncomingMessageHandler(null);
+
+  const expectedLocation = { latitude: 42.00, longitude: 42.42 };
+  const actual = await handler.extractAndProcessMessage({
+    location: expectedLocation,
+  });
+  expect(actual.latitude).toBe(expectedLocation.latitude);
+  expect(actual.longitude).toBe(expectedLocation.longitude);
+  expect(actual.text).toBeUndefined();
+  expect(actual.type).toBe(TelegramMessageType.LOCATION);
+});
+
+test('test voice message', async () => {
+  // @ts-ignore
+  const handler = new IncomingMessageHandler(mockTelegramBot);
+
+  const expectedText = 'foo bar';
+  const actual = await handler.extractAndProcessMessage({
+    voice: { file_id: 'abc123' },
+  });
+  expect(actual.text).toBe(expectedText);
+  expect(actual.latitude).toBeUndefined();
+  expect(actual.longitude).toBeUndefined();
+  expect(actual.type).toBe(TelegramMessageType.VOICE);
 });

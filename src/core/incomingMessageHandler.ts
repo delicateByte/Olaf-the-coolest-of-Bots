@@ -1,8 +1,8 @@
 import * as TelegramBot from 'node-telegram-bot-api';
 
+import ProcessedTelegramMessage from '../classes/ProcessedTelegramMessage';
 import TelegramMessageType from '../classes/TelegramMessageType';
 import SpeechToTextConnector from '../connectors/speechToText/speechToTextConnector';
-import ProcessedTelegramMessage from '../classes/ProcessedTelegramMessage';
 
 
 class IncomingMessageHandler {
@@ -11,7 +11,7 @@ class IncomingMessageHandler {
   constructor(private telegramBot: TelegramBot) {
   }
 
-  async extractMessage(originalMessage): Promise<ProcessedTelegramMessage> {
+  async extractAndProcessMessage(originalMessage): Promise<ProcessedTelegramMessage> {
     const telegramMessage = new ProcessedTelegramMessage(originalMessage);
     if ('voice' in originalMessage) {
       telegramMessage.type = TelegramMessageType.VOICE;
@@ -19,8 +19,8 @@ class IncomingMessageHandler {
       console.log(`Recognized text: ${telegramMessage.text}`);
     } else if ('location' in originalMessage) {
       telegramMessage.type = TelegramMessageType.LOCATION;
-      telegramMessage.latitude = originalMessage.latitude;
-      telegramMessage.longitude = originalMessage.longitude;
+      telegramMessage.latitude = originalMessage.location.latitude;
+      telegramMessage.longitude = originalMessage.location.longitude;
     } else if ('text' in originalMessage) {
       telegramMessage.type = TelegramMessageType.TEXT;
       telegramMessage.text = originalMessage.text;
