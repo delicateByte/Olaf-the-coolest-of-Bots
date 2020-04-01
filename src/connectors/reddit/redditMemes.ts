@@ -1,6 +1,6 @@
 /* eslint-disable import/extensions, import/no-unresolved */
 import Axios from 'axios';
-import Preferences from '../../preferences';
+import Preferences from '../../core/preferences';
 
 export default class RedditMemes {
   static async getMeme() {

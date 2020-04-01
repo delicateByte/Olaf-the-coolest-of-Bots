@@ -1,10 +1,8 @@
-import * as dotenv from 'dotenv';
 import * as express from 'express';
 import { CronJob } from 'cron';
-
 import * as SpotifyWebApi from 'spotify-web-api-node';
+import Preferences from '../../core/preferences';
 
-dotenv.config();
 
 export default class Spotify {
   private static spotifyApi = new SpotifyWebApi({
@@ -62,9 +60,9 @@ export default class Spotify {
     return {};
   }
 
-  static async getTrack(category: string) {
+  static async getTrack() {
     if (Spotify.isAuthorized()) {
-      const track = await Spotify.spotifyApi.getPlaylistsForCategory(category, {
+      const track = await Spotify.spotifyApi.getPlaylistsForCategory(Preferences.get('spotify', 'spotifyCategory'), {
         country: 'DE',
         limit: 50,
         offset: 0,
