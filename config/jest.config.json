@@ -1,11 +1,18 @@
 {
-  "moduleFileExtensions": ["ts", "tsx", "js"],
+  "moduleFileExtensions": [
+    "ts",
+    "tsx",
+    "js"
+  ],
   "testEnvironment": "node",
   "preset": "ts-jest",
   "verbose": true,
   "rootDir": "../src",
   "collectCoverage": true,
-  "coveragePathIgnorePatterns": ["/node_modules/", "/src/classes"],
+  "coveragePathIgnorePatterns": [
+    "/node_modules/",
+    "/src/classes"
+  ],
   "coverageThreshold": {
     "global": {
       "branches": 80,

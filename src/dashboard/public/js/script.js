@@ -1,39 +1,44 @@
 $(document).ready(() => {
-  // Unsplash
-  $('#form-unsplash').submit((e) => {
-    e.preventDefault();
-    $.ajax({
-      url: '/data/unsplash',
-      type: 'post',
-      data: $('#form-unsplash').serialize(),
-      success() {
-        console.log('done');
-        location.reload();
-      },
-    });
-  });
+  const registerSubmitHandler = (formName) => {
+    $(`#form-${formName}`).submit((e) => {
+      e.preventDefault();
+  
+      // Serialize the form to an array
+      let formDataArray = $(`#form-${formName}`).serializeArray();
+      formDataArray.map((x) => {
+        if (x.value === 'on') {
+          // Map checkboxes to be true instead of on
+          x.value = true;
+        }
+      });
 
-  $('#form-reddit-memes').submit((e) => {
-    e.preventDefault();
-    $.ajax({
-      url: '/data/redditMemes',
-      type: 'post',
-      data: $('#form-reddit-memes').serialize(),
-      success() {
-        location.reload();
-      },
-    });
-  });
+      // Include unchecked checkboxes
+      $(`#form-${formName} input[type="checkbox"]:not(:checked)`).toArray().forEach(element => {
+        formDataArray.push({ name: element.name, value: false });
+      });
 
-  $('#form-spotify').submit((e) => {
-    e.preventDefault();
-    $.ajax({
-      url: '/data/spotify',
-      type: 'post',
-      data: $('#form-spotify').serialize(),
-      success() {
-        location.reload();
-      },
+      // Convert array to object
+      let formData = {};
+      formDataArray.forEach((x) => {
+        formData[x.name] = x.value;
+      });
+      
+      // Post to backend
+      $.ajax({
+        url: `/data/${formName}`,
+        type: 'post',
+        data: {
+          data: JSON.stringify(formData)
+        },
+        success() {
+          location.reload();
+        },
+      });
     });
-  });
+  };
+
+  // Register forms
+  registerSubmitHandler('imageoftheday');
+  registerSubmitHandler('redditMemes');
+  registerSubmitHandler('spotify')
 });

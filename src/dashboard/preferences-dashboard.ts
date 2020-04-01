@@ -2,8 +2,7 @@
 import * as express from 'express';
 import * as session from 'express-session';
 import * as mustache from 'mustache-express';
-
-import Preferences from '../preferences';
+import Preferences from '../core/preferences';
 
 import Auth from './auth';
 import Spotify from '../connectors/spotify/spotify';
@@ -31,39 +30,39 @@ app.set('views', `${__dirname}/views`);
 app.get('/', Auth.isAuthenticated, async (req, res) => {
   // Get saved values
   // Unsplash
-  const unsplash = {
-    imgSource: Preferences.get('unsplash', 'unsplashImgSource'),
-    keywords: Preferences.get('unsplash', 'unsplashKeywords'),
-    isRandom: (Preferences.get('unsplash', 'unsplashImgSource') === 'random') ? 'checked' : '',
-    isKeywords: (Preferences.get('unsplash', 'unsplashImgSource') === 'keywords') ? 'checked' : '',
+  const imageoftheday = {
+    imageofthedayProactive: Preferences.get('imageoftheday', 'imageofthedayProactive'),
+    imageofthedayProactiveTime: Preferences.get('imageoftheday', 'imageofthedayProactiveTime'),
+    imageofthedayRandom: Preferences.get('imageoftheday', 'imageofthedayRandom'),
+    imageofthedayTags: Preferences.get('imageoftheday', 'imageofthedayTags'),
   };
 
   // Reddit Memes
   const redditMemes = {
-    subName: {
-      selected: Preferences.get('redditMemes', 'redditSubName'),
+    redditMemesSubName: {
+      selected: Preferences.get('redditMemes', 'redditMemesSubName'),
       all: [
         { id: 'r/memes', name: 'r/memes' },
-        { id: 'r/PewdiepieSubmissions', name: 'r/PewdiepieSubmissions' },
+        { id: 'r/ProgrammerHumor', name: 'r/ProgrammerHumor' },
         { id: 'r/funny', name: 'r/funny' },
-        { id: 'r/dankmemes', name: 'r/dankmemes' },
         { id: 'r/ich_iel', name: 'r/ich_iel' },
         { id: 'r/me_irl', name: 'r/me_irl' },
-        { id: 'r/ProgrammerHumor', name: 'r/ProgrammerHumor' },
+        { id: 'r/dankmemes', name: 'r/dankmemes' },
+        { id: 'r/PewdiepieSubmissions', name: 'r/PewdiepieSubmissions' },
       ],
     },
   };
 
-  redditMemes.subName.all = redditMemes.subName.all.map((s) => ({
+  redditMemes.redditMemesSubName.all = redditMemes.redditMemesSubName.all.map((s) => ({
     id: s.id,
     name: s.name,
-    selected: (s.id === redditMemes.subName.selected),
+    selected: (s.id === redditMemes.redditMemesSubName.selected),
   }));
 
   // Spotify
   const spotify = {
     userInfo: undefined,
-    categories: {
+    spotifyCategory: {
       selected: Preferences.get('spotify', 'spotifyCategory'),
       all: [
         { id: 'toplists', name: 'Top-Listen' },
@@ -108,10 +107,10 @@ app.get('/', Auth.isAuthenticated, async (req, res) => {
     },
   };
 
-  spotify.categories.all = spotify.categories.all.map((c) => ({
+  spotify.spotifyCategory.all = spotify.spotifyCategory.all.map((c) => ({
     id: c.id,
     name: c.name,
-    selected: (c.id === spotify.categories.selected),
+    selected: (c.id === spotify.spotifyCategory.selected),
   }));
 
   if (Spotify.isAuthorized()) {
@@ -121,7 +120,7 @@ app.get('/', Auth.isAuthenticated, async (req, res) => {
 
   // Return all values
   const options = {
-    unsplash,
+    imageoftheday,
     redditMemes,
     spotify,
   };
@@ -131,33 +130,36 @@ app.get('/', Auth.isAuthenticated, async (req, res) => {
 
 // Forms
 // Unsplash
-app.post('/data/unsplash', Auth.isAuthenticated, (req, res) => {
-  const { unsplashImgSource } = req.body;
-  const { unsplashKeywords } = req.body;
+app.post('/data/imageoftheday', Auth.isAuthenticated, (req, res) => {
+  const data = JSON.parse(req.body.data);
 
-  Preferences.set('unsplash', 'unsplashImgSource', unsplashImgSource);
-  Preferences.set('unsplash', 'unsplashKeywords', unsplashKeywords);
+  Preferences.set('imageoftheday', 'imageofthedayProactive', data.imageofthedayProactive);
+  Preferences.set('imageoftheday', 'imageofthedayProactiveTime', data.imageofthedayProactiveTime);
+  Preferences.set('imageoftheday', 'imageofthedayRandom', data.imageofthedayRandom);
+  Preferences.set('imageoftheday', 'imageofthedayTags', data.imageofthedayTags);
 
   res.sendStatus(200);
 });
 
 // Reddit Memes
 app.post('/data/redditMemes', Auth.isAuthenticated, (req, res) => {
-  const { redditSubName } = req.body;
+  const data = JSON.parse(req.body.data);
 
-  Preferences.set('redditMemes', 'redditSubName', redditSubName);
+  Preferences.set('redditMemes', 'redditMemesSubName', data.redditMemesSubName);
 
   res.sendStatus(200);
 });
 
 // Spotify
 app.post('/data/spotify', Auth.isAuthenticated, (req, res) => {
-  const { spotifyCategory } = req.body;
+  const data = JSON.parse(req.body.data);
 
-  Preferences.set('spotify', 'spotifyCategory', spotifyCategory);
+  Preferences.set('spotify', 'spotifyCategory', data.spotifyCategory);
 
   res.sendStatus(200);
 });
+
+// Authentications
 app.get('/auth/spotify', Spotify.authRoute);
 app.get('/callback/spotify', Spotify.callbackRoute);
 

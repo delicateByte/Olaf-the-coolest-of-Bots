@@ -17,35 +17,39 @@
   <div class="content">
     <h1 class="content-heading">Preferences</h1>
 
-    <!-- Unsplash -->
-    <form id="form-unsplash" action="/data/unsplash" method="POST" class="content-cell">
+    <form id="form-imageoftheday" action="/data/imageoftheday" method="POST" class="content-cell">
       <div class="content-cell-row">
-        <h2 class="content-cell-heading">Unsplash</h2>
+        <h2 class="content-cell-heading">Image Of The Day</h2>
+      </div>
+      <div class="content-cell-row">
+        <div class="input-wrapper">
+          <input type="checkbox" name="imageofthedayProactive" id="check-imageofthedayProactive"
+            {{ #imageoftheday.imageofthedayProactive }} checked {{ /imageoftheday.imageofthedayProactive }}>
+          <label for="check-imageofthedayProactive" class="input-check">Send images proactively</label>
+        </div>
+        <div class="input-wrapper">
+          <input type="time" name="imageofthedayProactiveTime" id="time-imageofthedayProactiveTime"
+            value="{{ imageoftheday.imageofthedayProactiveTime }}" required>
+        </div>
       </div>
       <div class="content-cell-row">
         <div class="content-cell-col">
           <div class="input-wrapper">
-            <input type="radio" name="unsplashImgSource" id="radio-unsplash-random" value="random"
-              {{ unsplash.isRandom }}>
-            <label for="radio-unsplash-random" class="input-radio">Show random images</label>
-          </div>
-          <div class="input-wrapper">
-            <input type="radio" name="unsplashImgSource" id="radio-unsplash-keywords" value="keywords"
-              {{ unsplash.isKeywords }}>
-            <label for="radio-unsplash-keywords" class="input-radio">Show images using keywords</label>
+            <input type="checkbox" name="imageofthedayRandom" id="check-imageoftheday-random"
+              {{ #imageoftheday.imageofthedayRandom }} checked {{ /imageoftheday.imageofthedayRandom }}>
+            <label for="check-imageoftheday-random" class="input-check">Show random images</label>
           </div>
         </div>
       </div>
       <div class="content-cell-row">
-        <textarea rows="5" type="text" class="input-text" name="unsplashKeywords">{{ unsplash.keywords }}</textarea>
+        <input type="text" class="input-text" name="imageofthedayTags" value="{{ imageoftheday.imageofthedayTags }}">
       </div>
       <div class="content-cell-row">
         <button class="button button-primary" type="submit">Save</button>
       </div>
     </form>
 
-    <!-- Reddit Memes -->
-    <form id="form-reddit-memes" action="/data/redditMemes" method="POST" class="content-cell">
+    <form id="form-redditMemes" action="/data/redditMemes" method="POST" class="content-cell">
       <div class="content-cell-row">
         <h2 class="content-cell-heading">Reddit Memes</h2>
       </div>
@@ -53,10 +57,10 @@
         <div class="content-cell-col">
           <div class="input-wrapper">
             <label for="select-redditMemes-subName">Meme Source:</label>
-            <select name="redditSubName" id="select-redditMemes-subName" class="input-select">
-              {{ #redditMemes.subName.all }}
+            <select name="redditMemesSubName" id="select-redditMemes-subName" class="input-select">
+              {{ #redditMemes.redditMemesSubName.all }}
               <option value="{{ id }}" {{ #selected }} selected {{ /selected }}>{{ name }}</option>
-              {{ /redditMemes.subName.all }}
+              {{ /redditMemes.redditMemesSubName.all }}
             </select>
           </div>
         </div>
@@ -75,9 +79,9 @@
         <div class="input-wrapper">
           <label for="select-spotify-category">Prefered music category:</label>
           <select name="spotifyCategory" id="select-spotify-category">
-            {{ #spotify.categories.all }}
+            {{ #spotify.spotifyCategory.all }}
             <option value="{{ id }}" {{ #selected }} selected {{ /selected }}>{{ name }}</option>
-            {{ /spotify.categories.all }}
+            {{ /spotify.spotifyCategory.all }}
           </select>
         </div>
       </div>
