@@ -9,12 +9,7 @@ export default class Auth {
     const sessionId = req.sessionID;
     const timestamp = localStorage.getItem(sessionId);
 
-    if (timestamp === null) {
-      Auth.logout(sessionId);
-      return res.redirect('/login');
-    }
-
-    if (moment().diff(moment(timestamp), 'minutes') < 20) {
+    if (timestamp !== null && moment().diff(moment(timestamp), 'minutes') < 20) {
       // Login is valid, refresh timestamp and continue
       Auth.saveTimestamp(sessionId);
       return next();
