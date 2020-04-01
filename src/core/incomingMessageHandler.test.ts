@@ -48,3 +48,13 @@ test('test voice message', async () => {
   expect(actual.longitude).toBeUndefined();
   expect(actual.type).toBe(TelegramMessageType.VOICE);
 });
+
+test('test unsupported message type', async () => {
+  // @ts-ignore
+  const handler = new IncomingMessageHandler(mockTelegramBot);
+
+  const actual = handler.extractAndProcessMessage({
+    photo: null,
+  });
+  expect(actual).rejects.toThrow();
+});
