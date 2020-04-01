@@ -10,6 +10,7 @@ import UseCase from '../interfaces/useCase';
 import ProcessedTelegramMessage from '../classes/ProcessedTelegramMessage';
 import UseCaseResponse from '../classes/UseCaseResponse';
 import TextResponse from '../classes/TextResponse';
+import Preferences from './preferences';
 
 class Olaf {
   private readonly telegramBot;
@@ -107,8 +108,10 @@ class Olaf {
       const job = new CronJob(`0 ${minute} ${hour} * * *`, async () => {
         console.log(`Running scheduled use case ${service}`);
         const useCase = this.messageRouter.findUseCaseByName(service);
-        const responses = await useCase.receiveMessage(null);
-        await this.messageSender.sendResponses(responses);
+        if (useCase) {
+          const responses = await useCase.receiveMessage(null);
+          await this.messageSender.sendResponses(responses);
+        }
       });
       this.proactiveJobs[service] = job;
       job.start();
