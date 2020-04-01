@@ -21,6 +21,7 @@ class Olaf {
   private readonly messageSender;
 
   private activeUseCase: UseCase;
+  // TODO register all proactive use cases here
   private proactiveJobs: {[key: string]: CronJob} = {
     imageoftheday: null,
   };
@@ -33,16 +34,17 @@ class Olaf {
     this.activeUseCase = null;
 
     // TODO register all use cases here
-    // this.messageRouter.registerUseCase(new XUseCase())
     this.messageRouter.registerUseCase(new ImageofthedayUsecase());
   }
 
   start() {
+    // Start listening to Telegram messages
     this.telegramBot.on('message', (msg) => this.handleTelegramMessage(msg));
 
+    // Start proactive jobs and listening to scheduling changes
     Object.keys(this.proactiveJobs).forEach((service) => this.scheduleProactivity(service));
     Preferences.events().on('changed', (service, property) => {
-      if (property.includes('Proactive')) {
+      if (property.includes('Proactive') && service in this.proactiveJobs) {
         this.scheduleProactivity(service);
       }
     });
@@ -103,6 +105,7 @@ class Olaf {
       const hour = time[0];
       const minute = time[1];
 
+      // Schedule use case daily at the specified time
       const job = new CronJob(`0 ${minute} ${hour} * * *`, async () => {
         console.log(`Running scheduled use case ${service}`);
         const useCase = this.messageRouter.findUseCaseByName(service);
