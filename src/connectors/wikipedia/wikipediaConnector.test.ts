@@ -72,3 +72,15 @@ test('get first paragraph by page id', async () => {
 
   expect(actual).toEqual(expected);
 });
+
+test('get first paragraph of non-existing page', async () => {
+  const actual = await getMockConnector({
+    query: {
+      pages: {
+        '-1': {},
+      },
+    },
+  }).getFirstParagraph('Non-existing Page');
+
+  expect(actual).toBeNull();
+});
