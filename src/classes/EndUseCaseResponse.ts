@@ -1,7 +1,4 @@
-
 import UseCaseResponse from './UseCaseResponse';
 
-class EndUseCaseResponse extends UseCaseResponse {
-
-}
+class EndUseCaseResponse implements UseCaseResponse {}
 export default EndUseCaseResponse;

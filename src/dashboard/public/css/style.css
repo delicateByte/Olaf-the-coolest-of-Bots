@@ -100,7 +100,8 @@ a:hover {
 .input-wrapper {
   width: 100%;
 }
-.input-wrapper > input[type="radio"] {
+.input-wrapper > input[type="radio"],
+.input-wrapper > input[type="checkbox"] {
   display: none;
 }
 
@@ -125,7 +126,8 @@ textarea.input-text {
   resize: vertical;
 }
 
-.input-radio {
+.input-radio,
+.input-check {
   align-items: center;
   cursor: pointer;
   display: inline-flex;
@@ -145,8 +147,23 @@ input[type="radio"] + .input-radio::before {
   width: 8px;
 }
 input[type="radio"]:checked + .input-radio::before {
-  border-color: var(--color-primary);
   background-color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+input[type="checkbox"] + .input-check::before {
+  background-clip: content-box;
+  border: 2px solid var(--color-border);
+  content: "";
+  display: inline-block;
+  height: 8px;
+  margin-right: 4px;
+  padding: 2px;
+  width: 8px;
+}
+input[type="checkbox"]:checked + .input-check::before {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
 }
 
 .container {
