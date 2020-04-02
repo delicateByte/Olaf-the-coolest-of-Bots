@@ -1,4 +1,3 @@
-
-class UseCaseResponse {
+interface UseCaseResponse {
 }
 export default UseCaseResponse;

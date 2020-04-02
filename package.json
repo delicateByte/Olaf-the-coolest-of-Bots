@@ -2,13 +2,13 @@
   "name": "bot-ich",
   "version": "0.0.1",
   "description": "",
-  "main": "./src/pda.ts",
+  "main": "src/core/olaf.ts",
   "scripts": {
-    "start": "node -r ts-node/register ./src/pda.ts",
+    "start": "node -r ts-node/register -r dotenv/config src/main.ts",
     "dev": "nodemon",
     "build": "tsc",
     "lint": "eslint ./src/**/*.ts",
-    "test": "jest --config config/jest.config.json --coverage "
+    "test": "jest --config config/jest.config.json"
   },
   "author": "",
   "license": "ISC",
@@ -41,6 +41,7 @@
     "eslint-plugin-import": "^2.20.1",
     "googleapis": "^48.0.0",
     "jest": "^25.1.0",
+    "jest-node-localstorage-simple-mock": "0.0.2",
     "nodemon": "^2.0.2",
     "ts-jest": "^25.2.1",
     "ts-node": "^8.6.2",

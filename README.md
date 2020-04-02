@@ -14,7 +14,6 @@ PDA for ASE
 
     # Telegram bot settings
     BOT_TOKEN=<TELEGRAM-BOT-TOKEN>
-    BOT_TOKEN_TEST=<YOUR TELEGRAM BOT USED FOR TESTING>
 
     # Dashboard password
     DASHBOARD_PASSWORD=$2a$10$KqDExovM4hv8cAtuxWkzSOWko6RIG.uRbS2g9hPH9UqYOxNDWsV/6
@@ -26,13 +25,10 @@ PDA for ASE
     GOOGLE_TOKEN=<GOOGLE-ACCESS-TOKEN>
     
     #Watson Token 
-    SPEECH_TO_TEXT_IAM_APIKEY=<STT-IAM-APIKEY>
-    SPEECH_TO_TEXT_URL=<STT-URL>
     SPEECH_TO_TEXT_APIKEY=<STT-APIKEY>
+    SPEECH_TO_TEXT_URL=<STT-URL>
     TEXT_TO_SPEECH_APIKEY=<TTS-APIKEY>
-    TEXT_TO_SPEECH_IAM_APIKEY=<TTS_IAM_API-KEY>
     TEXT_TO_SPEECH_URL=<TTS-URL>
-    TEXT_TO_SPEECH_AUTH_TYPE=iam
     ```
     
     
@@ -47,8 +43,7 @@ We use a common folder structure for all use cases and API connectors. Files are
 
 ```
 src/
-├──pda.ts
-├──preferences.ts
+├──main.ts
 ├──usecases/
 │  ├──dailystatus/
 │  │  ├──dailystatusUsecase.ts
@@ -68,5 +63,5 @@ src/
 │  │  ├──googleMapsConnector.test.ts
 │  │  └──otherFile.ts
 └──interfaces/
-   └──gatewayInterface.ts
+   └──useCase.ts
 ```
