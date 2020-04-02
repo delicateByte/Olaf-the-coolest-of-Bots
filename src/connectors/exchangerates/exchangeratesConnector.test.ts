@@ -1,0 +1,1 @@
+import ExchangeratesConnector from './exchangeratesConnector';
