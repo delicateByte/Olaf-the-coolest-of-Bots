@@ -16,7 +16,7 @@ function getMockConnector(response) : UnsplashConnector {
   return new UnsplashConnector('');
 }
 
-test('get random image', async () => {
+test('get random image with coordinates and description', async () => {
   const expected = new UnsplashImage(
     'Some description',
     'https://unsplash.com/photos/abc',
@@ -36,6 +36,33 @@ test('get random image', async () => {
     location: {
       title: expected.location,
       position: { latitude: expected.coordinates[0], longitude: expected.coordinates[1] },
+    },
+  }).getRandomImage();
+
+  expect(actual).toEqual(expected);
+});
+
+test('get random image without coordinates and description', async () => {
+  const expected = new UnsplashImage(
+    'Some description',
+    'https://unsplash.com/photos/abc',
+    'https://images.unsplash.com/photo-abc',
+    'John Doe',
+    ['first tag', 'second tag'],
+    'Some location',
+    null,
+  );
+  const actual = await getMockConnector({
+    id: 'abc',
+    description: null,
+    alt_description: expected.description,
+    links: { html: expected.postUrl },
+    urls: { raw: expected.imageUrl },
+    user: { name: expected.userName },
+    tags: expected.tags.map((tag) => ({ title: tag })),
+    location: {
+      title: expected.location,
+      position: { latitude: null, longitude: null },
     },
   }).getRandomImage();
 
