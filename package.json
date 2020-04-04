@@ -2,18 +2,19 @@
   "name": "bot-ich",
   "version": "0.0.1",
   "description": "",
-  "main": "./src/pda.ts",
+  "main": "src/core/olaf.ts",
   "scripts": {
-    "start": "node -r ts-node/register ./src/pda.ts",
+    "start": "node -r ts-node/register -r dotenv/config src/main.ts",
     "dev": "nodemon",
     "build": "tsc",
     "lint": "eslint ./src/**/*.ts",
-    "test": "jest --coverage"
+    "test": "jest --config config/jest.config.json"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@types/bcryptjs": "^2.4.2",
+    "@ibm-watson/speech-to-text-nodejs": "^2.9.0",
     "@types/express": "^4.17.3",
     "@types/express-session": "^1.17.0",
     "@types/node-telegram-bot-api": "^0.40.2",
@@ -33,6 +34,7 @@
     "eslint-config-airbnb-typescript": "^7.2.0",
     "eslint-plugin-import": "^2.20.1",
     "jest": "^25.1.0",
+    "jest-node-localstorage-simple-mock": "0.0.2",
     "nodemon": "^2.0.2",
     "ts-jest": "^25.2.1",
     "ts-node": "^8.6.2",

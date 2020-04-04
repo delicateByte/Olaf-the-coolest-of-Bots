@@ -15,43 +15,32 @@
   </header>
 
   <div class="content">
-    <form id="form-unsplash" action="/api/unsplash" method="POST" class="content-cell">
+    <form id="form-imageoftheday" action="/api/imageoftheday" method="POST" class="content-cell">
       <div class="content-cell-row">
-        <h2 class="content-cell-heading">Unsplash</h2>
+        <h2 class="content-cell-heading">Image Of The Day</h2>
+      </div>
+      <div class="content-cell-row">
+        <div class="input-wrapper">
+          <input type="checkbox" name="imageofthedayProactive" id="check-imageofthedayProactive"
+            {{ #imageoftheday.imageofthedayProactive }} checked {{ /imageoftheday.imageofthedayProactive }}>
+          <label for="check-imageofthedayProactive" class="input-check">Send images proactively</label>
+        </div>
+        <div class="input-wrapper">
+          <input type="time" name="imageofthedayProactiveTime" id="time-imageofthedayProactiveTime"
+            value="{{ imageoftheday.imageofthedayProactiveTime }}" required>
+        </div>
       </div>
       <div class="content-cell-row">
         <div class="content-cell-col">
           <div class="input-wrapper">
-            <input type="radio" name="imgSource" id="radio-unsplash-random" value="random" {{ unsplash.isRandom }}>
-            <label for="radio-unsplash-random" class="input-radio">Show random images</label>
-          </div>
-          <div class="input-wrapper">
-            <input type="radio" name="imgSource" id="radio-unsplash-keywords" value="keywords"
-              {{ unsplash.isKeywords }}>
-            <label for="radio-unsplash-keywords" class="input-radio">Show images using keywords</label>
+            <input type="checkbox" name="imageofthedayRandom" id="check-imageoftheday-random"
+              {{ #imageoftheday.imageofthedayRandom }} checked {{ /imageoftheday.imageofthedayRandom }}>
+            <label for="check-imageoftheday-random" class="input-check">Show random images</label>
           </div>
         </div>
       </div>
       <div class="content-cell-row">
-        <textarea rows="5" type="text" class="input-text" name="keywords">{{ unsplash.keywords }}</textarea>
-      </div>
-      <div class="content-cell-row">
-        <button class="button button-primary" type="submit">Save</button>
-      </div>
-    </form>
-
-    <div class="content-cell">
-      <div class="content-cell-row">
-        <h2 class="content-cell-heading">Google</h2>
-      </div>
-      <div class="content-cell-row">
-        <a href="#" class="button button-primary">Connect</a>
-      </div>
-    </div>
-
-    <form action="/api/vvs" class="content-cell">
-      <div class="content-cell-row">
-        <input type="text" class="input-text" name="key">
+        <input type="text" class="input-text" name="imageofthedayTags" value="{{ imageoftheday.imageofthedayTags }}">
       </div>
       <div class="content-cell-row">
         <button class="button button-primary" type="submit">Save</button>

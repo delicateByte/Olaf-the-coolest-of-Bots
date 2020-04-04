@@ -23,8 +23,15 @@ PDA for ASE
     
     # Google APIs token
     GOOGLE_TOKEN=<GOOGLE-ACCESS-TOKEN>
+    
+    #Watson Token 
+    SPEECH_TO_TEXT_APIKEY=<STT-APIKEY>
+    SPEECH_TO_TEXT_URL=<STT-URL>
+    TEXT_TO_SPEECH_APIKEY=<TTS-APIKEY>
+    TEXT_TO_SPEECH_URL=<TTS-URL>
     ```
-
+    
+    
 4.  Run the application using one of the following scripts  
     `npm start`: Compiles and starts the PDA  
     `npm run dev`: Same as start but also re-compiles on changes
@@ -36,8 +43,7 @@ We use a common folder structure for all use cases and API connectors. Files are
 
 ```
 src/
-├──pda.ts
-├──preferences.ts
+├──main.ts
 ├──usecases/
 │  ├──dailystatus/
 │  │  ├──dailystatusUsecase.ts
@@ -57,5 +63,5 @@ src/
 │  │  ├──googleMapsConnector.test.ts
 │  │  └──otherFile.ts
 └──interfaces/
-   └──gatewayInterface.ts
+   └──useCase.ts
 ```
