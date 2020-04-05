@@ -9,6 +9,7 @@ import UseCase from '../interfaces/useCase';
 import ProcessedTelegramMessage from '../classes/ProcessedTelegramMessage';
 import UseCaseResponse from '../classes/UseCaseResponse';
 import TextResponse from '../classes/TextResponse';
+import OpenWeatherConnector from "../connectors/openWeatherConnector/openWeatherConnector";
 
 class Olaf {
   private readonly telegramBot;
@@ -16,7 +17,7 @@ class Olaf {
   private readonly messageHandler;
   private readonly messageRouter;
   private readonly messageSender;
-
+weather;
   private activeUseCase: UseCase;
 
   constructor() {
@@ -25,13 +26,14 @@ class Olaf {
     this.messageRouter = new MessageRouter();
     this.messageSender = new MessageSender(this.telegramBot);
     this.activeUseCase = null;
-
+    this.weather = new OpenWeatherConnector(25.45345,3.1234);
     // TODO register all use cases here
     // this.messageRouter.registerUseCase(new XUseCase())
   }
 
   start() {
     this.telegramBot.on('message', (msg) => this.handleTelegramMessage(msg));
+    this.weather.getCurrentWeather((res)=>{console.log(res)});
   }
 
   private async handleTelegramMessage(originalMessage: Message): Promise<void> {
