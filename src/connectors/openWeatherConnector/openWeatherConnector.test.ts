@@ -40,29 +40,27 @@ const responseMock = {
 const shouldResolveTo = {
   position: { lon: 8.25, lat: 49.99 },
   tempretures_from: 1.11,
-  tempreatures_up_to: 8.89,
+  tempreatures_up_to: 9,
   weatherDescription: { mostly: 'Clear', description: 'Klarer Himmel' },
 };
-
 jest.mock('openweather-apis');
 
 function getMockConnector(response) : OpenWeatherConnector {
   // @ts-ignore
-  Weather.getAllWeather.mockReturnValue({
-    get: (callback) => callback(null, response),
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    setCoordinates: (lattitude, longitude) =>  Promise.resolve(null),
-  });
+  Weather.getAllWeather.mockReturnValue((callback) => callback(null, response));
   return new OpenWeatherConnector(24.9574, 2.12434);
 }
 
 test('if weatherConnector is working', async () => {
-  expect(getMockConnector(responseMock).getCurrentWeather()).resolves.toEqual(shouldResolveTo);
+  const mockCallback = jest.fn((err,x) => x);
+  Weather.getAllWeather(mockCallback,responseMock).mockImplementation((callback,response) => callback("string",response));
+  await expect(mockCallback.mock.results[0].value).toEqual(shouldResolveTo);
+
 });
 
 test('if formating weather Results is working ', async () => {
-  expect(getMockConnector('irrelevant').extractRelevantInformation(responseMock)).toEqual(shouldResolveTo);
+  await expect(getMockConnector('irrelevant').extractRelevantInformation(responseMock)).toEqual(shouldResolveTo);
 });
 test('if reconfiguring location is working ', async () => {
-  expect(getMockConnector('irrelevant').resetLocation(29.9574, 3.12434)).resolves
+  await expect(getMockConnector('irrelevant').resetLocation(29.9574, 3.12434)).toBeUndefined();
 });
