@@ -26,9 +26,9 @@ class GoogleGeocoderConnector {
 	 * Gets the city name, country and country code of a location
 	 * @param location The location (latitude, longitude) that needs to be translated into text.
 	 */
-  async getLocationName(latitude : Number, longitude : Number): Promise<String[]> {
+  async getLocationName(latitude : Number, longitude : Number): Promise<string[]> {
 		
-		let response : String[] = ['', '', ''];
+		let response : string[] = ['', '', ''];
 
 		await this.geocoder.reverse({ lat: latitude, lon: longitude }, (err, resLocation) => {
 			response[0] = resLocation[0].city;

@@ -3,7 +3,11 @@ import axios from 'axios';
 
 class EmergencyNumbersConnector {
 
-  async getEmergencyNumber(countryCode : String) : Promise<{}> {
+  /**
+   * Returns the emergency numbers of the given countryCode as a dictionary 
+   * @param countryCode The countryCode
+   */
+  async getEmergencyNumber(countryCode : string) : Promise<{}> {
     let response = null;
 		try {
 			response = await axios.get(`http://emergencynumberapi.com/api/country/${countryCode}`);
@@ -11,7 +15,6 @@ class EmergencyNumbersConnector {
 			console.error(error);
 			return null;
     }
-    
     
     response = response.data.data;
 
@@ -22,8 +25,6 @@ class EmergencyNumbersConnector {
     if (response.police.all[0] !== '') emergencyNumbers['Police'] = +response.police.all[0];
     if (response.fire.all[0] !== '') emergencyNumbers['Fire'] = +response.fire.all[0];
     if (response.dispatch.all[0] !== '') emergencyNumbers['Dispatch'] = +response.dispatch.all[0];
-
-    console.log(emergencyNumbers);
 
 		return emergencyNumbers;
   }

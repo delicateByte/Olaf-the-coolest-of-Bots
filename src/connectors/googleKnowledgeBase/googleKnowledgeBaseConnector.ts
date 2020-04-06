@@ -12,10 +12,10 @@ class GoogleKnowledgeBaseConnector {
 	};
 
 
-	async getLocationDescription(city : String) : Promise<String> {
+	async getLocationDescription(city : string) : Promise<string> {
 
 		// use google knowledge base to get short description of location
-		let response;
+		let response : any;
 		try {
 			response = await axios.get(`${this.knowledgeOptions.host}/${this.knowledgeOptions.path}&query=${city}`);
 		} catch (error) {

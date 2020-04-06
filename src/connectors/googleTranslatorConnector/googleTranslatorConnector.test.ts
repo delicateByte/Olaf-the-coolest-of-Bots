@@ -6,10 +6,10 @@ function getMockConnector() {
 }
 
 
-test('Translate exemplary German text to English', async () => {
-  const expected = 'Hello how are you?';
+test('Translate exemplary English text to German', async () => {
+  const expected = "Hallo wie geht's dir?";
   const mockConnector = getMockConnector();
-  const actual = await mockConnector.translate('Hallo, wie geht es dir?', 'de');
+  const actual = await mockConnector.translate('Hello, how are you?', 'de');
   expect(actual).toEqual(expected);
 });
 
