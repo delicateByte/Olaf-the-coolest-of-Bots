@@ -73,7 +73,7 @@ class Olaf {
   private async* getResponses(message: ProcessedTelegramMessage): AsyncGenerator<UseCaseResponse> {
     // Cancel active use case if user sends stop phrase
     if ('text' in message
-      && ['stop', 'cancel', 'end'].some((phrase) => message.text?.toLowerCase().includes(phrase))) {
+      && ['stop', 'cancel'].some((phrase) => message.text?.toLowerCase().includes(phrase))) {
       if (this.activeUseCase) {
         yield new TextResponse('Use case stopped');
         yield new EndUseCaseResponse();
