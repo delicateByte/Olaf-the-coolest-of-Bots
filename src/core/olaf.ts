@@ -12,9 +12,10 @@ import UseCaseResponse from '../classes/UseCaseResponse';
 import TextResponse from '../classes/TextResponse';
 import Preferences from './preferences';
 
+
+
 class Olaf {
   private readonly telegramBot;
-
   private readonly messageHandler;
   private readonly messageRouter;
   private readonly messageSender;
