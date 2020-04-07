@@ -1,28 +1,41 @@
-import * as Weather from 'openweather-apis';
+import axios from 'axios';
 
 class OpenWeatherConnector {
-  weather;
+  axios;
+  position={
+    lat: undefined,
+    long: undefined,
+  };
+
   constructor(lattitude :number, longitude : number) {
-    this.weather = Weather;
-    this.weather.setLang('de');
-    this.weather.setCoordinate(lattitude, longitude);
-    this.weather.setUnits('metric');
-    this.weather.setAPPID(process.env.OPEN_WEATHER_API);
+    this.axios = axios.create({
+      baseURL: 'https://api.openweathermap.org/data/2.5/weather',
+
+    });
+    this.position.lat = lattitude;
+    this.position.long = longitude;
   }
 
   resetLocation(lattitude:number, longitude:number) {
-    this.weather.setCoordinate(lattitude, longitude);
+    this.position.lat = lattitude;
+    this.position.long = longitude;
   }
 
-  async getCurrentWeather(callback) {
-    let a ={};
-    await this.weather.getAllWeather(async (err, JSONObj)=>{
-      callback( await this.extractRelevantInformation(JSONObj));
-    });
+  async getCurrentWeather() {
+    const openWeatherAPIResponse = await this.axios.get('', {
+      params: {
+        units: 'metric',
+        lang: 'de',
+        appid: process.env.OPEN_WEATHER_API,
+        lat: this.position.lat,
+        lon: this.position.long,
+      },
+
+    }).then((weatherResponse) => weatherResponse).catch((err) => { console.log(err); throw err; });
+    return this.extractRelevantInformation(openWeatherAPIResponse.data);
   }
 
-   extractRelevantInformation(weatherData:any) {
-
+  extractRelevantInformation(weatherData:any) {
     const a = {
       position: weatherData.coord,
       tempretures_from: weatherData.main.temp_min,

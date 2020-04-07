@@ -1,5 +1,6 @@
-import * as Weather from 'openweather-apis';
+import axios from 'axios';
 import OpenWeatherConnector from './openWeatherConnector';
+
 
 
 const responseMock = {
@@ -43,24 +44,28 @@ const shouldResolveTo = {
   tempreatures_up_to: 9,
   weatherDescription: { mostly: 'Clear', description: 'Klarer Himmel' },
 };
-jest.mock('openweather-apis');
+
+
+jest.mock('axios');
 
 function getMockConnector(response) : OpenWeatherConnector {
   // @ts-ignore
-  Weather.getAllWeather.mockReturnValue((callback) => callback(null, response));
-  return new OpenWeatherConnector(24.9574, 2.12434);
+  axios.create.mockReturnValue({
+    get: () => Promise.resolve({ data: response }),
+  });
+  return new OpenWeatherConnector(3,4);
 }
 
-test('if weatherConnector is working', async () => {
-  const mockCallback = jest.fn((err,x) => x);
-  Weather.getAllWeather(mockCallback,responseMock).mockImplementation((callback,response) => callback("string",response));
-  await expect(mockCallback.mock.results[0].value).toEqual(shouldResolveTo);
-
+test('reseting Coordinates is working', async () => {
+  const testInstance = new OpenWeatherConnector(29, 4);
+  testInstance.resetLocation(12, 11);
+  expect(testInstance.position.lat).toEqual(12);
+  expect(testInstance.position.long).toEqual(11);
 });
-
-test('if formating weather Results is working ', async () => {
-  await expect(getMockConnector('irrelevant').extractRelevantInformation(responseMock)).toEqual(shouldResolveTo);
+test('if reformatting of WeatherResponse is working', async () => {
+  const testInstance = new OpenWeatherConnector(29, 4);
+  expect(testInstance.extractRelevantInformation(responseMock)).toEqual(shouldResolveTo);
 });
-test('if reconfiguring location is working ', async () => {
-  await expect(getMockConnector('irrelevant').resetLocation(29.9574, 3.12434)).toBeUndefined();
+test('if getting Weather from API is working', async () => {
+  expect(getMockConnector(responseMock).getCurrentWeather()).resolves.toEqual(shouldResolveTo);
 });
