@@ -20,7 +20,6 @@ class CoronaConnector {
         country: 'Germany',
       },
     }).then((result) => result);
-    console.log(a.data);
     return this.formatResults(a.data);
   }
 
