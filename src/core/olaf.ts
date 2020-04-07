@@ -14,7 +14,6 @@ import TextResponse from '../classes/TextResponse';
 
 class Olaf {
   private readonly telegramBot;
-  private readonly newsApi;
   private readonly messageHandler;
   private readonly messageRouter;
   private readonly messageSender;
@@ -27,7 +26,6 @@ class Olaf {
     this.messageRouter = new MessageRouter();
     this.messageSender = new MessageSender(this.telegramBot);
     this.activeUseCase = null;
-
 
     // TODO register all use cases here
     // this.messageRouter.registerUseCase(new XUseCase())
