@@ -1,27 +1,23 @@
-import * as Twitter from 'twitter';
-
+import axios from 'axios';
 
 class TwitterConnector {
-  private TwitterClient;
-
+  axios;
 
   constructor() {
-    this.TwitterClient = new Twitter({
-      consumer_key: '',
-      consumer_secret: '',
-      access_token_key: '',
-      access_token_secret: '',
+    this.axios = axios.create({
+      baseURL: 'https://api.twitter.com/1.1/trends/place.json',
+      headers: {
+        Authorization: `Bearer ${process.env.TWITTER_OAUTH}`,
+      },
     });
   }
 
   async getTwitterTrends() {
-    this.TwitterClient.get('trends/place').then(async (trendsArray) => {
-      const finalTrends = await this.formatTwitterTrendResults(trendsArray);
-      console.log(finalTrends);
-      return finalTrends;
-    }).catch((err) => {
-      console.log(err);
-    });
+    return this.axios.get('', {
+      params: {
+        id: 698064,
+      },
+    }).then((res) => this.formatTwitterTrendResults(res.data)).catch((err) => { console.log(err); });
   }
 
   async formatTwitterTrendResults(unformattedTrends) {

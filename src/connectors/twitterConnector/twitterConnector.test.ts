@@ -1,7 +1,13 @@
-import * as Twitter from 'twitter';
+import axios from 'axios';
+
 import TwitterConnector from './twitterConnector';
 
-const mockResult = [
+
+jest.mock('axios');
+const mockTrendArray = [
+  '#ChainedToTheRhythm', '#اليوم_العالمي_للعتبان', 'George Lopez',
+];
+const mockTrendsResponse = [
   {
     trends: [
       {
@@ -12,11 +18,18 @@ const mockResult = [
         tweet_volume: 48857,
       },
       {
-        name: '#FelizMiercoles',
-        url: 'http://twitter.com/search?q=%23FelizMiercoles',
+        name: '#اليوم_العالمي_للعتبان',
+        url: 'http://twitter.com/search?q=%23%D8%A7%D9%84%D9%8A%D9%88%D9%85_%D8%A7%D9%84%D8%B9%D8%A7%D9%84%D9%85%D9%8A_%D9%84%D9%84%D8%B9%D8%AA%D8%A8%D8%A7%D9%86',
         promoted_content: null,
-        query: '%23FelizMiercoles',
-        tweet_volume: 36103,
+        query: '%23%D8%A7%D9%84%D9%8A%D9%88%D9%85_%D8%A7%D9%84%D8%B9%D8%A7%D9%84%D9%85%D9%8A_%D9%84%D9%84%D8%B9%D8%AA%D8%A8%D8%A7%D9%86',
+        tweet_volume: null,
+      },
+      {
+        name: 'George Lopez',
+        url: 'http://twitter.com/search?q=%22George+Lopez%22',
+        promoted_content: null,
+        query: '%22George+Lopez%22',
+        tweet_volume: 90590,
       },
     ],
     as_of: '2017-02-08T16:18:18Z',
@@ -29,23 +42,19 @@ const mockResult = [
     ],
   },
 ];
-const formattedArrayResolution = ['#ChainedToTheRhythm', '#FelizMiercoles'];
-jest.mock('Twitter');
-function getMockConnector() {
+function getMockConnector(response) : TwitterConnector {
   // @ts-ignore
-  const path = 'trends/place';
-  const params = {};
+  axios.create.mockReturnValue({
+    get: () => Promise.resolve({ data: response }),
+  });
   return new TwitterConnector();
 }
-test('if getting Trends is Working', async () => {
-  const testInstance = new TwitterConnector();
-  console.log(Twitter);
 
-  Twitter.get.mockResolvedValue(mockResult);
-  return expect(testInstance.getTwitterTrends()).resolves.toEqual(formattedArrayResolution);
+test('if retrieving  Twitter Trends is working', async () => {
+  expect(getMockConnector(mockTrendsResponse).getTwitterTrends()).resolves.toEqual(mockTrendArray);
 });
 
-test('if reformatting of Trends is working', async () => {
+test('if formatting Twitter Trends is working', async () => {
   const testInstance = new TwitterConnector();
-  return expect(testInstance.formatTwitterTrendResults(mockResult)).resolves.toEqual(formattedArrayResolution);
+  expect(testInstance.formatTwitterTrendResults(mockTrendsResponse)).resolves.toEqual(mockTrendArray);
 });
