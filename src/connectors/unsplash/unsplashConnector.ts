@@ -1,5 +1,8 @@
 import axios from 'axios';
+import * as tempy from 'tempy';
+
 import UnsplashImage from './unsplashImage';
+
 
 class UnsplashConnector {
   private axios;
@@ -12,9 +15,6 @@ class UnsplashConnector {
   }
 
   async getRandomImage(query: string = ''): Promise<UnsplashImage> {
-    // TODO trigger photo.links.download_location on download to conform with API guidelines
-    // https://help.unsplash.com/en/articles/2511258-guideline-triggering-a-download
-
     // Get a random featured photo matching the query
     const randomPhoto = await this.axios.get('/photos/random', {
       params: {
@@ -35,12 +35,29 @@ class UnsplashConnector {
     return new UnsplashImage(
       photoData.description || photoData.alt_description,
       photoData.links.html,
-      photoData.urls.full,
+      photoData.urls.raw,
       photoData.user.name,
-      photoData.tags.map((tag) => tag.title),
+      photoData.tags.map((tag) => tag.title).filter((tag) => tag !== query),
       photoData.location.title,
       coordinates,
     );
+  }
+
+  async downloadImage(image: UnsplashImage): Promise<string> {
+    // Calling the download endpoint is not necessary because this is not a user-triggered event
+    // https://help.unsplash.com/en/articles/2511258-guideline-triggering-a-download
+    const response = await this.axios.get(image.imageUrl, {
+      responseType: 'stream',
+      params: {
+        fm: 'png',
+        crop: 'entropy',
+        cs: 'tinysrgb',
+        w: 1000,
+        fit: 'max',
+      },
+    });
+
+    return tempy.write(response.data, { extension: 'png' });
   }
 }
 export default UnsplashConnector;

@@ -1,24 +1,22 @@
 import * as bcrypt from 'bcryptjs';
-import { Request, Response, NextFunction } from 'express';
 import { LocalStorage } from 'node-localstorage';
 import * as moment from 'moment';
 
 const localStorage = new LocalStorage('./localstorage/session');
 
 export default class Auth {
-  static isAuthenticated(req: Request, res: Response, next: NextFunction) {
+  static isAuthenticated(req, res, next) {
     const sessionId = req.sessionID;
-    const timestamp = moment(localStorage.getItem(sessionId));
+    const timestamp = localStorage.getItem(sessionId);
 
-    if (moment().diff(timestamp, 'minutes') < 20) {
+    if (timestamp !== null && moment().diff(moment(timestamp), 'minutes') < 20) {
       // Login is valid, refresh timestamp and continue
       Auth.saveTimestamp(sessionId);
-      next();
-    } else {
-      // Not valid anymore, logging out
-      Auth.logout(sessionId);
-      res.redirect('/login');
+      return next();
     }
+    // Not valid anymore, logging out
+    Auth.logout(sessionId);
+    return res.redirect('/login');
   }
 
   static authenticate(sessionId, password) {
