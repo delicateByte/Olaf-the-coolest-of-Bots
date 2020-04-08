@@ -34,21 +34,29 @@ app.get('/', Auth.isAuthenticated, (req, res) => {
     imageofthedayTags: Preferences.get('imageoftheday', 'imageofthedayTags'),
   };
 
+  const dfstatus = {
+    dfstatusProactive: Preferences.get('dfstatus', 'dfstatusProactive'),
+    dfstatusProactiveTime: Preferences.get('dfstatus', 'dfstatusProactiveTime'),
+    dfstatusCalendarID: Preferences.get('dfstatus', 'dfstatusCalendarID'),
+  };
+
+  const news = {
+    newsProactive: Preferences.get('news', 'newsProactive'),
+    newsProactiveTime: Preferences.get('news', 'newsProactiveTime'),
+    newsKeywords: Preferences.get('news', 'newsKeywords'),
+  };
+
   // Return all values
   const options = {
     imageoftheday,
+    dfstatus,
+    news,
   };
-
-  console.log('options: ', options);
 
   res.render('index', options);
 });
 
 // Get dashboard data
-app.get('/json/dashboard', Auth.isAuthenticated, (req, res) => {
-  res.json({ test: true });
-});
-
 app.post('/data/imageoftheday', (req, res) => {
   const data = JSON.parse(req.body.data);
 
@@ -56,6 +64,24 @@ app.post('/data/imageoftheday', (req, res) => {
   Preferences.set('imageoftheday', 'imageofthedayProactiveTime', data.imageofthedayProactiveTime);
   Preferences.set('imageoftheday', 'imageofthedayRandom', data.imageofthedayRandom);
   Preferences.set('imageoftheday', 'imageofthedayTags', data.imageofthedayTags);
+  res.sendStatus(200);
+});
+
+app.post('/data/dfstatus', (req, res) => {
+  const data = JSON.parse(req.body.data);
+
+  Preferences.set('dfstatus', 'dfstatusProactive', data.dfstatusProactive);
+  Preferences.set('dfstatus', 'dfstatusProactiveTime', data.dfstatusProactiveTime);
+  Preferences.set('dfstatus', 'dfstatusCalendarID', data.dfstatusCalendarID);
+  res.sendStatus(200);
+});
+
+app.post('/data/news', (req, res) => {
+  const data = JSON.parse(req.body.data);
+
+  Preferences.set('news', 'newsProactive', data.newsProactive);
+  Preferences.set('news', 'newsProactiveTime', data.newsProactiveTime);
+  Preferences.set('news', 'newsKeywords', data.newsKeywords);
   res.sendStatus(200);
 });
 

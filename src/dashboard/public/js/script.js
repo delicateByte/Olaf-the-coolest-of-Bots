@@ -39,4 +39,6 @@ $(document).ready(() => {
 
   // Register forms
   registerSubmitHandler('imageoftheday');
+  registerSubmitHandler('dfstatus');
+  registerSubmitHandler('news');
 });
