@@ -5,6 +5,18 @@ import Preferences from '../../core/preferences';
 
 
 export default class Spotify {
+  constructor() {
+    if (!('SPOTIFY_CLIENT_ID' in process.env)) {
+      throw new Error('Missing SPOTIFY_CLIENT_ID');
+    }
+    if (!('SPOTIFY_CLIENT_SECRET' in process.env)) {
+      throw new Error('Missing SPOTIFY_CLIENT_SECRET');
+    }
+    if (!('SPOTIFY_REDIRECT_URI' in process.env)) {
+      throw new Error('Missing SPOTIFY_REDIRECT_URI');
+    }
+  }
+
   private static spotifyApi = new SpotifyWebApi({
     clientId: process.env.SPOTIFY_CLIENT_ID,
     clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
@@ -60,7 +72,7 @@ export default class Spotify {
     return {};
   }
 
-  static async getTrack() {
+  static async getPlaylist() {
     if (Spotify.isAuthorized()) {
       const track = await Spotify.spotifyApi.getPlaylistsForCategory(Preferences.get('spotify', 'spotifyCategory'), {
         country: 'DE',
@@ -69,19 +81,20 @@ export default class Spotify {
       }).then((data) => {
         const playlists = data.body.playlists.items;
 
-        return Spotify.spotifyApi.getPlaylistTracks(
-          playlists[Math.round(Math.random() * (playlists.length - 1))].id,
-        );
-      }).then((data) => {
-        const tracks = data.body.items;
-        const trackRaw = tracks[Math.round(Math.random() * (tracks.length - 1))].track;
-        const trackParsed = {
-          name: trackRaw.name,
-          artist: trackRaw.artists.map((artist) => artist.name).join(', '),
-          url: trackRaw.external_urls.spotify,
+        console.log(playlists);
+
+
+        const playlistRaw = playlists[Math.round(Math.random() * (playlists.length - 1))];
+        console.log(playlistRaw);
+
+        const playlistParsed = {
+          name: playlistRaw.name,
+          author: playlistRaw.owner.display_name,
+          description: playlistRaw.description,
+          url: playlistRaw.external_urls.spotify,
         };
 
-        return trackParsed;
+        return playlistParsed;
       }).catch((err) => {
         console.log(err);
         return {};

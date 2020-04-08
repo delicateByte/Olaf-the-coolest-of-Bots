@@ -9,6 +9,7 @@ import UseCase from '../interfaces/useCase';
 import ProcessedTelegramMessage from '../classes/ProcessedTelegramMessage';
 import UseCaseResponse from '../classes/UseCaseResponse';
 import TextResponse from '../classes/TextResponse';
+import Entertainment from '../usecases/entertainment/entertainment';
 
 class Olaf {
   private readonly telegramBot;
@@ -28,6 +29,7 @@ class Olaf {
 
     // TODO register all use cases here
     // this.messageRouter.registerUseCase(new XUseCase())
+    this.messageRouter.registerUseCase(new Entertainment());
   }
 
   start() {
