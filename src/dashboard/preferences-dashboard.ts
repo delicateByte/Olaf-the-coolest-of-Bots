@@ -113,20 +113,32 @@ app.get('/', Auth.isAuthenticated, async (req, res) => {
     spotify.userInfo = await Spotify.getUserInfo();
   }
 
+  const dfstatus = {
+    dfstatusProactive: Preferences.get('dfstatus', 'dfstatusProactive'),
+    dfstatusProactiveTime: Preferences.get('dfstatus', 'dfstatusProactiveTime'),
+    dfstatusCalendarID: Preferences.get('dfstatus', 'dfstatusCalendarID'),
+  };
+
+  const news = {
+    newsProactive: Preferences.get('news', 'newsProactive'),
+    newsProactiveTime: Preferences.get('news', 'newsProactiveTime'),
+    newsKeywords: Preferences.get('news', 'newsKeywords'),
+  };
 
   // Return all values
   const options = {
     imageoftheday,
     redditMemes,
     spotify,
+    dfstatus,
+    news,
   };
 
   res.render('index', options);
 });
 
-// Forms
-// Unsplash
-app.post('/data/imageoftheday', Auth.isAuthenticated, (req, res) => {
+// Get dashboard data
+app.post('/data/imageoftheday', (req, res) => {
   const data = JSON.parse(req.body.data);
 
   Preferences.set('imageoftheday', 'imageofthedayProactive', data.imageofthedayProactive);
@@ -152,6 +164,26 @@ app.post('/data/spotify', Auth.isAuthenticated, (req, res) => {
 
   Preferences.set('spotify', 'spotifyCategory', data.spotifyCategory);
 
+  res.sendStatus(200);
+});
+
+// Daily Financial Status
+app.post('/data/dfstatus', (req, res) => {
+  const data = JSON.parse(req.body.data);
+
+  Preferences.set('dfstatus', 'dfstatusProactive', data.dfstatusProactive);
+  Preferences.set('dfstatus', 'dfstatusProactiveTime', data.dfstatusProactiveTime);
+  Preferences.set('dfstatus', 'dfstatusCalendarID', data.dfstatusCalendarID);
+  res.sendStatus(200);
+});
+
+// News
+app.post('/data/news', (req, res) => {
+  const data = JSON.parse(req.body.data);
+
+  Preferences.set('news', 'newsProactive', data.newsProactive);
+  Preferences.set('news', 'newsProactiveTime', data.newsProactiveTime);
+  Preferences.set('news', 'newsKeywords', data.newsKeywords);
   res.sendStatus(200);
 });
 

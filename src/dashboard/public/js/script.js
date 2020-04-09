@@ -41,4 +41,6 @@ $(document).ready(() => {
   registerSubmitHandler('imageoftheday');
   registerSubmitHandler('redditMemes');
   registerSubmitHandler('spotify')
+  registerSubmitHandler('dfstatus');
+  registerSubmitHandler('news');
 });

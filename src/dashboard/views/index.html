@@ -44,7 +44,63 @@
         </div>
       </div>
       <div class="content-cell-row">
-        <input type="text" class="input-text" name="imageofthedayTags" value="{{ imageoftheday.imageofthedayTags }}">
+        <div class="input-wrapper">
+          <label for="text-imageofthedayTags">Tags</label>
+          <input type="text" class="input-text" name="imageofthedayTags" id="text-imageofthedayTags"
+            value="{{ imageoftheday.imageofthedayTags }}">
+        </div>
+      </div>
+      <div class="content-cell-row">
+        <button class="button button-primary" type="submit">Save</button>
+      </div>
+    </form>
+
+    <form id="form-dfstatus" action="/api/dfstatus" method="POST" class="content-cell">
+      <div class="content-cell-row">
+        <h2 class="content-cell-heading">Daily Financial Status</h2>
+      </div>
+      <div class="content-cell-row">
+        <div class="input-wrapper">
+          <input type="checkbox" name="dfstatusProactive" id="check-dfstatusProactive" {{ #dfstatus.dfstatusProactive }}
+            checked {{ /dfstatus.dfstatusProactive }}>
+          <label for="check-dfstatusProactive" class="input-check">Send daily update proactively</label>
+        </div>
+        <div class="input-wrapper">
+          <label for="time-dfstatusProactiveTime">Daily Status Time</label>
+          <input type="time" class="input-text" name="dfstatusProactiveTime" id="time-dfstatusProactiveTime"
+            value="{{ dfstatus.dfstatusProactiveTime }}" required>
+        </div>
+      </div>
+      <div class="content-cell-row">
+        <input type="text" class="input-text" name="dfstatusCalendarID" value="{{ dfstatus.dfstatusCalendarID }}">
+      </div>
+      <div class="content-cell-row">
+        <button class="button button-primary" type="submit">Save</button>
+      </div>
+    </form>
+
+    <form id="form-news" action="/api/news" method="POST" class="content-cell">
+      <div class="content-cell-row">
+        <h2 class="content-cell-heading">Daily News Update</h2>
+      </div>
+      <div class="content-cell-row">
+        <div class="input-wrapper">
+          <input type="checkbox" name="newsProactive" id="check-newsProactive" {{ #news.newsProactive }} checked
+            {{ /news.newsProactive }}>
+          <label for="check-newsProactive" class="input-check">Send daily update proactively</label>
+        </div>
+        <div class="input-wrapper">
+          <label for="time-newsProactiveTime">News Time</label>
+          <input type="time" class="input-text" name="newsProactiveTime" id="time-newsProactiveTime"
+            value="{{ news.newsProactiveTime }}" required>
+        </div>
+      </div>
+      <div class="content-cell-row">
+        <div class="input-wrapper">
+          <label for="text-newsKeywords">Keywords</label>
+          <input type="text" class="input-text" name="newsKeywords" id="text-newsKeywords"
+            value="{{ news.newsKeywords }}">
+        </div>
       </div>
       <div class="content-cell-row">
         <button class="button button-primary" type="submit">Save</button>
