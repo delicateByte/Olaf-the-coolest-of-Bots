@@ -25,7 +25,7 @@ class OpenWeatherConnector {
     const openWeatherAPIResponse = await this.axios.get('', {
       params: {
         units: 'metric',
-        lang: 'de',
+        lang: 'en',
         appid: process.env.OPEN_WEATHER_API,
         lat: this.position.lat,
         lon: this.position.long,
