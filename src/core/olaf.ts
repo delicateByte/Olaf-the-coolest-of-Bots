@@ -11,8 +11,7 @@ import ProcessedTelegramMessage from '../classes/ProcessedTelegramMessage';
 import UseCaseResponse from '../classes/UseCaseResponse';
 import TextResponse from '../classes/TextResponse';
 import Preferences from './preferences';
-
-
+import NewsFlashUsecase from "../usecases/news/newsFlashUseCase";
 
 class Olaf {
   private readonly telegramBot;
@@ -33,6 +32,7 @@ class Olaf {
     this.activeUseCase = null;
     // TODO register all use cases here
     // this.messageRouter.registerUseCase(new XUseCase())
+    this.messageRouter.registerUseCase(new NewsFlashUsecase());
   }
 
   start() {
