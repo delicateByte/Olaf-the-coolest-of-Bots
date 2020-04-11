@@ -74,19 +74,13 @@ export default class Spotify {
 
   static async getPlaylist() {
     if (Spotify.isAuthorized()) {
-      const track = await Spotify.spotifyApi.getPlaylistsForCategory(Preferences.get('spotify', 'spotifyCategory'), {
+      const playlist = await Spotify.spotifyApi.getPlaylistsForCategory(Preferences.get('spotify', 'spotifyCategory'), {
         country: 'DE',
         limit: 50,
         offset: 0,
       }).then((data) => {
         const playlists = data.body.playlists.items;
-
-        console.log(playlists);
-
-
         const playlistRaw = playlists[Math.round(Math.random() * (playlists.length - 1))];
-        console.log(playlistRaw);
-
         const playlistParsed = {
           name: playlistRaw.name,
           author: playlistRaw.owner.display_name,
@@ -97,11 +91,11 @@ export default class Spotify {
         return playlistParsed;
       }).catch((err) => {
         console.log(err);
-        return {};
+        return null;
       });
 
-      return track;
+      return playlist;
     }
-    return {};
+    return null;
   }
 }
