@@ -6,6 +6,7 @@ export default class RedditMemes {
   static async getMeme() {
     const postJson = await Axios.get(`https://www.reddit.com/${Preferences.get('redditMemes', 'redditMemesSubName')}.json?limit=50`).then((res) => {
       const posts = res.data.data.children.map((post) => post.data);
+      console.log(posts);
 
       do {
         const post = posts[0];

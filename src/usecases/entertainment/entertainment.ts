@@ -36,10 +36,10 @@ export default class Entertainment implements UseCase {
         yield new TextResponse('Getting you some beats...');
 
         const playlist = await Spotify.getPlaylist();
-        if (playlist === {}) {
-          yield new TextResponse('Could not retrieve a playlist, please log into the dashboard to connect your account.');
-        } else {
+        if (playlist !== null) {
           yield new TextResponse(`"${playlist.description}"\n"${playlist.name}" by ${playlist.author}\n${playlist.url}`);
+        } else {
+          yield new TextResponse('Could not retrieve a playlist, please log into the dashboard to connect your account.');
         }
       }
     }
