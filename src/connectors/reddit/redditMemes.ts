@@ -9,7 +9,6 @@ export default class RedditMemes {
 
       do {
         const post = posts[0];
-
         const postsShown = (Preferences.get('redditMemes', 'redditMemesShown')) ? JSON.parse(Preferences.get('redditMemes', 'redditMemesShown')) : [];
 
         // Skip posts if they are already sent, sticky (usually mod posts) or not an image
@@ -29,13 +28,12 @@ export default class RedditMemes {
       console.log(err.message);
       return {
         title: 'An error occoured while retrieving a meme :(',
-        imageUrl: RedditMemes.catCryingUrl,
+        url: RedditMemes.catCryingUrl,
       };
     });
 
     if (postJson) {
       const memeJson = {
-        // postUrl: `https://reddit.com${postJson.permalink}`,
         imageUrl: postJson.url,
         title: postJson.title,
       };
