@@ -61,9 +61,9 @@ export default class Spotify {
     return res.redirect(Spotify.spotifyApi.createAuthorizeURL(['user-read-private', 'user-top-read']));
   }
 
-  static getUserInfo() {
+  static async getUserInfo() {
     if (Spotify.isAuthorized()) {
-      const userInfo = Spotify.spotifyApi.getMe().then((data) => data.body).catch((err) => {
+      const userInfo = await Spotify.spotifyApi.getMe().then((data) => data.body).catch((err) => {
         console.log(err);
         return {};
       });
