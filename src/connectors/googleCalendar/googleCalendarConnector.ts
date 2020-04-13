@@ -1,9 +1,8 @@
 /* eslint-disable array-callback-return */
 /* eslint-disable consistent-return */
 
-// import { utc } from 'moment';
+// IMPORT PREFERENCE TIME!!!
 
-// import googleCalendarAuthentication
 const gcAuthentication = require('./googleCalendarAuthentication.ts');
 
 function listEvents(auth) {
@@ -13,7 +12,7 @@ function listEvents(auth) {
   const startDate = new Date().getDate();
   const startMonth = new Date().getMonth();
   const startYear = new Date().getFullYear();
-  const startHour = 0 + 2;
+  const startHour = 0;
   const startMinute = 0;
   console.log(startDate, startMonth, startYear);
 
@@ -21,15 +20,20 @@ function listEvents(auth) {
     auth,
     resource: {
       timeMin: (new Date(startYear, startMonth, startDate, startHour, startMinute)).toISOString(),
-      timeMax: (new Date(startYear, startMonth, startDate, startHour + 24, startMinute)).toISOString(),
+      timeMax: (new Date(startYear, startMonth, startDate, startHour + 28, startMinute)).toISOString(),
       items: [{ id: calendarID }],
     },
   })
     .then((answer) => {
       const busyEvents = answer.data.calendars[calendarID].busy;
+      // busy object is empty if there are no appointments or only all-day events
       console.log(answer.data);
       console.log(busyEvents);
-    }); // , BodyResponseCallback
+      // if array is not empty: iterate over elements
+      // check if one of its times equals preference time
+      // if so, check for the events end time
+      // reschedule information to end time of event
+    });
   // calendar.events.list({
   //   calendarId: 'primary',
   //   timeMin: (new Date()).toISOString(),
