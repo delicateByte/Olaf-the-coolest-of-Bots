@@ -72,14 +72,8 @@ class Olaf {
 
   private async* getResponses(message: ProcessedTelegramMessage): AsyncGenerator<UseCaseResponse> {
     // Cancel active use case if user sends stop phrase
-    if ('text' in message
-      && ['stop', 'cancel'].some((phrase) => message.text?.toLowerCase().includes(phrase))) {
-      if (this.activeUseCase) {
-        yield new TextResponse('Use case stopped');
-        yield new EndUseCaseResponse();
-      } else {
-        yield new TextResponse('No active use case');
-      }
+    if (message && message.text?.startsWith('/')) {
+      yield* this.handleCommand(message.text.substr(1).toLowerCase());
       return;
     }
 
@@ -89,6 +83,37 @@ class Olaf {
     }
     // Let use case handle the message
     yield* this.activeUseCase.receiveMessage(message);
+  }
+
+  private async* handleCommand(command: string): AsyncGenerator<UseCaseResponse> {
+    const helpText = `Available use cases:
+• Image of the Day: Discover an image, read its subject's Wikipedia article and show the location
+  Triggers: image, photo, picture
+  Proactivity possible
+• Entertainment: Discover memes, jokes and music
+  Triggers: meme, joke, chuck norris, song, track, music, playlist
+`;
+    switch (command) {
+      case 'start':
+        yield new TextResponse(
+          'Say Hi to Olaf, your personal assistant! You can let him help you by sending voice or text messages. Personalize him under http://olaf-host:3000/',
+        );
+        yield new TextResponse(helpText);
+        break;
+      case 'help':
+        yield new TextResponse(helpText);
+        break;
+      case 'stop':
+        if (this.activeUseCase) {
+          yield new TextResponse('Use case stopped');
+          yield new EndUseCaseResponse();
+        } else {
+          yield new TextResponse('No active use case');
+        }
+        break;
+      default:
+        throw new Error('Unrecognized command');
+    }
   }
 
   private scheduleProactivity(service: string) {
