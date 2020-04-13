@@ -1,89 +1,89 @@
-import { LocalStorage } from 'node-localstorage';
-import * as mockBcrypt from 'bcryptjs';
+/* eslint-disable import/order, import/first, @typescript-eslint/no-unused-vars */
+import * as express from 'express';
+import * as session from 'express-session';
+import * as supertest from 'supertest';
 import * as moment from 'moment';
+import * as bcrypt from 'bcryptjs';
+import { LocalStorage } from 'node-localstorage';
+
+jest.mock('bcryptjs');
+jest.mock('node-localstorage');
 
 import Auth from './auth';
 
-jest.mock('node-localstorage', jest.fn());
-jest.mock('bcryptjs');
+// Mock server
+const app = express();
 
-// Global setup
-const sessionId = 'test1234';
+app.use(session({
+  secret: 'keyboard cat',
+  resave: false,
+  saveUninitialized: true,
+}));
 
-const getNull = () => ({
-  getItem: () => null,
+app.use(express.static(`${__dirname}/public`));
+app.use(express.urlencoded({
+  extended: true,
+}));
+
+app.get('/test', Auth.isAuthenticated, (req, res) => res.sendStatus(200));
+app.get('/login', (req, res) => res.sendStatus(200));
+
+const server = app.listen(3000);
+const stopServer = () => server.close();
+
+const request = supertest(app);
+
+afterAll(() => {
+  // Stop server after testing
+  stopServer();
 });
 
-const getVal = () => ({
-  getItem: () => moment().toISOString(),
-});
-
-beforeEach(() => {
-  // Clear all instances and calls to constructor and all methods:
-  jest.resetModules();
-});
-
-test('isAuthenticated fail', () => {
-  // Setup
-  // const localStorage = new LocalStorage('./localstorage/session');
-  // localStorage.getItem.mockReturnValue(null);
-  LocalStorage.mockImplementation(() => getNull);
-
-  jest.doMock('moment', () => () => ({ diff: () => 21 }));
-
-  const req = { sessionId };
-  const res = {
-    redirect: () => 'redirect',
-  };
-  const next = () => 'next';
-
-  // Work
-  const result = Auth.isAuthenticated(req, res, next);
-
-  // Expect
-  expect(result).toBe('redirect');
-});
-
-test('authenticate fail', async () => {
-  // Setup
+test('authenticate fails', () => {
   // @ts-ignore
-  mockBcrypt.compareSync.mockImplementationOnce(() => false);
+  bcrypt.compareSync.mockImplementationOnce(() => false);
+  // localStorage.removeItem.mockImplementationOnce(() => 'item');
 
-  // Work
-  const result = Auth.authenticate(sessionId, 'wrong password');
+  const auth = Auth.authenticate('some_id', 'some_pass');
 
-  // Expect
-  expect(result).toBe(false);
+  expect(auth).toBe(false);
 });
 
-test('authenticate success', async () => {
-  // Setup
+test('authenticate', () => {
   // @ts-ignore
-  mockBcrypt.compareSync.mockImplementationOnce(() => true);
+  bcrypt.compareSync.mockImplementationOnce(() => true);
+  // // @ts-ignore
+  // localStorage.setItem.mockImplementationOnce(() => undefined);
 
-  // Work
-  const result = Auth.authenticate(sessionId, 'test123');
+  const auth = Auth.authenticate('some_id', 'some_pass');
 
-  // Expect
-  expect(result).toBe(true);
+  expect(auth).toBe(true);
 });
 
-test('isAuthenticated success', () => {
-  // Setup
-  const localStorage = new LocalStorage('./localstorage/session');
-  localStorage.getItem.mockImplementationOnce(() => moment().toISOString());
+test('callback route fails', async (done) => {
+  const mockLocalStorage = LocalStorage.mock.instances[0];
 
-  jest.doMock('moment', () => () => ({ diff: () => 0 }));
+  mockLocalStorage.getItem.mockImplementationOnce(() => null);
+  mockLocalStorage.removeItem.mockImplementationOnce(() => undefined);
 
-  const req = { sessionId };
-  const res = {
-    redirect: () => 'redirect',
-  };
-  const next = () => 'next';
+  // @ts-ignore
+  bcrypt.compareSync.mockImplementationOnce(() => true);
 
-  // Work
-  const result = Auth.isAuthenticated(req, res, next);
+  const res = await request.get('/test');
 
-  // Expect
-  expect(result).toBe('next');
+  expect(res.statusCode).toBe(302);
+
+  done();
+});
+
+test('callback route', async (done) => {
+  const mockLocalStorage = LocalStorage.mock.instances[0];
+
+  mockLocalStorage.getItem.mockImplementationOnce(() => moment().toISOString());
+  mockLocalStorage.setItem.mockImplementationOnce(() => undefined);
+
+  const res = await request.get('/test');
+
+  expect(res.statusCode).toBe(200);
+
+  done();
 });
