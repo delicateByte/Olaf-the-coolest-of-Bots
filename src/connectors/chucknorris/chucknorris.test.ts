@@ -14,7 +14,7 @@ test('get Joke', async () => {
 
 test('get Joke fails', async () => {
   // @ts-ignore
-  axios.get.mockResolvedValue({ joke: 'Chuck Norris was not unable to make up a joke, the API failed to deliver one to you.' });
+  axios.get.mockRejectedValueOnce({ joke: 'Chuck Norris was not unable to make up a joke, the API failed to deliver one to you.' });
 
   const joke = await ChuckNorris.getJoke();
   expect(joke).toEqual({ joke: 'Chuck Norris was not unable to make up a joke, the API failed to deliver one to you.' });
