@@ -1,7 +1,7 @@
 import UnsplashConnector from '../../connectors/unsplash/unsplashConnector';
 import UnsplashImage from '../../connectors/unsplash/unsplashImage';
 import WikipediaConnector from '../../connectors/wikipedia/wikipediaConnector';
-import GoogleMapsStaticConnector from '../../connectors/googleMapsStaticConnector/googleMapsStaticConnector';
+import GoogleMapsStaticConnector from '../../connectors/googleMapsStatic/googleMapsStaticConnector';
 import UseCase from '../../interfaces/useCase';
 import UseCaseResponse from '../../classes/UseCaseResponse';
 import TextResponse from '../../classes/TextResponse';
@@ -94,7 +94,7 @@ class ImageofthedayUsecase implements UseCase {
     if (image.location) {
       let query = image.location;
 
-      do {
+      for (;;) {
         // eslint-disable-next-line no-await-in-loop
         const results = await this.wikipedia.search(query);
         if (results.length) {
@@ -102,8 +102,11 @@ class ImageofthedayUsecase implements UseCase {
           break;
         }
 
+        if (!query.includes(',')) {
+          break;
+        }
         query = query.substring(query.indexOf(',') + 1).trim();
-      } while (query.includes(','));
+      }
     }
 
     // If no article was found using location, search by tags returned from Unsplash
