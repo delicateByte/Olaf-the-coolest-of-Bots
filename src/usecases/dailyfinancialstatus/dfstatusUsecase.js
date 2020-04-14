@@ -42,15 +42,16 @@ exports.__esModule = true;
 var TextResponse_1 = require("../../classes/TextResponse");
 // import Preferneces from '../../core/preferences';
 var EndUseCaseResponse_1 = require("../../classes/EndUseCaseResponse");
-var googleCalendarConnector_1 = require("../../connectors/googleCalendar/googleCalendarConnector");
+// import GoogleCalendarConnector from '../../connectors/googleCalendar/googleCalendarConnector';
 var exchangeratesConnector_1 = require("../../connectors/exchangerates/exchangeratesConnector");
 var coingeckoConnector_1 = require("../../connectors/coingecko/coingeckoConnector");
-// const fs = require('fs');
+var fs = require('fs');
+var gcAuthentication = require('../../connectors/googleCalendar/googleCalendarAuthentication.ts');
 var DailyFinancialStatus = /** @class */ (function () {
     function DailyFinancialStatus() {
         this.name = 'Daily financial status';
         this.triggers = ['financial', 'finance', 'finances'];
-        this.googleCalendar = new googleCalendarConnector_1["default"]();
+        // private googleCalendar = new GoogleCalendarConnector();
         this.exchangeRates = new exchangeratesConnector_1["default"]();
         this.coinGecko = new coingeckoConnector_1["default"]();
     }
@@ -76,6 +77,46 @@ var DailyFinancialStatus = /** @class */ (function () {
                         return [2 /*return*/];
                 }
             });
+        });
+    };
+    // eslint-disable-next-line class-methods-use-this
+    DailyFinancialStatus.prototype.checkForEvents = function () {
+        var _this = this;
+        fs.readFile('../../../credentials.json', function (err, content) {
+            if (err)
+                return console.log('Error loading client secret file:', err);
+            // Authorize a client with credentials, then call the Google Calendar API.
+            gcAuthentication.authorize(JSON.parse(content), _this.listEvents);
+        });
+    };
+    // eslint-disable-next-line class-methods-use-this
+    DailyFinancialStatus.prototype.listEvents = function (auth) {
+        var calendar = gcAuthentication.google.calendar({ version: 'v3', auth: auth });
+        var calendarID = 'k.sonja1999@gmail.com';
+        var startDate = new Date().getDate();
+        var startMonth = new Date().getMonth();
+        var startYear = new Date().getFullYear();
+        var startHour = 0;
+        var startMinute = 0;
+        console.log(startDate, startMonth, startYear);
+        calendar.freebusy.query({
+            auth: auth,
+            resource: {
+                timeMin: (new Date(startYear, startMonth, startDate, startHour, startMinute)).toISOString(),
+                // eslint-disable-next-line max-len
+                timeMax: (new Date(startYear, startMonth, startDate, startHour + 28, startMinute)).toISOString(),
+                items: [{ id: calendarID }]
+            }
+        })
+            .then(function (answer) {
+            var busyEvents = answer.data.calendars[calendarID].busy;
+            // busy object is empty if there are no appointments or only all-day events
+            console.log(answer.data);
+            console.log(busyEvents);
+            // if array is not empty: iterate over elements
+            // check if one of its times equals preference time
+            // if so, check for the events end time
+            // reschedule information to end time of event
         });
     };
     // eslint-disable-next-line class-methods-use-this

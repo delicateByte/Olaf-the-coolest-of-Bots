@@ -4,17 +4,16 @@ import TextResponse from '../../classes/TextResponse';
 // import Preferneces from '../../core/preferences';
 import EndUseCaseResponse from '../../classes/EndUseCaseResponse';
 import ProcessedTelegramMessage from '../../classes/ProcessedTelegramMessage';
-import GoogleCalendarConnector from '../../connectors/googleCalendar/googleCalendarConnector';
 import ExchangeRatesConnector from '../../connectors/exchangerates/exchangeratesConnector';
 import CoinGeckoConnector from '../../connectors/coingecko/coingeckoConnector';
 
-// const fs = require('fs');
+const fs = require('fs');
+const gcAuthentication = require('../../connectors/googleCalendar/googleCalendarAuthentication.ts');
 
 class DailyFinancialStatus implements UseCase {
   name = 'Daily financial status';
   triggers = ['financial', 'finance', 'finances'];
 
-  private googleCalendar = new GoogleCalendarConnector();
   private exchangeRates = new ExchangeRatesConnector();
   private coinGecko = new CoinGeckoConnector();
 
@@ -29,6 +28,48 @@ class DailyFinancialStatus implements UseCase {
     }
 
     yield new EndUseCaseResponse();
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  public checkForEvents() {
+    fs.readFile('../../../credentials.json', (err, content) => {
+      if (err) return console.log('Error loading client secret file:', err);
+      // Authorize a client with credentials, then call the Google Calendar API.
+      gcAuthentication.authorize(JSON.parse(content), this.listEvents);
+    });
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  public listEvents(auth) {
+    const calendar = gcAuthentication.google.calendar({ version: 'v3', auth });
+    const calendarID = 'k.sonja1999@gmail.com';
+
+    const startDate = new Date().getDate();
+    const startMonth = new Date().getMonth();
+    const startYear = new Date().getFullYear();
+    const startHour = 0;
+    const startMinute = 0;
+    console.log(startDate, startMonth, startYear);
+
+    calendar.freebusy.query({
+      auth,
+      resource: {
+        timeMin: (new Date(startYear, startMonth, startDate, startHour, startMinute)).toISOString(),
+        // eslint-disable-next-line max-len
+        timeMax: (new Date(startYear, startMonth, startDate, startHour + 28, startMinute)).toISOString(),
+        items: [{ id: calendarID }],
+      },
+    })
+      .then((answer) => {
+        const busyEvents = answer.data.calendars[calendarID].busy;
+        // busy object is empty if there are no appointments or only all-day events
+        console.log(answer.data);
+        console.log(busyEvents);
+      // if array is not empty: iterate over elements
+      // check if one of its times equals preference time
+      // if so, check for the events end time
+      // reschedule information to end time of event
+      });
   }
 
   // eslint-disable-next-line class-methods-use-this
