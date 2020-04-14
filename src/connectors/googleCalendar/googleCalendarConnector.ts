@@ -20,6 +20,7 @@ function listEvents(auth) {
     auth,
     resource: {
       timeMin: (new Date(startYear, startMonth, startDate, startHour, startMinute)).toISOString(),
+      // eslint-disable-next-line max-len
       timeMax: (new Date(startYear, startMonth, startDate, startHour + 28, startMinute)).toISOString(),
       items: [{ id: calendarID }],
     },
