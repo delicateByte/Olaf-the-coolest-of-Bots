@@ -10,6 +10,14 @@ class Preferences {
     ['imageoftheday', 'imageofthedayProactiveTime', '08:00'],
     ['imageoftheday', 'imageofthedayRandom', true],
     ['imageoftheday', 'imageofthedayTags', ''],
+    ['redditMemes', 'redditMemesSubName', 'r/memes'],
+    ['spotify', 'spotifyCategory', 'party'],
+    ['dfstatus', 'dfstatusProactive', false],
+    ['dfstatus', 'dfstatusProactiveTime', '08:00'],
+    ['dfstatus', 'dfstatusCalendarID', ''],
+    ['news', 'newsProactive', false],
+    ['news', 'newsProactiveTime', '08:00'],
+    ['news', 'newsKeywords', ''],
   ];
 
   static initialize(): void {

@@ -11,18 +11,17 @@ import ProcessedTelegramMessage from '../classes/ProcessedTelegramMessage';
 import UseCaseResponse from '../classes/UseCaseResponse';
 import TextResponse from '../classes/TextResponse';
 import Preferences from './preferences';
-import ImageofthedayUsecase from '../usecases/imageoftheday/imageofthedayUsecase';
+import Entertainment from '../usecases/entertainment/entertainment';
+
 
 class Olaf {
   private readonly telegramBot;
-
   private readonly messageHandler;
   private readonly messageRouter;
   private readonly messageSender;
-
   private activeUseCase: UseCase;
   // TODO register all proactive use cases here
-  private proactiveJobs: {[key: string]: CronJob} = {
+  private proactiveJobs: { [key: string]: CronJob } = {
     imageoftheday: null,
   };
 
@@ -32,9 +31,9 @@ class Olaf {
     this.messageRouter = new MessageRouter();
     this.messageSender = new MessageSender(this.telegramBot);
     this.activeUseCase = null;
-
     // TODO register all use cases here
-    this.messageRouter.registerUseCase(new ImageofthedayUsecase());
+    // this.messageRouter.registerUseCase(new XUseCase())
+    this.messageRouter.registerUseCase(new Entertainment());
   }
 
   start() {
