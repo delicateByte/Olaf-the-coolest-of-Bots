@@ -37,6 +37,10 @@
     "twitter": "^1.7.1"
   },
   "devDependencies": {
+    "@babel/cli": "^7.8.4",
+    "@babel/core": "^7.9.0",
+    "@babel/node": "^7.8.7",
+    "@babel/preset-env": "^7.9.5",
     "@types/jest": "^25.1.4",
     "@types/node": "^13.7.7",
     "@typescript-eslint/eslint-plugin": "^2.24.0",

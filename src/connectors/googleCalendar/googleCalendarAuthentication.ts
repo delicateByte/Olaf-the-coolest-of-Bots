@@ -77,6 +77,7 @@ exports.authorize = authorize;
  * Lists the next 10 events on the user's primary calendar.
  * @param {google.auth.OAuth2} auth An authorized OAuth2 client.
  */
+
 // function listEvents(auth) {
 //   const calendar = google.calendar({ version: 'v3', auth });
 //   calendar.events.list({
