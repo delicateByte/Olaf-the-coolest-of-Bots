@@ -12,6 +12,7 @@ import UseCaseResponse from '../classes/UseCaseResponse';
 import TextResponse from '../classes/TextResponse';
 import Preferences from './preferences';
 import Entertainment from '../usecases/entertainment/entertainment';
+import ImageofthedayUsecase from '../usecases/imageoftheday/imageofthedayUsecase';
 
 
 class Olaf {
@@ -36,6 +37,7 @@ class Olaf {
     // TODO register all use cases here
     // this.messageRouter.registerUseCase(new XUseCase())
     this.messageRouter.registerUseCase(new Entertainment());
+    this.messageRouter.registerUseCase(new ImageofthedayUsecase());
   }
 
   start() {
@@ -69,7 +71,18 @@ class Olaf {
       // Get responses to send to the user
       const responses = this.getResponses(message);
       // Send responses back to user
-      await this.sendResponses(responses);
+      const endUseCase = await this.messageSender.sendResponses(responses);
+      // Reset active use case if it is done
+      if (endUseCase && this.activeUseCase) {
+        this.activeUseCase.reset();
+        this.activeUseCase = null;
+
+        // Run enqueued proactive use cases
+        if (this.proactiveQueue.length) {
+          this.activeUseCase = this.proactiveQueue.pop();
+          this.runUseCase(null);
+        }
+      }
     } catch (err) {
       console.log(err);
       await this.messageSender.sendResponse(new TextResponse(err.toString()));
@@ -95,21 +108,6 @@ class Olaf {
     }
     // Let active use case handle the message
     yield* this.activeUseCase.receiveMessage(message);
-  }
-
-  private async sendResponses(responses: AsyncGenerator<UseCaseResponse>): Promise<void> {
-    const endUseCase = await this.messageSender.sendResponses(responses);
-    // Reset active use case if it is done
-    if (endUseCase && this.activeUseCase) {
-      this.activeUseCase.reset();
-      this.activeUseCase = null;
-
-      // Run enqueued proactive use cases
-      if (this.proactiveQueue.length) {
-        this.activeUseCase = this.proactiveQueue.pop();
-        this.runUseCase(null);
-      }
-    }
   }
 
   private scheduleProactivity(service: string): void {
