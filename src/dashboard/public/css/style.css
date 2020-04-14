@@ -236,6 +236,12 @@ input[type="checkbox"]:checked + .input-check::before {
   width: 100%;
 }
 
+.content-heading {
+  margin: 16px 0;
+  width: calc(100% - 16px);
+  max-width: 1024px;
+}
+
 .content-cell {
   background-color: var(--color-face);
   border-radius: var(--metric-border-radius);
