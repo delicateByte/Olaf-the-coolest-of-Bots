@@ -12,6 +12,7 @@ import UseCaseResponse from '../classes/UseCaseResponse';
 import TextResponse from '../classes/TextResponse';
 import Preferences from './preferences';
 import Entertainment from '../usecases/entertainment/entertainment';
+import DailyFinancialStatus from '../usecases/dailyfinancialstatus/dfstatusUsecase';
 
 
 class Olaf {
@@ -34,6 +35,7 @@ class Olaf {
     // TODO register all use cases here
     // this.messageRouter.registerUseCase(new XUseCase())
     this.messageRouter.registerUseCase(new Entertainment());
+    this.messageRouter.registerUseCase(new DailyFinancialStatus());
   }
 
   start() {

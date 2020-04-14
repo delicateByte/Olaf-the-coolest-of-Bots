@@ -1,13 +1,15 @@
+/* eslint-disable consistent-return */
 import UseCase from '../../interfaces/useCase';
 import UseCaseResponse from '../../classes/UseCaseResponse';
 import TextResponse from '../../classes/TextResponse';
-// import Preferneces from '../../core/preferences';
+import Preferences from '../../core/preferences';
 import EndUseCaseResponse from '../../classes/EndUseCaseResponse';
 import ProcessedTelegramMessage from '../../classes/ProcessedTelegramMessage';
 import ExchangeRatesConnector from '../../connectors/exchangerates/exchangeratesConnector';
 import CoinGeckoConnector from '../../connectors/coingecko/coingeckoConnector';
 
 const fs = require('fs');
+const path = require('path');
 const gcAuthentication = require('../../connectors/googleCalendar/googleCalendarAuthentication.ts');
 
 class DailyFinancialStatus implements UseCase {
@@ -23,16 +25,20 @@ class DailyFinancialStatus implements UseCase {
   // eslint-disable-next-line class-methods-use-this
   async* receiveMessage(message: ProcessedTelegramMessage): AsyncGenerator<UseCaseResponse> {
     if (message) {
-      yield new TextResponse('Here\'s a response');
-      console.log('Done.');
+      yield new TextResponse('Here\'s your financial update');
+    } else {
+      yield new TextResponse('Here\'s your automatic financial update');
     }
+
+    this.checkForEvents();
 
     yield new EndUseCaseResponse();
   }
 
   // eslint-disable-next-line class-methods-use-this
   public checkForEvents() {
-    fs.readFile('../../../credentials.json', (err, content) => {
+    console.log(__dirname);
+    fs.readFile(path.resolve(__dirname, '../../../credentials.json'), (err, content) => {
       if (err) return console.log('Error loading client secret file:', err);
       // Authorize a client with credentials, then call the Google Calendar API.
       gcAuthentication.authorize(JSON.parse(content), this.listEvents);
@@ -42,7 +48,8 @@ class DailyFinancialStatus implements UseCase {
   // eslint-disable-next-line class-methods-use-this
   public listEvents(auth) {
     const calendar = gcAuthentication.google.calendar({ version: 'v3', auth });
-    const calendarID = 'k.sonja1999@gmail.com';
+    // const calendarID = 'k.sonja1999@gmail.com';
+    const calendarID = Preferences.get('dfstatus', 'dfstatusCalendarID');
 
     const startDate = new Date().getDate();
     const startMonth = new Date().getMonth();
@@ -65,6 +72,10 @@ class DailyFinancialStatus implements UseCase {
         // busy object is empty if there are no appointments or only all-day events
         console.log(answer.data);
         console.log(busyEvents);
+
+        const preferenceTime = Preferences.get('dfstatus', 'dfstatusProactiveTime');
+        console.log(preferenceTime);
+      //
       // if array is not empty: iterate over elements
       // check if one of its times equals preference time
       // if so, check for the events end time
