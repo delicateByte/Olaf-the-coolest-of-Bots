@@ -13,7 +13,7 @@ const path = require('path');
 const gcAuthentication = require('../../connectors/googleCalendar/googleCalendarAuthentication.ts');
 
 class DailyFinancialStatus implements UseCase {
-  name = 'Daily financial status';
+  name = 'dfstatus';
   triggers = ['financial', 'finance', 'finances'];
 
   private exchangeRates = new ExchangeRatesConnector();

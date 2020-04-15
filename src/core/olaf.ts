@@ -24,6 +24,7 @@ class Olaf {
   // TODO register all proactive use cases here
   private proactiveJobs: { [key: string]: CronJob } = {
     imageoftheday: null,
+    dfstatus: null,
   };
 
   constructor() {

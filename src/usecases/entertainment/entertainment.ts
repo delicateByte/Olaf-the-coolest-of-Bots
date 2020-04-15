@@ -9,7 +9,7 @@ import ImageResponse from '../../classes/ImageResponse';
 import EndUseCaseResponse from '../../classes/EndUseCaseResponse';
 
 export default class Entertainment implements UseCase {
-  name: string;
+  name = '';
   triggers: string[] = [
     'meme',
     'joke', 'chuck norris',
