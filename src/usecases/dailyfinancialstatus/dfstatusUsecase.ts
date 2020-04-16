@@ -30,9 +30,11 @@ class DailyFinancialStatus implements UseCase {
     }
 
     this.checkForEvents();
-    const allValues = await this.exchangeRates.getCurrentStatus();
-    const values = await this.exchangeRates.getCurrencies(allValues);
-    console.log(values);
+    const allClassicRates = await this.exchangeRates.getCurrentStatus();
+    const classicRates = await this.exchangeRates.getCurrencies(allClassicRates);
+    console.log(classicRates);
+    const bitcoinRate = await this.coinGecko.getCurrentStatus();
+    console.log(bitcoinRate);
 
     yield new EndUseCaseResponse();
   }
