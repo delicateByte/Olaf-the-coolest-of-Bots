@@ -22,7 +22,6 @@ class DailyFinancialStatus implements UseCase {
   // constructor() {
   // }
 
-  // eslint-disable-next-line class-methods-use-this
   async* receiveMessage(message: ProcessedTelegramMessage): AsyncGenerator<UseCaseResponse> {
     if (message) {
       yield new TextResponse('Here\'s your financial update');
@@ -31,11 +30,13 @@ class DailyFinancialStatus implements UseCase {
     }
 
     this.checkForEvents();
+    const allValues = await this.exchangeRates.getCurrentStatus();
+    const values = await this.exchangeRates.getCurrencies(allValues);
+    console.log(values);
 
     yield new EndUseCaseResponse();
   }
 
-  // eslint-disable-next-line class-methods-use-this
   public checkForEvents() {
     console.log(__dirname);
     fs.readFile(path.resolve(__dirname, '../../../credentials.json'), (err, content) => {
@@ -79,7 +80,7 @@ class DailyFinancialStatus implements UseCase {
       // if array is not empty: iterate over elements
       // check if one of its times equals preference time
       // if so, check for the events end time
-      // reschedule information to end time of event
+      // abort use case and don't send message if there is a collision to an appointment
       });
   }
 
