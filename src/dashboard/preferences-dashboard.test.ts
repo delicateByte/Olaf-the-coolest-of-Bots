@@ -8,9 +8,11 @@ import app from './preferences-dashboard';
 jest.mock('./auth');
 jest.mock('../core/preferences');
 
+jest.setTimeout(10000);
+
 import Auth from './auth';
 
-const server = app.listen(3000);
+const server = app.listen(3001);
 const stopServer = () => server.close();
 
 const request = supertest(app);
@@ -41,7 +43,7 @@ test('test /', async () => {
 
 test('test /data/imageoftheday', async () => {
   // @ts-ignore
-  Preferences.set.mockImplementationOnce(() => undefined);
+  Preferences.set.mockImplementation(() => undefined);
 
   const res = await request.post('/data/imageoftheday').send({
     data: JSON.stringify({
@@ -57,7 +59,7 @@ test('test /data/imageoftheday', async () => {
 
 test('test /data/dfstatus', async () => {
   // @ts-ignore
-  Preferences.set.mockImplementationOnce(() => undefined);
+  Preferences.set.mockImplementation(() => undefined);
 
   const res = await request.post('/data/dfstatus').send({
     data: JSON.stringify({
@@ -72,13 +74,26 @@ test('test /data/dfstatus', async () => {
 
 test('test /data/news', async () => {
   // @ts-ignore
-  Preferences.set.mockImplementationOnce(() => undefined);
+  Preferences.set.mockImplementation(() => undefined);
 
   const res = await request.post('/data/news').send({
     data: JSON.stringify({
       newsProactive: 'some_val',
       newsProactiveTime: 'some_val',
       newsKeywords: 'some_val',
+    }),
+  }).type('form');
+
+  expect(res.statusCode).toBe(200);
+});
+
+test('test /data/spotify', async () => {
+  // @ts-ignore
+  Preferences.set.mockImplementation(() => undefined);
+
+  const res = await request.post('/data/spotify').send({
+    data: JSON.stringify({
+      spotifyCategory: 'some_val',
     }),
   }).type('form');
 
