@@ -3,7 +3,7 @@ import ExchangeratesResponse from './exchangeratesResponse';
 
 class ExchangeratesConnector {
   private axios;
-  private currencies = ['USD', 'JPY', 'GBP', 'CHF'];
+  public currencies = ['USD', 'JPY', 'GBP', 'CHF'];
 
   constructor() {
     this.axios = axios.create({
