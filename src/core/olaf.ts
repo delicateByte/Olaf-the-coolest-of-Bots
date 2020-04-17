@@ -80,7 +80,7 @@ class Olaf {
         // Run enqueued proactive use cases
         if (this.proactiveQueue.length) {
           this.activeUseCase = this.proactiveQueue.pop();
-          this.runUseCase(null);
+          await this.runUseCase(null);
         }
       }
     } catch (err) {
