@@ -8,7 +8,7 @@ import ProcessedTelegramMessage from '../../classes/ProcessedTelegramMessage';
 import ExchangeRatesConnector from '../../connectors/exchangerates/exchangeratesConnector';
 import CoinGeckoConnector from '../../connectors/coingecko/coingeckoConnector';
 
-const fs = require('fs');
+const fs = require('fs').promises;
 const path = require('path');
 const gcAuthentication = require('../../connectors/googleCalendar/googleCalendarAuthentication.ts');
 
@@ -41,16 +41,21 @@ class DailyFinancialStatus implements UseCase {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  public async checkForEvents() {
-    fs.readFile(path.resolve(__dirname, '../../../credentials.json'), (err, content) => {
-      if (err) return console.log('Error loading client secret file:', err);
+  public async* checkForEvents() {
+    try {
+      const content = await fs.readFile(path.resolve(__dirname, '../../../credentials.json'));
       // Authorize a client with credentials, then call the Google Calendar API.
-      gcAuthentication.authorize(JSON.parse(content), this.listEvents);
-    });
+      const auth = await new Promise(((resolve) => {
+        gcAuthentication.authorize(JSON.parse(content), (res) => resolve(res));
+      }));
+      yield* this.listEvents(auth);
+    } catch (err) {
+      console.log('Error loading client secret file:', err);
+    }
   }
 
   // eslint-disable-next-line class-methods-use-this
-  async listEvents(auth) {
+  async* listEvents(auth) {
     const calendar = gcAuthentication.google.calendar({ version: 'v3', auth });
     const calendarID = Preferences.get('dfstatus', 'dfstatusCalendarID');
 
@@ -61,29 +66,27 @@ class DailyFinancialStatus implements UseCase {
     const startMin = 0;
     console.log(startD, startM, startY);
 
-    calendar.freebusy.query({
+    const answer = await calendar.freebusy.query({
       auth,
       resource: {
         timeMin: (new Date(startY, startM, startD, startH, startMin)).toISOString(),
         timeMax: (new Date(startY, startM, startD, startH + 28, startMin)).toISOString(),
         items: [{ id: calendarID }],
       },
-    })
-      .then((answer) => {
-        const busyEvents = answer.data.calendars[calendarID].busy;
-        // busy object is empty if there are no appointments or only all-day events
-        console.log(answer.data);
-        console.log(busyEvents);
+    });
+    const busyEvents = answer.data.calendars[calendarID].busy;
+    // busy object is empty if there are no appointments or only all-day events
+    console.log(answer.data);
+    console.log(busyEvents);
 
-        const preferenceTime = Preferences.get('dfstatus', 'dfstatusProactiveTime');
-        console.log(preferenceTime);
-        this.proactiveMessageGenerator(preferenceTime);
-      //
-      // if array is not empty: iterate over elements
-      // check if one of its times equals preference time
-      // if so, check for the events end time
-      // abort use case and don't send message if there is a collision to an appointment
-      });
+    const preferenceTime = Preferences.get('dfstatus', 'dfstatusProactiveTime');
+    console.log(preferenceTime);
+    yield* this.proactiveMessageGenerator(preferenceTime);
+    //
+    // if array is not empty: iterate over elements
+    // check if one of its times equals preference time
+    // if so, check for the events end time
+    // abort use case and don't send message if there is a collision to an appointment
   }
 
   private generateTextmessage(classicRates, bitcoinRate): string {
