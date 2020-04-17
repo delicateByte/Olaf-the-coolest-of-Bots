@@ -34,7 +34,7 @@ class DailyFinancialStatus implements UseCase {
     } else if (Preferences.get('dfstatus', 'dfstatusCalendarID') === '') { // proactive case
       yield new TextResponse('No calendar ID specified in dashboard. Cannot check your calendar.');
     } else {
-      this.checkForEvents();
+      yield* this.checkForEvents();
     }
 
     yield new EndUseCaseResponse();
