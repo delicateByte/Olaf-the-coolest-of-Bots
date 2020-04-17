@@ -138,7 +138,7 @@ app.get('/', Auth.isAuthenticated, async (req, res) => {
 });
 
 // Get dashboard data
-app.post('/data/imageoftheday', (req, res) => {
+app.post('/data/imageoftheday', Auth.isAuthenticated, (req, res) => {
   const data = JSON.parse(req.body.data);
 
   Preferences.set('imageoftheday', 'imageofthedayProactive', data.imageofthedayProactive);
@@ -168,7 +168,7 @@ app.post('/data/spotify', Auth.isAuthenticated, (req, res) => {
 });
 
 // Daily Financial Status
-app.post('/data/dfstatus', (req, res) => {
+app.post('/data/dfstatus', Auth.isAuthenticated, (req, res) => {
   const data = JSON.parse(req.body.data);
 
   Preferences.set('dfstatus', 'dfstatusProactive', data.dfstatusProactive);
@@ -178,7 +178,7 @@ app.post('/data/dfstatus', (req, res) => {
 });
 
 // News
-app.post('/data/news', (req, res) => {
+app.post('/data/news', Auth.isAuthenticated, (req, res) => {
   const data = JSON.parse(req.body.data);
 
   Preferences.set('news', 'newsProactive', data.newsProactive);
