@@ -23,21 +23,25 @@ class DailyFinancialStatus implements UseCase {
   // }
 
   async* receiveMessage(message: ProcessedTelegramMessage): AsyncGenerator<UseCaseResponse> {
-    if (message) {
-      yield new TextResponse('Here\'s your financial update: ');
-    }
-    this.checkForEvents();
     const allClassicRates = await this.exchangeRates.getCurrentStatus();
     const classicRates = await this.exchangeRates.getCurrencies(allClassicRates);
     const bitcoinRate = await this.coinGecko.getCurrentStatus();
 
-    yield new TextResponse(this.generateTextmessage(classicRates, bitcoinRate));
+    if (message) {
+      yield new TextResponse('Here\'s your financial update: ');
+      yield new TextResponse(this.generateTextmessage(classicRates, bitcoinRate));
+      // this.checkForEvents();
+    } else if (Preferences.get('dfstatus', 'dfstatusCalendarID') === '') { // proactive case
+      yield new TextResponse('No calendar ID specified in dashboard. Cannot check your calendar.');
+    } else {
+      this.checkForEvents();
+    }
 
     yield new EndUseCaseResponse();
   }
 
-  public checkForEvents() {
-    console.log(__dirname);
+  // eslint-disable-next-line class-methods-use-this
+  public async checkForEvents() {
     fs.readFile(path.resolve(__dirname, '../../../credentials.json'), (err, content) => {
       if (err) return console.log('Error loading client secret file:', err);
       // Authorize a client with credentials, then call the Google Calendar API.
@@ -46,24 +50,22 @@ class DailyFinancialStatus implements UseCase {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  public listEvents(auth) {
+  async listEvents(auth) {
     const calendar = gcAuthentication.google.calendar({ version: 'v3', auth });
-    // const calendarID = 'k.sonja1999@gmail.com';
     const calendarID = Preferences.get('dfstatus', 'dfstatusCalendarID');
 
-    const startDate = new Date().getDate();
-    const startMonth = new Date().getMonth();
-    const startYear = new Date().getFullYear();
-    const startHour = 0;
-    const startMinute = 0;
-    console.log(startDate, startMonth, startYear);
+    const startD = new Date().getDate();
+    const startM = new Date().getMonth();
+    const startY = new Date().getFullYear();
+    const startH = 0;
+    const startMin = 0;
+    console.log(startD, startM, startY);
 
     calendar.freebusy.query({
       auth,
       resource: {
-        timeMin: (new Date(startYear, startMonth, startDate, startHour, startMinute)).toISOString(),
-        // eslint-disable-next-line max-len
-        timeMax: (new Date(startYear, startMonth, startDate, startHour + 28, startMinute)).toISOString(),
+        timeMin: (new Date(startY, startM, startD, startH, startMin)).toISOString(),
+        timeMax: (new Date(startY, startM, startD, startH + 28, startMin)).toISOString(),
         items: [{ id: calendarID }],
       },
     })
@@ -75,6 +77,7 @@ class DailyFinancialStatus implements UseCase {
 
         const preferenceTime = Preferences.get('dfstatus', 'dfstatusProactiveTime');
         console.log(preferenceTime);
+        this.proactiveMessageGenerator(preferenceTime);
       //
       // if array is not empty: iterate over elements
       // check if one of its times equals preference time
@@ -95,7 +98,12 @@ class DailyFinancialStatus implements UseCase {
   }
 
   // eslint-disable-next-line class-methods-use-this
+  private async* proactiveMessageGenerator(preferenceTime): AsyncGenerator<UseCaseResponse> {
+    // eslint-disable-next-line no-new
+    yield new TextResponse('Some Text...');
+  }
+
+  // eslint-disable-next-line class-methods-use-this
   reset(): void { }
 }
-
 export default DailyFinancialStatus;
