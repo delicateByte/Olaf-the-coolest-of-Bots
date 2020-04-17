@@ -1,26 +1,13 @@
 /* eslint-disable import/order, import/first, @typescript-eslint/no-unused-vars */
 import * as supertest from 'supertest';
 
-import Preferences from '../core/preferences';
 import app from './preferences-dashboard';
+import Auth from './auth';
 
-// jest.mock('express');
 jest.mock('./auth');
 jest.mock('../core/preferences');
 
-jest.setTimeout(10000);
-
-import Auth from './auth';
-
-const server = app.listen(3001);
-const stopServer = () => server.close();
-
 const request = supertest(app);
-
-afterAll(() => {
-  // Stop server after testing
-  stopServer();
-});
 
 
 test('test / not authorized', async () => {
@@ -41,63 +28,58 @@ test('test /', async () => {
   expect(res.statusCode).toBe(200);
 });
 
-test('test /data/imageoftheday', async () => {
-  // @ts-ignore
-  Preferences.set.mockImplementation(() => undefined);
+describe('test /data/', () => {
+  beforeAll(() => {
+    // @ts-ignore
+    Auth.isAuthenticated.mockImplementation((req, res, next) => next());
+  });
 
-  const res = await request.post('/data/imageoftheday').send({
-    data: JSON.stringify({
-      imageofthedayProactive: 'some_val',
-      imageofthedayProactiveTime: 'some_val',
-      imageofthedayRandom: 'some_val',
-      imageofthedayTags: 'some_val',
-    }),
-  }).type('form');
+  test('imageoftheday', async () => {
+    const res = await request.post('/data/imageoftheday').send({
+      data: JSON.stringify({
+        imageofthedayProactive: 'some_val',
+        imageofthedayProactiveTime: 'some_val',
+        imageofthedayRandom: 'some_val',
+        imageofthedayTags: 'some_val',
+      }),
+    }).type('form');
 
-  expect(res.statusCode).toBe(200);
-});
+    expect(res.statusCode).toBe(200);
+  });
 
-test('test /data/dfstatus', async () => {
-  // @ts-ignore
-  Preferences.set.mockImplementation(() => undefined);
+  test('dfstatus', async () => {
+    const res = await request.post('/data/dfstatus').send({
+      data: JSON.stringify({
+        dfstatusProactive: 'some_val',
+        dfstatusProactiveTime: 'some_val',
+        dfstatusCalendarID: 'some_val',
+      }),
+    }).type('form');
 
-  const res = await request.post('/data/dfstatus').send({
-    data: JSON.stringify({
-      dfstatusProactive: 'some_val',
-      dfstatusProactiveTime: 'some_val',
-      dfstatusCalendarID: 'some_val',
-    }),
-  }).type('form');
+    expect(res.statusCode).toBe(200);
+  });
 
-  expect(res.statusCode).toBe(200);
-});
+  test('news', async () => {
+    const res = await request.post('/data/news').send({
+      data: JSON.stringify({
+        newsProactive: 'some_val',
+        newsProactiveTime: 'some_val',
+        newsKeywords: 'some_val',
+      }),
+    }).type('form');
 
-test('test /data/news', async () => {
-  // @ts-ignore
-  Preferences.set.mockImplementation(() => undefined);
+    expect(res.statusCode).toBe(200);
+  });
 
-  const res = await request.post('/data/news').send({
-    data: JSON.stringify({
-      newsProactive: 'some_val',
-      newsProactiveTime: 'some_val',
-      newsKeywords: 'some_val',
-    }),
-  }).type('form');
+  test('spotify', async () => {
+    const res = await request.post('/data/spotify').send({
+      data: JSON.stringify({
+        spotifyCategory: 'some_val',
+      }),
+    }).type('form');
 
-  expect(res.statusCode).toBe(200);
-});
-
-test('test /data/spotify', async () => {
-  // @ts-ignore
-  Preferences.set.mockImplementation(() => undefined);
-
-  const res = await request.post('/data/spotify').send({
-    data: JSON.stringify({
-      spotifyCategory: 'some_val',
-    }),
-  }).type('form');
-
-  expect(res.statusCode).toBe(200);
+    expect(res.statusCode).toBe(200);
+  });
 });
 
 test('test /login', async () => {

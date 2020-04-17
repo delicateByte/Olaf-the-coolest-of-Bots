@@ -28,15 +28,8 @@ app.use(express.urlencoded({
 app.get('/test', Auth.isAuthenticated, (req, res) => res.sendStatus(200));
 app.get('/login', (req, res) => res.sendStatus(200));
 
-const server = app.listen(3000);
-const stopServer = () => server.close();
-
 const request = supertest(app);
 
-afterAll(() => {
-  // Stop server after testing
-  stopServer();
-});
 
 test('authenticate fails', () => {
   // @ts-ignore
