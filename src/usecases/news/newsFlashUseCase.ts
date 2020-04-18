@@ -14,7 +14,6 @@ import EndUseCaseResponse from '../../classes/EndUseCaseResponse';
 
 
 class NewsFlashUsecase implements UseCase {
-
   readonly name: string;
   readonly triggers: string[];
   state:number;
@@ -25,10 +24,8 @@ class NewsFlashUsecase implements UseCase {
 
   constructor() {
     this.triggers = [];
-    this.name = 'NewsFlash';
-    this.triggers.push('news flash');
-    this.triggers.push('news');
-    this.triggers.push('flash me');
+    this.name = 'news';
+    this.triggers.push('news flash', 'news', 'flash me');
     this.state = 0;
     this.initiateConnector();
   }
@@ -47,8 +44,13 @@ class NewsFlashUsecase implements UseCase {
 
   async formatNewsResponse() {
     let text = '🌐 The News from a News Company 🌐 \n\n';
-    await console.log(typeof this.news.getHeadlines([]));
-    const headlines = await this.news.getHeadlines([]);// Preferences.get('news', 'Newskeywords').split(','));
+    let preferences = await Preferences.get('news', 'newsKeywords');
+    if (preferences === undefined) {
+      preferences = [];
+    } else {
+      preferences = preferences.split(',');
+    }
+    const headlines = await this.news.getHeadlines(preferences);
     headlines.articles.forEach((story, index) => {
       if (index < 9) {
         text = `${text} 🔹${story.title}\n${story.description}\n\n`;
@@ -58,7 +60,7 @@ class NewsFlashUsecase implements UseCase {
   }
 
   async formatCoronaResponse() {
-    let text = '☣ Update on the Pandemic - [GER] ☣ \n\n';
+    let text = '☣ Update on the Pandemic - [GER] ☣\n\n';
     const coronaInfo = await this.corona.getCoronaData();
     text = `${text}Information from:${coronaInfo.record_date}\n Total Cases :${coronaInfo.total_Cases_Ger}\n\n`
         + `Lives Lost:${coronaInfo.total_deaths}\n\n`
@@ -70,7 +72,6 @@ class NewsFlashUsecase implements UseCase {
     let text = '🌧 Your Local Weather -  ☀ \n\n';
     text += await this.weather.getCurrentWeather().then((weatherInfo) => ` Today: ${weatherInfo.weatherDescription.description} with Temperatures from ${weatherInfo.tempretures_from} to ${weatherInfo.tempreatures_up_to}°C`
           + ' \n Still stay Inside!').catch((err) => `An Error has Occurred${err}`);
-
     return new TextResponse(text);
   }
 
@@ -85,7 +86,7 @@ class NewsFlashUsecase implements UseCase {
       });
       textCombination += 'Still stay Inside!';
       return textCombination;
-    }).catch((err) => `An Error has Occurred\n ${err}`);
+    });
     return new TextResponse(text);
   }
 
@@ -100,33 +101,27 @@ class NewsFlashUsecase implements UseCase {
   }
 
   updateWeatherPosition(lon:number, lat :number) {
-    console.log('updating weather');
-
     this.weather.resetLocation(lat, lon);
   }
 
   async* receiveMessage(message: ProcessedTelegramMessage): AsyncGenerator<UseCaseResponse> {
-    if (message === null || message === undefined) {
+    if (message.originalMessage === null || message.originalMessage === undefined) {
       console.log('Cron Job Trigger');
       const messages = await this.prepareNewsFlash();
-      for (let i = 0; i < messages.length; i++) {
+      for (let i = 0; i < messages.length; i += 1) {
         yield messages[i];
       }
     } else if (this.state === 0) {
       yield await this.prepareInitialResponse().then((response) => {
         this.state = 1;
         return response;
-      }).catch((err) => {
-        console.log(err);
-        this.reset();
-        return new TextResponse('An Error has occured. The Use case is restarting, please try again');
       });
     } else if (this.state === 1) {
       this.state = 2;
       if (message.type === TelegramMessageType.LOCATION) {
         await this.updateWeatherPosition(message.longitude, message.latitude);
         const messages = await this.prepareNewsFlash();
-        for (let i = 0; i < messages.length; i++) {
+        for (let i = 0; i < messages.length; i += 1) {
           yield messages[i];
         }
         this.state = 0;
