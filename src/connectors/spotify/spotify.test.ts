@@ -22,8 +22,6 @@ app.use(express.urlencoded({
 
 app.get('/callback', Spotify.callbackRoute);
 
-app.listen(3000);
-
 const request = supertest(app);
 
 test('isAuthorized fails', () => {
