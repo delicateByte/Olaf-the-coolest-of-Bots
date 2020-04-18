@@ -1,5 +1,5 @@
 /* eslint-disable import/first */
-import Entertainment from './entertainment';
+import EntertainmentUsecase from './entertainment';
 import ProcessedTelegramMessage from '../../classes/ProcessedTelegramMessage';
 import EndUseCaseResponse from '../../classes/EndUseCaseResponse';
 import TextResponse from '../../classes/TextResponse';
@@ -15,7 +15,7 @@ jest.mock('../../connectors/spotify/spotify');
 import Spotify from '../../connectors/spotify/spotify';
 
 test('get Meme', async () => {
-  const entertainment = new Entertainment();
+  const entertainment = new EntertainmentUsecase();
 
   const message = new ProcessedTelegramMessage({
     message_id: 42,
@@ -52,7 +52,7 @@ test('get Meme', async () => {
 });
 
 test('get Joke', async () => {
-  const entertainment = new Entertainment();
+  const entertainment = new EntertainmentUsecase();
 
   const message = new ProcessedTelegramMessage({
     message_id: 42,
@@ -85,7 +85,7 @@ test('get Joke', async () => {
 });
 
 test('get Playlist', async () => {
-  const entertainment = new Entertainment();
+  const entertainment = new EntertainmentUsecase();
 
   const message = new ProcessedTelegramMessage({
     message_id: 42,
@@ -123,7 +123,7 @@ test('get Playlist', async () => {
 });
 
 test('get Playlist fails', async () => {
-  const entertainment = new Entertainment();
+  const entertainment = new EntertainmentUsecase();
 
   const message = new ProcessedTelegramMessage({
     message_id: 42,
@@ -156,7 +156,7 @@ test('get Playlist fails', async () => {
 });
 
 test('test reset', () => {
-  const entertainment = new Entertainment();
+  const entertainment = new EntertainmentUsecase();
 
   expect(entertainment.reset()).toBeUndefined();
 });
