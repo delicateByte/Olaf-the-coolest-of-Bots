@@ -105,7 +105,7 @@ class NewsFlashUsecase implements UseCase {
   }
 
   async* receiveMessage(message: ProcessedTelegramMessage): AsyncGenerator<UseCaseResponse> {
-    if (message.originalMessage === null || message.originalMessage === undefined) {
+    if (message === null || message.originalMessage === undefined) {
       console.log('Cron Job Trigger');
       const messages = await this.prepareNewsFlash();
       for (let i = 0; i < messages.length; i += 1) {
