@@ -1,6 +1,4 @@
 import * as dotenv from 'dotenv';
-import { resolve } from 'dns';
-import { rejects } from 'assert';
 dotenv.config();
 
 const googleTranslate = require('google-translate');
@@ -30,7 +28,6 @@ class GoogleTranslatorConnector {
       });
     });
   }
-
 }
 
 export default GoogleTranslatorConnector;

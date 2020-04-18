@@ -5,11 +5,17 @@ dotenv.config();
 
 
 class GoogleKnowledgeBaseConnector {
-	
+	private axios;
 	private knowledgeOptions = {
 		host: 'https://kgsearch.googleapis.com',
 		path: `v1/entities:search?key=${process.env.GOOGLE_KEY}&limit=1&types=City&types=Place`,
 	};
+
+	constructor() {
+    this.axios = axios.create({
+      baseURL: `${this.knowledgeOptions.host}/${this.knowledgeOptions.path}&query=`,
+    });
+  }
 
 
 	async getLocationDescription(city : string) : Promise<string> {
@@ -17,7 +23,7 @@ class GoogleKnowledgeBaseConnector {
 		// use google knowledge base to get short description of location
 		let response : any;
 		try {
-			response = await axios.get(`${this.knowledgeOptions.host}/${this.knowledgeOptions.path}&query=${city}`);
+			response = await this.axios.get(city)
 		} catch (error) {
 			console.error(error);
 			return null;
