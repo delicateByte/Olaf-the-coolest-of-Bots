@@ -1,6 +1,13 @@
 import { LocalStorage } from 'node-localstorage';
+import { EventEmitter } from 'events';
+import * as fs from 'fs';
+
+if (!fs.existsSync('./localstorage')) {
+  fs.mkdirSync(('./localstorage'));
+}
 
 const localStorage = new LocalStorage('./localstorage/settings');
+const eventEmitter = new EventEmitter();
 
 class Preferences {
   private static readonly defaults: Array<[string, string, any]> = [
@@ -8,6 +15,14 @@ class Preferences {
     ['imageoftheday', 'imageofthedayProactiveTime', '08:00'],
     ['imageoftheday', 'imageofthedayRandom', true],
     ['imageoftheday', 'imageofthedayTags', ''],
+    ['redditMemes', 'redditMemesSubName', 'r/memes'],
+    ['spotify', 'spotifyCategory', 'party'],
+    ['dfstatus', 'dfstatusProactive', false],
+    ['dfstatus', 'dfstatusProactiveTime', '08:00'],
+    ['dfstatus', 'dfstatusCalendarID', ''],
+    ['news', 'newsProactive', false],
+    ['news', 'newsProactiveTime', '08:00'],
+    ['news', 'newsKeywords', ''],
   ];
 
   static initialize(): void {
@@ -44,6 +59,11 @@ class Preferences {
 
     serviceObject[property] = value;
     localStorage.setItem(service, JSON.stringify(serviceObject));
+    eventEmitter.emit('changed', service, property);
+  }
+
+  static events(): EventEmitter {
+    return eventEmitter;
   }
 }
 export default Preferences;

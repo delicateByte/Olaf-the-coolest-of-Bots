@@ -29,5 +29,11 @@ class MessageRouter {
 
     throw new Error('Invalid use case');
   }
+
+  findUseCaseByName(name: string): UseCase {
+    // Remove spaces and convert to lower case
+    const unify = (t: string) => t.replace(/\s/g, '').toLowerCase();
+    return this.useCases.find((useCase) => unify(useCase.name) === unify(name)) || null;
+  }
 }
 export default MessageRouter;
