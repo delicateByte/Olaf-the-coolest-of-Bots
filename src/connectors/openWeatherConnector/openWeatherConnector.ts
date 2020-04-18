@@ -32,11 +32,11 @@ class OpenWeatherConnector {
       },
 
     }).then((weatherResponse) => weatherResponse).catch((err) => { console.log(err); throw err; });
-    return this.extractRelevantInformation(openWeatherAPIResponse.data);
+    return OpenWeatherConnector.extractRelevantInformation(openWeatherAPIResponse.data);
   }
 
-  extractRelevantInformation(weatherData:any) {
-    const a = {
+  static extractRelevantInformation(weatherData:any) {
+    return {
       position: weatherData.coord,
       tempretures_from: weatherData.main.temp_min,
       tempreatures_up_to: weatherData.main.temp_max,
@@ -46,7 +46,6 @@ class OpenWeatherConnector {
       },
 
     };
-    return a;
   }
 }
 export default OpenWeatherConnector;

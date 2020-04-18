@@ -22,11 +22,9 @@ class NewsApiConnector {
           country: 'de',
           category: 'politics',
         },
-      }).then((axiosResponse) => {
-        return axiosResponse.data;
-      }).catch((err) => {
+      }).then((axiosResponse) => axiosResponse.data).catch((err) => {
         console.log(err);
-        return Promise.reject({ articles: [{ title: 'ERROR IN TRANSMISSION' }] });
+        return Promise.resolve({ articles: [{ title: 'ERROR IN TRANSMISSION' }] });
       });
     }
     return this.axiosNewsInstance.get('/top-headlines', {
@@ -36,7 +34,7 @@ class NewsApiConnector {
       },
     }).then((axiosResponse) => axiosResponse.data).catch((err) => {
       console.log(err);
-      return Promise.reject({ articles: [{ title: 'ERROR IN TRANSMISSION' }] });
+      return Promise.resolve({ articles: [{ title: 'ERROR IN TRANSMISSION' }] });
     });
   }
 }
