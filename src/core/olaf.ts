@@ -14,7 +14,7 @@ import Preferences from './preferences';
 
 import Entertainment from '../usecases/entertainment/entertainment';
 import ImageofthedayUsecase from '../usecases/imageoftheday/imageofthedayUsecase';
-import NewsFlashUsecase from "../usecases/news/newsFlashUseCase";
+import NewsFlashUsecase from '../usecases/news/newsFlashUseCase';
 
 
 class Olaf {
@@ -27,6 +27,7 @@ class Olaf {
   // TODO register all proactive use cases here
   private proactiveJobs: { [key: string]: CronJob } = {
     imageoftheday: null,
+    news: null,
   };
 
   constructor() {
@@ -41,7 +42,6 @@ class Olaf {
     this.messageRouter.registerUseCase(new Entertainment());
     this.messageRouter.registerUseCase(new ImageofthedayUsecase());
     this.messageRouter.registerUseCase(new NewsFlashUsecase());
-
   }
 
   start() {
