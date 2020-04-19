@@ -7,8 +7,7 @@ jest.mock('axios');
 const mockResponse = {
   status: 200,
   statusText: 'OK',
-  headers: {
-  },
+  headers: {},
   itemListElement: [
     {
       resultScore: 14028.6689453125,
@@ -29,6 +28,8 @@ const mockResponse = {
     }
   ]
 }
+
+process.env.GOOGLE_KEY = null;
 
 
 function getMockConnector(response) {

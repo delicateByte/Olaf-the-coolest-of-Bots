@@ -9,7 +9,7 @@ import ProcessedTelegramMessage from "../../classes/ProcessedTelegramMessage"
 import EmergencyNumbersConnector from "../../connectors/emergencyNumbers/emergencyNumbersConnector";
 import GoogleKnowledgeBaseConnector from "../../connectors/googleKnowledgeBase/googleKnowledgeBaseConnector";
 import EndUseCaseResponse from "../../classes/EndUseCaseResponse";
-import GoogleTranslatorConnector from "../../connectors/googleTranslatorConnector/googleTranslatorConnector";
+import GoogleTranslatorConnector from "../../connectors/googleTranslator/googleTranslatorConnector";
 
 
 class TranslatorUsecase implements UseCase {
@@ -33,6 +33,11 @@ class TranslatorUsecase implements UseCase {
 
 
   async* receiveMessage(message: ProcessedTelegramMessage): AsyncGenerator<UseCaseResponse, any, unknown> {
+    if (!('GOOGLE_KEY' in process.env)) {
+      throw new Error('Missing API key for Google');
+    }
+
+
     if (message.originalMessage.location) {
       const locationInfo = await this.googleGeocoderConnector.getLocationName(message.latitude, message.longitude);
       const city : string = locationInfo[0];

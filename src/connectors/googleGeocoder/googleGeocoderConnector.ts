@@ -1,12 +1,10 @@
 import * as dotenv from 'dotenv';
-dotenv.config();
+//dotenv.config();
 
-const NodeGeocoder = require('node-geocoder');
-
-
+import * as NodeGeocoder from 'node-geocoder';
 
 class GoogleGeocoderConnector {
-	private geocoder;
+	geocoder;
 	
 	private geocoderOptions = {
 		provider: 'google',
@@ -19,25 +17,33 @@ class GoogleGeocoderConnector {
 
 
   constructor() {
-    this.geocoder = NodeGeocoder(this.geocoderOptions);
-  }
+			this.geocoder = NodeGeocoder(this.geocoderOptions);
+	}
+	
 
 	/**
 	 * Gets the city name, country and country code of a location
 	 * @param location The location (latitude, longitude) that needs to be translated into text.
 	 */
   async getLocationName(latitude : Number, longitude : Number): Promise<string[]> {
-		
-		let response : string[] = ['', '', ''];
-
+		let locationName = ['', '', ''];
 		await this.geocoder.reverse({ lat: latitude, lon: longitude }, (err, resLocation) => {
-			response[0] = resLocation[0].city;
-			response[1] = resLocation[0].country;
-			response[2] = resLocation[0].countryCode;
+			locationName = this.formatResponse(resLocation);
 		});
+    return locationName;
+	}
 
-    return response;
-  }
+	formatResponse(response) : string[] {
+		let locationName = ['', '', ''];
+		locationName[0] = response[0].city;
+		locationName[1] = response[0].country;
+		locationName[2] = response[0].countryCode;
+		return locationName;
+	}
+	
+	getGeocoderOptions() : {} {
+		return this.geocoderOptions;
+	}
 }
 
 export default GoogleGeocoderConnector;
