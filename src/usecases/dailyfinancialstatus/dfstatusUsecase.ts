@@ -20,10 +20,12 @@ class DailyFinancialStatus implements UseCase {
   private coinGeckoPath = '/simple/price?ids=bitcoin&vs_currencies=eur';
   private classicRates;
   private bitcoinRate;
+  private requiredCurrencies;
   private timeZoneOffsetHours;
 
   constructor() {
     this.timeZoneOffsetHours = new Date().getTimezoneOffset() / 60; // -2
+    this.requiredCurrencies = this.exchangeRates.currencies;
   }
 
   async* receiveMessage(message: ProcessedTelegramMessage): AsyncGenerator<UseCaseResponse> {
@@ -34,7 +36,7 @@ class DailyFinancialStatus implements UseCase {
     if (message) {
       yield new TextResponse('Here\'s your financial update: ');
       yield new TextResponse(this.generateTextmessage(
-        this.classicRates, this.bitcoinRate, this.exchangeRates.currencies,
+        this.classicRates, this.bitcoinRate, this.requiredCurrencies,
       ));
     } else if (Preferences.get('dfstatus', 'dfstatusCalendarID') === '') { // proactive case
       yield new TextResponse('No calendar ID specified in dashboard. Cannot check your calendar.');

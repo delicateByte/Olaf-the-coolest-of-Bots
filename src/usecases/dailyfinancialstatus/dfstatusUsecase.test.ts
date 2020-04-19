@@ -71,8 +71,20 @@ test('receiving a telegram message', async () => {
   'EUR',
   '2020-04-04'));
   coingeckoGetCurrentStatus.mockReturnValueOnce(new CoingeckoResponse('1234'));
+  jest.spyOn(dfStatus, 'generateTextmessage').mockReturnValue('A message');
 
   expect((await responses.next()).value).toEqual(new TextResponse('Here\'s your financial update: '));
+  expect((await responses.next()).value).toEqual(new TextResponse('A message'));
+  expect((await responses.next()).value).toEqual(new EndUseCaseResponse());
+});
+
+test('proactive execution without calendar ID', async () => {
+  const dfStatus = new DailyFinancialStatus();
+  const responses = await dfStatus.receiveMessage(null);
+  // @ts-ignore
+  Preferences.get.mockReturnValueOnce('');
+
+  expect((await responses.next()).value).toEqual(new TextResponse('No calendar ID specified in dashboard. Cannot check your calendar.'));
 });
 
 test('create a text message', () => {
@@ -87,4 +99,8 @@ test('create a text message', () => {
     eur: 1234,
   }, ['CHF', 'JPY', 'GBP', 'USD']);
   expect(actual).toEqual(expected);
+});
+
+test('reset', () => {
+  expect(new DailyFinancialStatus().reset()).toBeUndefined();
 });
