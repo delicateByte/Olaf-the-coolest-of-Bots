@@ -1,5 +1,10 @@
 import { LocalStorage } from 'node-localstorage';
 import { EventEmitter } from 'events';
+import * as fs from 'fs';
+
+if (!fs.existsSync('./localstorage')) {
+  fs.mkdirSync(('./localstorage'));
+}
 
 const localStorage = new LocalStorage('./localstorage/settings');
 const eventEmitter = new EventEmitter();

@@ -8,8 +8,8 @@ import TextResponse from '../../classes/TextResponse';
 import ImageResponse from '../../classes/ImageResponse';
 import EndUseCaseResponse from '../../classes/EndUseCaseResponse';
 
-export default class Entertainment implements UseCase {
-  name = '';
+export default class EntertainmentUsecase implements UseCase {
+  name: string = 'Entertainment';
   triggers: string[] = [
     'meme',
     'joke', 'chuck norris',
