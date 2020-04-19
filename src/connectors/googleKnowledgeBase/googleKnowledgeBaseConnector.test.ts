@@ -5,9 +5,6 @@ jest.mock('axios');
 
 
 const mockResponse = {
-  status: 200,
-  statusText: 'OK',
-  headers: {},
   itemListElement: [
     {
       resultScore: 14028.6689453125,
