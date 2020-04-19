@@ -1,7 +1,7 @@
 /* eslint-disable array-callback-return */
 /* eslint-disable consistent-return */
 //
-// code provided by tutorial:
+// CODE PROVIDED BY GOOGLE:
 // https://developers.google.com/calendar/quickstart/nodejs
 
 const fs = require('fs');

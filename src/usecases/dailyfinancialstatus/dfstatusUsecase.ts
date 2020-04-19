@@ -33,7 +33,9 @@ class DailyFinancialStatus implements UseCase {
 
     if (message) {
       yield new TextResponse('Here\'s your financial update: ');
-      yield new TextResponse(this.generateTextmessage(this.classicRates, this.bitcoinRate));
+      yield new TextResponse(this.generateTextmessage(
+        this.classicRates, this.bitcoinRate, this.exchangeRates.currencies,
+      ));
     } else if (Preferences.get('dfstatus', 'dfstatusCalendarID') === '') { // proactive case
       yield new TextResponse('No calendar ID specified in dashboard. Cannot check your calendar.');
     } else {
@@ -101,18 +103,24 @@ class DailyFinancialStatus implements UseCase {
         }
       });
       if (isFree) {
-        yield new TextResponse(this.generateTextmessage(this.classicRates, this.bitcoinRate));
+        yield new TextResponse(this.generateTextmessage(
+          this.classicRates, this.bitcoinRate, this.exchangeRates.currencies,
+        ));
       }
     } else {
-      yield new TextResponse(this.generateTextmessage(this.classicRates, this.bitcoinRate));
+      yield new TextResponse(this.generateTextmessage(
+        this.classicRates, this.bitcoinRate, this.exchangeRates.currencies,
+      ));
     }
   }
 
-  private generateTextmessage(classicRates, bitcoinRate): string {
+  // eslint-disable-next-line class-methods-use-this
+  generateTextmessage(classicRates, bitcoinRate, requiredCurrencies): string {
     const money = String.fromCodePoint(0x1F4B8);
     let text = '';
-    text += 'Exhange rates for EUR are:\n\n';
-    this.exchangeRates.currencies.forEach((key) => {
+    text += 'Exchange rates for EUR are:\n\n';
+    // this.exchangeRates.currencies.forEach((key) => {
+    requiredCurrencies.forEach((key) => {
       text += `${money}  ${key}: ${classicRates[key]}\n`;
     });
     text += `\nBitcoin's current value: ${bitcoinRate.eur}€  ${money}`;
