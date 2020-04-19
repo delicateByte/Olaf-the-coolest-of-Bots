@@ -28,7 +28,7 @@ class DailyFinancialStatus implements UseCase {
 
   async* receiveMessage(message: ProcessedTelegramMessage): AsyncGenerator<UseCaseResponse> {
     const allClassicRates = await this.exchangeRates.getCurrentStatus();
-    this.classicRates = await this.exchangeRates.getCurrencies(allClassicRates);
+    this.classicRates = this.exchangeRates.getCurrencies(allClassicRates);
     this.bitcoinRate = await this.coinGecko.getCurrentStatus(this.coinGeckoPath);
 
     if (message) {

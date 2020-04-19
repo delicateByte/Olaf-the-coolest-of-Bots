@@ -20,7 +20,7 @@ class ExchangeratesConnector {
     );
   }
 
-  async getCurrencies(allCurrencies: ExchangeratesResponse) {
+  getCurrencies(allCurrencies: ExchangeratesResponse) {
     const result = {};
     Object.keys(allCurrencies.rates).forEach((key) => {
       if (this.currencies.includes(key)) {
