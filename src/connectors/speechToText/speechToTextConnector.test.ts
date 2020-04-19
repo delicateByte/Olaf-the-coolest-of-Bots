@@ -11,8 +11,8 @@ jest.mock('ibm-watson/auth');
 test('connector creation', () => {
   process.env.SPEECH_TO_TEXT_APIKEY = 'sst-key';
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const connector = new SpeechToTextConnector();
+  // eslint-disable-next-line no-new
+  new SpeechToTextConnector();
 
   expect(IamAuthenticator).toHaveBeenCalledWith({ apikey: 'sst-key' });
   expect(SpeechToTextV1).toHaveBeenCalled();
