@@ -7,12 +7,10 @@ import EndUseCaseResponse from '../../classes/EndUseCaseResponse';
 import ProcessedTelegramMessage from '../../classes/ProcessedTelegramMessage';
 import ExchangeRatesConnector from '../../connectors/exchangerates/exchangeratesConnector';
 import CoinGeckoConnector from '../../connectors/coingecko/coingeckoConnector';
-import GoogleAuthentication from '../../connectors/googleCalendar/googleCalendarAuthenticationRe';
 
-const fs = require('fs');
+const fs = require('fs').promises;
 const path = require('path');
-// const gcAuthentication = require('../../connectors/googleCalendar/googleCalendarAuthentication.ts');
-// const gcAuth = require('../../connectors/googleCalendar/googleCalendarAuthenticationRe.ts');
+const gcAuthentication = require('../../connectors/googleCalendar/googleCalendarAuthentication.ts');
 
 class DailyFinancialStatus implements UseCase {
   name = 'dfstatus';
@@ -20,111 +18,78 @@ class DailyFinancialStatus implements UseCase {
 
   private exchangeRates = new ExchangeRatesConnector();
   private coinGecko = new CoinGeckoConnector();
-  private gcAuth;
-  private oAuth;
-  private credentials;
+  private classicRates;
+  private bitcoinRate;
+  private timeZoneOffsetHours;
 
   constructor() {
-    this.gcAuth = new GoogleAuthentication();
+    this.timeZoneOffsetHours = new Date().getTimezoneOffset() / 60; // -2
   }
 
   async* receiveMessage(message: ProcessedTelegramMessage): AsyncGenerator<UseCaseResponse> {
-    this.credentials = await this.gcAuth.getCredentials();
-    console.log(this.credentials);
-    this.oAuth = await this.gcAuth.authorize(this.credentials);
-
     const allClassicRates = await this.exchangeRates.getCurrentStatus();
-    const classicRates = await this.exchangeRates.getCurrencies(allClassicRates);
-    const bitcoinRate = await this.coinGecko.getCurrentStatus();
+    this.classicRates = await this.exchangeRates.getCurrencies(allClassicRates);
+    this.bitcoinRate = await this.coinGecko.getCurrentStatus();
 
     if (message) {
       yield new TextResponse('Here\'s your financial update: ');
-      yield new TextResponse(this.generateTextmessage(classicRates, bitcoinRate));
-      // this.checkForEvents();
+      yield new TextResponse(this.generateTextmessage(this.classicRates, this.bitcoinRate));
     } else if (Preferences.get('dfstatus', 'dfstatusCalendarID') === '') { // proactive case
       yield new TextResponse('No calendar ID specified in dashboard. Cannot check your calendar.');
     } else {
-      fs.readFile(path.resolve(__dirname, '../../../credentials.json'), (err, content) => {
-        if (err) return console.log('Error loading client secret file:', err);
-        // Authorize a client with credentials, then call the Google Calendar API.
-        const credentials = JSON.parse(content);
-        // const authClient = await gcAuth.auth(credentials);
-        // const calendar = gcAuth.google.calendar({ version: 'v3', authClient });
-        // const calendarID = Preferences.get('dfstatus', 'dfstatusCalendarID');
-
-        // const startD = new Date().getDate();
-        // const startM = new Date().getMonth();
-        // const startY = new Date().getFullYear();
-        // const startH = 0;
-        // const startMin = 0;
-        // console.log(startD, startM, startY);
-
-        // calendar.freebusy.query({
-        //   authClient,
-        //   resource: {
-        //     timeMin: (new Date(startY, startM, startD, startH, startMin)).toISOString(),
-        //     timeMax: (new Date(startY, startM, startD, startH + 28, startMin)).toISOString(),
-        //     items: [{ id: calendarID }],
-        //   },
-        // })
-        //   .then((answer) => {
-        //     const busyEvents = answer.data.calendars[calendarID].busy;
-        //     // busy object is empty if there are no appointments or only all-day events
-        //     console.log(answer.data);
-        //     console.log(busyEvents);
-        //   });
-      });
+      yield* this.checkForEvents();
     }
     yield new EndUseCaseResponse();
   }
 
-  // eslint-disable-next-line class-methods-use-this
-  // public async checkForEvents() {
-  //   fs.readFile(path.resolve(__dirname, '../../../credentials.json'), (err, content) => {
-  //     if (err) return console.log('Error loading client secret file:', err);
-  //     // Authorize a client with credentials, then call the Google Calendar API.
-  //     gcAuthentication.authorize(JSON.parse(content), this.listEvents);
-  //   });
-  // }
+  public async* checkForEvents() {
+    try {
+      const content = await fs.readFile(path.resolve(__dirname, '../../../credentials.json'));
+      // Authorize a client with credentials, then call the Google Calendar API.
+      const auth = await new Promise(((resolve) => {
+        gcAuthentication.authorize(JSON.parse(content), (res) => resolve(res));
+      }));
+      yield* this.listEvents(auth);
+    } catch (err) {
+      console.log('Error loading client secret file:', err);
+    }
+  }
 
   // eslint-disable-next-line class-methods-use-this
-  // async listEvents(auth) {
-  //   const calendar = gcAuthentication.google.calendar({ version: 'v3', auth });
-  //   const calendarID = Preferences.get('dfstatus', 'dfstatusCalendarID');
+  async* listEvents(auth) {
+    const calendar = gcAuthentication.google.calendar({ version: 'v3', auth });
+    const calendarID = Preferences.get('dfstatus', 'dfstatusCalendarID');
+    if (calendarID === '') {
+      yield new TextResponse('No calender ID specified, cannot check appointments.');
+    } else {
+      const startD = new Date().getDate();
+      const startM = new Date().getMonth();
+      const startY = new Date().getFullYear();
+      const startH = 0 - this.timeZoneOffsetHours;
+      const startMin = 0;
 
-  //   const startD = new Date().getDate();
-  //   const startM = new Date().getMonth();
-  //   const startY = new Date().getFullYear();
-  //   const startH = 0;
-  //   const startMin = 0;
-  //   console.log(startD, startM, startY);
+      const answer = await calendar.freebusy.query({
+        auth,
+        resource: {
+          timeMin: (new Date(startY, startM, startD, startH, startMin)).toISOString(),
+          timeMax: (new Date(startY, startM, startD, startH + 24, startMin)).toISOString(),
+          items: [{ id: calendarID }],
+        },
+      });
+      const busyEvents = answer.data.calendars[calendarID].busy;
+      // busy object is empty if there are no appointments or only all-day events
+      console.log(answer.data);
+      console.log(busyEvents);
+      yield* this.proactiveMessageGenerator(busyEvents);
+    }
 
-  //   calendar.freebusy.query({
-  //     auth,
-  //     resource: {
-  //       timeMin: (new Date(startY, startM, startD, startH, startMin)).toISOString(),
-  //       timeMax: (new Date(startY, startM, startD, startH + 28, startMin)).toISOString(),
-  //       items: [{ id: calendarID }],
-  //     },
-  //   })
-  //     .then((answer) => {
-  //       const busyEvents = answer.data.calendars[calendarID].busy;
-  //       // busy object is empty if there are no appointments or only all-day events
-  //       console.log(answer.data);
-  //       console.log(busyEvents);
 
-  //       const preferenceTime = Preferences.get('dfstatus', 'dfstatusProactiveTime');
-  //       console.log(preferenceTime);
-  //       // const final = new TextResponse('some other text...');
-  //       // const message = this.proactiveMessageGenerator();
-  //       // message.next();
-  //     //
-  //     // if array is not empty: iterate over elements
-  //     // check if one of its times equals preference time
-  //     // if so, check for the events end time
-  //     // abort use case and don't send message if there is a collision to an appointment
-  //     });
-  // }
+    //
+    // if array is not empty: iterate over elements
+    // check if one of its times equals preference time
+    // if so, check for the events end time
+    // abort use case and don't send message if there is a collision to an appointment
+  }
 
   private generateTextmessage(classicRates, bitcoinRate): string {
     const money = String.fromCodePoint(0x1F4B8);
@@ -138,9 +103,33 @@ class DailyFinancialStatus implements UseCase {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  async* proactiveMessageGenerator(): AsyncGenerator<UseCaseResponse> {
-    // eslint-disable-next-line no-new
-    yield new TextResponse('Some Text...');
+  private async* proactiveMessageGenerator(busyEvents): AsyncGenerator<UseCaseResponse> {
+    if (busyEvents.length > 0) {
+      let isFree = true;
+      const preferenceTime = Preferences.get('dfstatus', 'dfstatusProactiveTime');
+      busyEvents.forEach((event) => {
+        const date = new Date();
+        const start = new Date(date.getTime());
+        start.setHours(event.start.split(':')[0].slice(-2) - 2 * this.timeZoneOffsetHours);
+        start.setMinutes(event.start.split(':')[1]);
+        const end = new Date(date.getTime());
+        end.setHours(event.end.split(':')[0].slice(-2) - 2 * this.timeZoneOffsetHours);
+        end.setMinutes(event.end.split(':')[1]);
+        const preferenceDate = new Date();
+        preferenceDate.setHours(preferenceTime.split(':')[0] - this.timeZoneOffsetHours);
+        preferenceDate.setMinutes(preferenceTime.split(':')[1]);
+        console.log(start, end, preferenceDate);
+        if (start < preferenceDate && end > preferenceDate) {
+          console.log('Not free...');
+          isFree = false; // don't send text message if there is an appointment
+        }
+      });
+      if (isFree) {
+        yield new TextResponse(this.generateTextmessage(this.classicRates, this.bitcoinRate));
+      }
+    } else {
+      yield new TextResponse(this.generateTextmessage(this.classicRates, this.bitcoinRate));
+    }
   }
 
   // eslint-disable-next-line class-methods-use-this
