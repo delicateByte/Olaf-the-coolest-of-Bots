@@ -37,26 +37,25 @@ class DailyFinancialStatus implements UseCase {
     } else if (Preferences.get('dfstatus', 'dfstatusCalendarID') === '') { // proactive case
       yield new TextResponse('No calendar ID specified in dashboard. Cannot check your calendar.');
     } else {
-      yield* this.checkForEvents();
+      yield* this.authorizeClient();
     }
     yield new EndUseCaseResponse();
   }
 
-  public async* checkForEvents() {
+  public async* authorizeClient() {
     try {
-      const content = await fs.readFile(path.resolve(__dirname, '../../../credentials.json'));
       // Authorize a client with credentials, then call the Google Calendar API.
+      const content = await fs.readFile(path.resolve(__dirname, '../../../credentials.json'));
       const auth = await new Promise(((resolve) => {
         gcAuthentication.authorize(JSON.parse(content), (res) => resolve(res));
       }));
-      yield* this.listEvents(auth);
+      yield* this.retrieveEvents(auth);
     } catch (err) {
       console.log('Error loading client secret file:', err);
     }
   }
 
-  // eslint-disable-next-line class-methods-use-this
-  async* listEvents(auth) {
+  async* retrieveEvents(auth) {
     const calendar = gcAuthentication.google.calendar({ version: 'v3', auth });
     const calendarID = Preferences.get('dfstatus', 'dfstatusCalendarID');
     if (calendarID === '') {
@@ -76,34 +75,13 @@ class DailyFinancialStatus implements UseCase {
           items: [{ id: calendarID }],
         },
       });
+      // busyEvents do not consider time zone - still UTC!
       const busyEvents = answer.data.calendars[calendarID].busy;
-      // busy object is empty if there are no appointments or only all-day events
-      console.log(answer.data);
-      console.log(busyEvents);
-      yield* this.proactiveMessageGenerator(busyEvents);
+      yield* this.checkAppointmentTimes(busyEvents);
     }
-
-
-    //
-    // if array is not empty: iterate over elements
-    // check if one of its times equals preference time
-    // if so, check for the events end time
-    // abort use case and don't send message if there is a collision to an appointment
   }
 
-  private generateTextmessage(classicRates, bitcoinRate): string {
-    const money = String.fromCodePoint(0x1F4B8);
-    let text = '';
-    text += 'Exhange rates for EUR are:\n\n';
-    this.exchangeRates.currencies.forEach((key) => {
-      text += `${money}  ${key}: ${classicRates[key]}\n`;
-    });
-    text += `\nBitcoin's current value: ${bitcoinRate.eur}€  ${money}`;
-    return text;
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  private async* proactiveMessageGenerator(busyEvents): AsyncGenerator<UseCaseResponse> {
+  private async* checkAppointmentTimes(busyEvents): AsyncGenerator<UseCaseResponse> {
     if (busyEvents.length > 0) {
       let isFree = true;
       const preferenceTime = Preferences.get('dfstatus', 'dfstatusProactiveTime');
@@ -118,9 +96,7 @@ class DailyFinancialStatus implements UseCase {
         const preferenceDate = new Date();
         preferenceDate.setHours(preferenceTime.split(':')[0] - this.timeZoneOffsetHours);
         preferenceDate.setMinutes(preferenceTime.split(':')[1]);
-        console.log(start, end, preferenceDate);
         if (start < preferenceDate && end > preferenceDate) {
-          console.log('Not free...');
           isFree = false; // don't send text message if there is an appointment
         }
       });
@@ -130,6 +106,17 @@ class DailyFinancialStatus implements UseCase {
     } else {
       yield new TextResponse(this.generateTextmessage(this.classicRates, this.bitcoinRate));
     }
+  }
+
+  private generateTextmessage(classicRates, bitcoinRate): string {
+    const money = String.fromCodePoint(0x1F4B8);
+    let text = '';
+    text += 'Exhange rates for EUR are:\n\n';
+    this.exchangeRates.currencies.forEach((key) => {
+      text += `${money}  ${key}: ${classicRates[key]}\n`;
+    });
+    text += `\nBitcoin's current value: ${bitcoinRate.eur}€  ${money}`;
+    return text;
   }
 
   // eslint-disable-next-line class-methods-use-this
