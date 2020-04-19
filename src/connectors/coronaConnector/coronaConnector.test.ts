@@ -48,4 +48,3 @@ test('if formatting of Response is working', async () => {
 test('if getting Corona data is working', async () => {
   expect(getMockConnector(mockResponseAxios).getCoronaData()).resolves.toEqual(mockformated);
 });
-

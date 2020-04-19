@@ -16,15 +16,15 @@ const mockResponse = {
         detailedDescription: {
           license: 'https://en.wikipedia.org/wiki/Wikipedia:Text_of_Creative_Commons_Attribution-ShareAlike_3.0_Unported_License',
           url: 'https://en.wikipedia.org/wiki/Paris',
-          articleBody: 'Paris is the capital and most populous city of France, with a population of 2,148,271 residents in an area of 105 square kilometres. '
+          articleBody: 'Paris is the capital and most populous city of France, with a population of 2,148,271 residents in an area of 105 square kilometres. ',
         },
         url: 'http://www.paris.fr',
         '@id': 'kg:/m/05qtj',
-        image: [Object]
-      }
-    }
-  ]
-}
+        image: [Object],
+      },
+    },
+  ],
+};
 
 process.env.GOOGLE_KEY = null;
 
@@ -41,6 +41,6 @@ function getMockConnector(response) {
 test('Get location info from exemplary city name', async () => {
   expect(getMockConnector(mockResponse).getLocationDescription('Paris')).resolves.toEqual(
     'Paris is the capital and most populous city of France, with a population of'
-    + ' 2,148,271 residents in an area of 105 square kilometres. '
+    + ' 2,148,271 residents in an area of 105 square kilometres. ',
   );
 });

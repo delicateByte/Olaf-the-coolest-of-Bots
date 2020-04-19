@@ -1,4 +1,5 @@
 import GoogleGeocoderConnector from './googleGeocoderConnector';
+
 const NodeGeocoder = require('node-geocoder');
 
 process.env.GOOGLE_KEY = null;
@@ -10,7 +11,7 @@ const geocoderOptions = {
   httpAdapter: 'https', // Default
   apiKey: process.env.GOOGLE_KEY, // for Mapquest, OpenCage, Google Premier
   formatter: null, // 'gpx', 'string', ...
-}
+};
 
 
 const mockResponse = [
@@ -18,10 +19,10 @@ const mockResponse = [
     city: 'Sindelfingen',
     country: 'Germany',
     countryCode: 'DE',
-  }
+  },
 ];
 
-test('Get geocoder options', () => {  
+test('Get geocoder options', () => {
   const actual = new GoogleGeocoderConnector().getGeocoderOptions();
   expect(actual).toEqual(geocoderOptions);
 });
@@ -34,10 +35,6 @@ test('Check if initializing the geocoder works', () => {
 
 test('Check if response formatting works', () => {
   const expected = ['Sindelfingen', 'Germany', 'DE'];
-  const actual = new GoogleGeocoderConnector().formatResponse(mockResponse);
+  const actual = GoogleGeocoderConnector.formatResponse(mockResponse);
   expect(actual).toEqual(expected);
-})
-
-
-
-
+});

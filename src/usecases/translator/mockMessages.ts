@@ -1,4 +1,4 @@
-import { Message } from "node-telegram-bot-api"
+import { Message } from 'node-telegram-bot-api';
 
 const mockLocation : Message = {
   message_id: 378,
@@ -7,17 +7,17 @@ const mockLocation : Message = {
     is_bot: false,
     first_name: 'Michael',
     last_name: 'Müller',
-    language_code: 'en'
+    language_code: 'en',
   },
   chat: {
     id: 741235876,
     first_name: 'Michael',
     last_name: 'Müller',
-    type: 'private'
+    type: 'private',
   },
   date: 1587221585,
-  location: { latitude: 48.8698679, longitude: 2.3072976 }  // <- Paris
-}
+  location: { latitude: 48.8698679, longitude: 2.3072976 }, // <- Paris
+};
 
 const mockText : Message = {
   message_id: 386,
@@ -26,17 +26,17 @@ const mockText : Message = {
     is_bot: false,
     first_name: 'Michael',
     last_name: 'Müller',
-    language_code: 'en'
+    language_code: 'en',
   },
   chat: {
     id: 741235876,
     first_name: 'Michael',
     last_name: 'Müller',
-    type: 'private'
+    type: 'private',
   },
   date: 1587222617,
-  text: 'Hello, how are you?'
-}
+  text: 'Hello, how are you?',
+};
 
 exports.location = mockLocation;
-exports.text = mockText
+exports.text = mockText;

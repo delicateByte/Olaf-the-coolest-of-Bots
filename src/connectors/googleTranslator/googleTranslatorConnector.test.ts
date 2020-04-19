@@ -1,22 +1,22 @@
-import GoogleTranslatorConnector from './googleTranslatorConnector';
 import axios from 'axios';
+import GoogleTranslatorConnector from './googleTranslatorConnector';
 
 
 jest.mock('axios');
 
 
 const mockResponse = {
-  data: { 
-    data: { 
+  data: {
+    data: {
       translations: [
         {
           translatedText: "Hallo wie geht's dir?",
-          detectedSourceLanguage: 'en'
-        }
-      ] 
-    } 
-  }
-}
+          detectedSourceLanguage: 'en',
+        },
+      ],
+    },
+  },
+};
 
 process.env.GOOGLE_KEY = null;
 
@@ -29,7 +29,7 @@ function getMockConnector(response) {
   return new GoogleTranslatorConnector();
 }
 
-test('translate exemplary english text to german', async() => {
-  expect(getMockConnector(mockResponse).translate("Hello, how are you?", "de"))
-        .resolves.toEqual("Hallo wie geht's dir?");
-})
+test('translate exemplary english text to german', async () => {
+  expect(getMockConnector(mockResponse).translate('Hello, how are you?', 'de'))
+    .resolves.toEqual("Hallo wie geht's dir?");
+});
