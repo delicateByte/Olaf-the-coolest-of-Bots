@@ -1,4 +1,3 @@
-/* eslint-disable consistent-return */
 import UseCase from '../../interfaces/useCase';
 import UseCaseResponse from '../../classes/UseCaseResponse';
 import TextResponse from '../../classes/TextResponse';
@@ -18,6 +17,7 @@ class DailyFinancialStatus implements UseCase {
 
   private exchangeRates = new ExchangeRatesConnector();
   private coinGecko = new CoinGeckoConnector();
+  private coinGeckoPath = '/simple/price?ids=bitcoin&vs_currencies=eur';
   private classicRates;
   private bitcoinRate;
   private timeZoneOffsetHours;
@@ -29,7 +29,7 @@ class DailyFinancialStatus implements UseCase {
   async* receiveMessage(message: ProcessedTelegramMessage): AsyncGenerator<UseCaseResponse> {
     const allClassicRates = await this.exchangeRates.getCurrentStatus();
     this.classicRates = await this.exchangeRates.getCurrencies(allClassicRates);
-    this.bitcoinRate = await this.coinGecko.getCurrentStatus();
+    this.bitcoinRate = await this.coinGecko.getCurrentStatus(this.coinGeckoPath);
 
     if (message) {
       yield new TextResponse('Here\'s your financial update: ');

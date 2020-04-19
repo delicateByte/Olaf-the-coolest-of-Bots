@@ -10,8 +10,9 @@ class CoingeckoConnector {
     });
   }
 
-  async getCurrentStatus(): Promise<CoingeckoResponse> {
-    const values = await this.axios.get('/simple/price?ids=bitcoin&vs_currencies=eur');
+  async getCurrentStatus(path: string): Promise<CoingeckoResponse> {
+    // const values = await this.axios.get('/simple/price?ids=bitcoin&vs_currencies=eur');
+    const values = await this.axios.get(path);
     return new CoingeckoResponse(
       values.data.bitcoin.eur,
     );
