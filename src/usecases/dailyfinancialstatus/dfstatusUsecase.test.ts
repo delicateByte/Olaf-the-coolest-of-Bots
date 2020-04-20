@@ -1,3 +1,5 @@
+import * as mockdate from 'mockdate';
+
 import DailyFinancialStatus from './dfstatusUsecase';
 import TextResponse from '../../classes/TextResponse';
 import EndUseCaseResponse from '../../classes/EndUseCaseResponse';
@@ -37,6 +39,7 @@ beforeEach(() => {
   exchangeratesGetCurrentStatus.mockReset();
   exchangeratesGetCurrencies.mockReset();
   coingeckoGetCurrentStatus.mockReset();
+  mockdate.reset();
 });
 
 test('receiving a telegram message', async () => {
@@ -107,7 +110,7 @@ test('check for free time slots and send text message', async () => {
     end: '2020-03-12T13:00:00.000Z',
   }];
   // @ts-ignore
-  Preferences.get.mockReturnValueOnce('11:30');
+  mockdate.set('2020-03-12T11:30Z');
   const dfStatus = new DailyFinancialStatus();
   const responses = await dfStatus.checkAppointmentTimes(events);
   jest.spyOn(dfStatus, 'generateTextmessage').mockReturnValue('A message');
@@ -118,7 +121,7 @@ test('check for free time slots and send text message', async () => {
 test('check without having events and send text message', async () => {
   const events = [];
   // @ts-ignore
-  Preferences.get.mockReturnValueOnce('11:30');
+  mockdate.set('2020-03-12T11:30Z');
   const dfStatus = new DailyFinancialStatus();
   const responses = await dfStatus.checkAppointmentTimes(events);
   jest.spyOn(dfStatus, 'generateTextmessage').mockReturnValue('A message');
@@ -132,7 +135,7 @@ test('check for free time slots and do not send text message', async () => {
     end: '2020-03-12T16:00:00.000Z',
   }];
   // @ts-ignore
-  Preferences.get.mockReturnValueOnce('11:30');
+  mockdate.set('2020-03-12T11:30Z');
   const dfStatus = new DailyFinancialStatus();
   const responses = await dfStatus.checkAppointmentTimes(events);
   jest.spyOn(dfStatus, 'generateTextmessage').mockReturnValue('A message');
