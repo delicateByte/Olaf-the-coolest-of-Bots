@@ -55,7 +55,7 @@ class DailyFinancialStatus implements UseCase {
       }));
       yield* this.retrieveEvents(auth);
     } catch (err) {
-      console.log('Error loading client secret file:', err);
+      console.log('Error loading client secret file');
     }
   }
 
@@ -85,7 +85,7 @@ class DailyFinancialStatus implements UseCase {
     }
   }
 
-  private async* checkAppointmentTimes(busyEvents): AsyncGenerator<UseCaseResponse> {
+  async* checkAppointmentTimes(busyEvents): AsyncGenerator<UseCaseResponse> {
     if (busyEvents.length > 0) {
       let isFree = true;
       const preferenceTime = Preferences.get('dfstatus', 'dfstatusProactiveTime');

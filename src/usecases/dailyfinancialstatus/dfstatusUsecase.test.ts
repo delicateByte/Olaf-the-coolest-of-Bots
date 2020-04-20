@@ -87,6 +87,59 @@ test('proactive execution without calendar ID', async () => {
   expect((await responses.next()).value).toEqual(new TextResponse('No calendar ID specified in dashboard. Cannot check your calendar.'));
 });
 
+test('proactive execution with calendar ID - receive message', async () => {
+  const dfStatus = new DailyFinancialStatus();
+  const responses = await dfStatus.receiveMessage(null);
+  // @ts-ignore
+  Preferences.get.mockReturnValueOnce('anID@calendar.com');
+  const spyAuthorizeClient = jest.spyOn(dfStatus, 'authorizeClient');
+
+  expect((await responses.next()).value).toEqual(new EndUseCaseResponse());
+  expect(spyAuthorizeClient).toHaveBeenCalled();
+});
+
+test('check for free time slots and send text message', async () => {
+  const events = [{
+    start: '2020-03-12T10:00:00.000Z',
+    end: '2020-03-12T11:00:00.000Z',
+  }, {
+    start: '2020-03-12T12:00:00.000Z',
+    end: '2020-03-12T13:00:00.000Z',
+  }];
+  // @ts-ignore
+  Preferences.get.mockReturnValueOnce('11:30');
+  const dfStatus = new DailyFinancialStatus();
+  const responses = await dfStatus.checkAppointmentTimes(events);
+  jest.spyOn(dfStatus, 'generateTextmessage').mockReturnValue('A message');
+
+  expect((await responses.next()).value).toEqual(new TextResponse('A message'));
+});
+
+test('check without having events and send text message', async () => {
+  const events = [];
+  // @ts-ignore
+  Preferences.get.mockReturnValueOnce('11:30');
+  const dfStatus = new DailyFinancialStatus();
+  const responses = await dfStatus.checkAppointmentTimes(events);
+  jest.spyOn(dfStatus, 'generateTextmessage').mockReturnValue('A message');
+
+  expect((await responses.next()).value).toEqual(new TextResponse('A message'));
+});
+
+test('check for free time slots and do not send text message', async () => {
+  const events = [{
+    start: '2020-03-12T07:00:00.000Z',
+    end: '2020-03-12T16:00:00.000Z',
+  }];
+  // @ts-ignore
+  Preferences.get.mockReturnValueOnce('11:30');
+  const dfStatus = new DailyFinancialStatus();
+  const responses = await dfStatus.checkAppointmentTimes(events);
+  jest.spyOn(dfStatus, 'generateTextmessage').mockReturnValue('A message');
+
+  expect((await responses.next()).value).toEqual(undefined);
+});
+
 test('create a text message', () => {
   const emoji = String.fromCodePoint(0x1F4B8);
   const expected = `Exchange rates for EUR are:\n\n${emoji}  CHF: 1.1207\n${emoji}  JPY: 125.01\n${emoji}  GBP: 0.85418\n${emoji}  USD: 1.1219\n\nBitcoin's current value: 1234€  ${emoji}`;
