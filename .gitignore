@@ -75,6 +75,9 @@ typings/
 .env
 .env.test
 
+# google calendar api credentials that should be stored in credentials.json
+credentials.json
+
 # parcel-bundler cache (https://parceljs.org/)
 .cache
 
