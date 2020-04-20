@@ -12,7 +12,9 @@ import UseCaseResponse from '../classes/UseCaseResponse';
 import TextResponse from '../classes/TextResponse';
 import Preferences from './preferences';
 import EntertainmentUsecase from '../usecases/entertainment/entertainment';
+import DailyFinancialStatus from '../usecases/dailyfinancialstatus/dfstatusUsecase';
 import ImageofthedayUsecase from '../usecases/imageoftheday/imageofthedayUsecase';
+import TranslatorUsecase from '../usecases/translator/translatorUsecase';
 import NewsFlashUsecase from '../usecases/news/newsFlashUseCase';
 
 
@@ -27,6 +29,7 @@ class Olaf {
   private proactiveJobs: { [key: string]: CronJob } = {
     imageoftheday: null,
     news: null,
+    dfstatus: null,
   };
 
   constructor() {
@@ -39,7 +42,9 @@ class Olaf {
     // TODO register all use cases here
     // this.messageRouter.registerUseCase(new XUseCase())
     this.messageRouter.registerUseCase(new EntertainmentUsecase());
+    this.messageRouter.registerUseCase(new DailyFinancialStatus());
     this.messageRouter.registerUseCase(new ImageofthedayUsecase());
+    this.messageRouter.registerUseCase(new TranslatorUsecase());
     this.messageRouter.registerUseCase(new NewsFlashUsecase());
   }
 
@@ -83,7 +88,7 @@ class Olaf {
         // Run enqueued proactive use cases
         if (this.proactiveQueue.length) {
           this.activeUseCase = this.proactiveQueue.pop();
-          this.runUseCase(null);
+          await this.runUseCase(null);
         }
       }
     } catch (err) {

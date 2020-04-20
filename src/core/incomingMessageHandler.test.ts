@@ -3,9 +3,9 @@ import TelegramMessageType from '../classes/TelegramMessageType';
 
 
 jest.mock('../connectors/speechToText/speechToTextConnector', () => ({
-  default: jest.fn().mockImplementation(() => ({
+  default: jest.fn().mockReturnValue({
     recognize: () => 'foo bar',
-  })),
+  }),
 }));
 const mockTelegramBot = { getFileStream: () => null };
 
