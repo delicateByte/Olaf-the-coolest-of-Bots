@@ -212,19 +212,16 @@ describe('formating of Responses', () => {
     );
   });
 });
-test('if preparing generator yield is working', () => {
+test('if preparing generator yield is working', async () => {
   const testInstance = new NewsFlashUsecase();
+  const responses = await testInstance.prepareNewsFlash();
   getHeadlines.mockResolvedValue(mockNewsReturn);
   getTwitterTrends.mockResolvedValue(mockTwitterReturn);
   getCurrentWeather.mockResolvedValue(mockWeatherResponse);
   getCoronaData.mockResolvedValue(mockCoronaReturn);
-  return expect(testInstance.prepareNewsFlash()).resolves.toStrictEqual(
-    [
-      new TextResponse(newsTextResponse),
-      new TextResponse(coronaTextResponse),
-      new TextResponse(weatherTextResponse),
-      new TextResponse(twitterTextResponse),
-      new EndUseCaseResponse(),
-    ],
-  );
+  expect((await responses.next()).value).toEqual(new TextResponse(newsTextResponse));
+  expect((await responses.next()).value).toEqual(new TextResponse(coronaTextResponse));
+  expect((await responses.next()).value).toEqual(new TextResponse(weatherTextResponse));
+  expect((await responses.next()).value).toEqual(new TextResponse(twitterTextResponse));
+  expect((await responses.next()).value).toEqual(new EndUseCaseResponse());
 });

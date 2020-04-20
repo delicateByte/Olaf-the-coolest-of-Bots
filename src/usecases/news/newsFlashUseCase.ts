@@ -90,14 +90,12 @@ class NewsFlashUsecase implements UseCase {
     return new TextResponse(text);
   }
 
-  async prepareNewsFlash() :Promise<UseCaseResponse[]> {
-    const results = [];
-    results.push(await this.formatNewsResponse());
-    results.push(await this.formatCoronaResponse());
-    results.push(await this.formatWeatherUpdate());
-    results.push(await this.formatTwitterTrends());
-    results.push(new EndUseCaseResponse());
-    return results;
+  async* prepareNewsFlash() :AsyncGenerator<UseCaseResponse> {
+    yield await this.formatNewsResponse();
+    yield await this.formatCoronaResponse();
+    yield await this.formatWeatherUpdate();
+    yield await this.formatTwitterTrends();
+    yield new EndUseCaseResponse();
   }
 
   updateWeatherPosition(lon:number, lat :number) {
@@ -106,11 +104,7 @@ class NewsFlashUsecase implements UseCase {
 
   async* receiveMessage(message: ProcessedTelegramMessage): AsyncGenerator<UseCaseResponse> {
     if (message === null || message.originalMessage === undefined) {
-      console.log('Cron Job Trigger');
-      const messages = await this.prepareNewsFlash();
-      for (let i = 0; i < messages.length; i += 1) {
-        yield messages[i];
-      }
+      yield* await this.prepareNewsFlash();
     } else if (this.state === 0) {
       yield await this.prepareInitialResponse().then((response) => {
         this.state = 1;
@@ -120,10 +114,7 @@ class NewsFlashUsecase implements UseCase {
       this.state = 2;
       if (message.type === TelegramMessageType.LOCATION) {
         await this.updateWeatherPosition(message.longitude, message.latitude);
-        const messages = await this.prepareNewsFlash();
-        for (let i = 0; i < messages.length; i += 1) {
-          yield messages[i];
-        }
+        yield* await this.prepareNewsFlash();
         this.state = 0;
       } else {
         this.state = 1;
