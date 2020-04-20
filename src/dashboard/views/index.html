@@ -30,7 +30,8 @@
           <label for="check-imageofthedayProactive" class="input-check">Send images proactively</label>
         </div>
         <div class="input-wrapper">
-          <input type="time" name="imageofthedayProactiveTime" id="time-imageofthedayProactiveTime"
+          <label for="time-imageofthedayProactiveTime">Image Of The Day Time</label>
+          <input type="time" class="input-text" name="imageofthedayProactiveTime" id="time-imageofthedayProactiveTime"
             value="{{ imageoftheday.imageofthedayProactiveTime }}" required>
         </div>
       </div>
@@ -72,7 +73,9 @@
         </div>
       </div>
       <div class="content-cell-row">
-        <input type="text" class="input-text" name="dfstatusCalendarID" value="{{ dfstatus.dfstatusCalendarID }}">
+        <label for="text-dfstatusCalendarID" class="input-check">Calendar ID</label>
+        <input type="text" class="input-text" name="dfstatusCalendarID" id="text-dfstatusCalendarID"
+          value="{{ dfstatus.dfstatusCalendarID }}">
       </div>
       <div class="content-cell-row">
         <button class="button button-primary" type="submit">Save</button>
