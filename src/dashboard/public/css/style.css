@@ -104,6 +104,9 @@ a:hover {
 .input-wrapper > input[type="checkbox"] {
   display: none;
 }
+.input-wrapper ~ .input-wrapper {
+  margin-top: 8px;
+}
 
 .input-text {
   align-items: center;
