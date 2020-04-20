@@ -23,9 +23,9 @@ class Olaf {
   private readonly messageHandler;
   private readonly messageRouter;
   private readonly messageSender;
+
   private activeUseCase: UseCase;
   private proactiveQueue: UseCase[];
-  // TODO register all proactive use cases here
   private proactiveJobs: { [key: string]: CronJob } = {
     imageoftheday: null,
     news: null,
@@ -39,8 +39,7 @@ class Olaf {
     this.messageSender = new MessageSender(this.telegramBot);
     this.activeUseCase = null;
     this.proactiveQueue = [];
-    // TODO register all use cases here
-    // this.messageRouter.registerUseCase(new XUseCase())
+
     this.messageRouter.registerUseCase(new EntertainmentUsecase());
     this.messageRouter.registerUseCase(new DailyFinancialStatus());
     this.messageRouter.registerUseCase(new ImageofthedayUsecase());
