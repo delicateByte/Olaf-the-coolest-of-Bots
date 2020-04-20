@@ -12,6 +12,7 @@ import UseCaseResponse from '../classes/UseCaseResponse';
 import TextResponse from '../classes/TextResponse';
 import Preferences from './preferences';
 import EntertainmentUsecase from '../usecases/entertainment/entertainment';
+import DailyFinancialStatus from '../usecases/dailyfinancialstatus/dfstatusUsecase';
 import ImageofthedayUsecase from '../usecases/imageoftheday/imageofthedayUsecase';
 import TranslatorUsecase from '../usecases/translator/translatorUsecase';
 
@@ -26,6 +27,7 @@ class Olaf {
   // TODO register all proactive use cases here
   private proactiveJobs: { [key: string]: CronJob } = {
     imageoftheday: null,
+    dfstatus: null,
   };
 
   constructor() {
@@ -38,6 +40,7 @@ class Olaf {
     // TODO register all use cases here
     // this.messageRouter.registerUseCase(new XUseCase())
     this.messageRouter.registerUseCase(new EntertainmentUsecase());
+    this.messageRouter.registerUseCase(new DailyFinancialStatus());
     this.messageRouter.registerUseCase(new ImageofthedayUsecase());
     this.messageRouter.registerUseCase(new TranslatorUsecase());
   }
