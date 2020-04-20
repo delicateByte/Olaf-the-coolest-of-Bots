@@ -1,3 +1,5 @@
+import * as moment from 'moment';
+
 import UseCase from '../../interfaces/useCase';
 import UseCaseResponse from '../../classes/UseCaseResponse';
 import TextResponse from '../../classes/TextResponse';
@@ -20,10 +22,8 @@ class DailyFinancialStatus implements UseCase {
   private classicRates;
   private bitcoinRate;
   private requiredCurrencies;
-  private timeZoneOffsetHours;
 
   constructor() {
-    this.timeZoneOffsetHours = new Date().getTimezoneOffset() / 60; // -2
     this.requiredCurrencies = this.exchangeRates.currencies;
   }
 
@@ -61,54 +61,30 @@ class DailyFinancialStatus implements UseCase {
   async* retrieveEvents(auth) {
     const calendar = gcAuthentication.google.calendar({ version: 'v3', auth });
     const calendarID = Preferences.get('dfstatus', 'dfstatusCalendarID');
-    if (calendarID === '') {
-      yield new TextResponse('No calender ID specified, cannot check appointments.');
-    } else {
-      const startD = new Date().getDate();
-      const startM = new Date().getMonth();
-      const startY = new Date().getFullYear();
-      const startH = 0 - this.timeZoneOffsetHours;
-      const startMin = 0;
+    const start = moment().startOf('day');
+    const end = moment(start).add(1, 'day');
 
-      const answer = await calendar.freebusy.query({
-        auth,
-        resource: {
-          timeMin: (new Date(startY, startM, startD, startH, startMin)).toISOString(),
-          timeMax: (new Date(startY, startM, startD, startH + 24, startMin)).toISOString(),
-          items: [{ id: calendarID }],
-        },
-      });
-      // busyEvents do not consider time zone - still UTC!
-      const busyEvents = answer.data.calendars[calendarID].busy;
-      yield* this.checkAppointmentTimes(busyEvents);
-    }
+    const answer = await calendar.freebusy.query({
+      auth,
+      resource: {
+        timeMin: start.toISOString(),
+        timeMax: end.toISOString(),
+        items: [{ id: calendarID }],
+      },
+    });
+    // busyEvents do not consider time zone - still UTC!
+    const busyEvents = answer.data.calendars[calendarID].busy;
+    yield* this.checkAppointmentTimes(busyEvents);
   }
 
   async* checkAppointmentTimes(busyEvents): AsyncGenerator<UseCaseResponse> {
-    if (busyEvents.length > 0) {
-      let isFree = true;
-      const preferenceTime = Preferences.get('dfstatus', 'dfstatusProactiveTime');
-      busyEvents.forEach((event) => {
-        const date = new Date();
-        const start = new Date(date.getTime());
-        start.setHours(event.start.split(':')[0].slice(-2) - 2 * this.timeZoneOffsetHours);
-        start.setMinutes(event.start.split(':')[1]);
-        const end = new Date(date.getTime());
-        end.setHours(event.end.split(':')[0].slice(-2) - 2 * this.timeZoneOffsetHours);
-        end.setMinutes(event.end.split(':')[1]);
-        const preferenceDate = new Date();
-        preferenceDate.setHours(preferenceTime.split(':')[0] - this.timeZoneOffsetHours);
-        preferenceDate.setMinutes(preferenceTime.split(':')[1]);
-        if (start < preferenceDate && end > preferenceDate) {
-          isFree = false; // don't send text message if there is an appointment
-        }
-      });
-      if (isFree) {
-        yield new TextResponse(this.generateTextmessage(
-          this.classicRates, this.bitcoinRate, this.exchangeRates.currencies,
-        ));
-      }
-    } else {
+    const now = moment();
+    const isFree = !busyEvents.some((event) => {
+      const start = moment.utc(event.start);
+      const end = moment.utc(event.end);
+      return now.isBetween(start, end, 'minute', '[]');
+    });
+    if (isFree) {
       yield new TextResponse(this.generateTextmessage(
         this.classicRates, this.bitcoinRate, this.exchangeRates.currencies,
       ));
