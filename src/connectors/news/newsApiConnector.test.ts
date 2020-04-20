@@ -29,7 +29,7 @@ const resultMock = {
 const rejectMock = { articles: [{ title: 'ERROR IN TRANSMISSION' }] };
 function getMockConnector(response) : NewsApiConnector {
   // @ts-ignore
-  axios.create.mockReturnValueOnce({get:() => Promise.resolve({ data: response })});
+  axios.create.mockReturnValueOnce({ get: () => Promise.resolve({ data: response }) });
   return new NewsApiConnector();
 }
 function getMockConnectorButTriggerAxiosError(rejectResponse) : NewsApiConnector {
