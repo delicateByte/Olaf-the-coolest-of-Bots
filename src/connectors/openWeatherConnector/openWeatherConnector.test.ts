@@ -2,7 +2,6 @@ import axios from 'axios';
 import OpenWeatherConnector from './openWeatherConnector';
 
 
-
 const responseMock = {
   coord: { lon: 8.25, lat: 49.99 },
   weather: [
@@ -53,7 +52,7 @@ function getMockConnector(response) : OpenWeatherConnector {
   axios.create.mockReturnValue({
     get: () => Promise.resolve({ data: response }),
   });
-  return new OpenWeatherConnector(3,4);
+  return new OpenWeatherConnector(3, 4);
 }
 
 test('reseting Coordinates is working', async () => {
