@@ -13,6 +13,7 @@ import TextResponse from '../classes/TextResponse';
 import Preferences from './preferences';
 import EntertainmentUsecase from '../usecases/entertainment/entertainment';
 import ImageofthedayUsecase from '../usecases/imageoftheday/imageofthedayUsecase';
+import TranslatorUsecase from '../usecases/translator/translatorUsecase';
 
 
 class Olaf {
@@ -38,6 +39,7 @@ class Olaf {
     // this.messageRouter.registerUseCase(new XUseCase())
     this.messageRouter.registerUseCase(new EntertainmentUsecase());
     this.messageRouter.registerUseCase(new ImageofthedayUsecase());
+    this.messageRouter.registerUseCase(new TranslatorUsecase());
   }
 
   start() {
