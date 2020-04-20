@@ -1,5 +1,5 @@
 {
-  "name": "bot-ich",
+  "name": "olaf",
   "version": "0.0.1",
   "description": "",
   "main": "src/core/olaf.ts",
@@ -45,13 +45,8 @@
     "eslint": "^6.8.0",
     "eslint-config-airbnb-typescript": "^7.2.0",
     "eslint-plugin-import": "^2.20.1",
-<<<<<<< HEAD
     "googleapis": "^48.0.0",
     "jest": "^25.3.0",
-=======
-    "jest": "^25.3.0",
-    "googleapis": "^48.0.0",
->>>>>>> 10a3824c37420ef984096e89ad986876bcc03743
     "jest-node-localstorage-simple-mock": "0.0.2",
     "mockdate": "^2.0.5",
     "nodemon": "^2.0.2",
