@@ -20,10 +20,10 @@ class CoronaConnector {
         country: 'Germany',
       },
     }).then((result) => result);
-    return this.formatResults(a.data);
+    return CoronaConnector.formatResults(a.data);
   }
 
-  async formatResults(coronaInfo) {
+  static async formatResults(coronaInfo) {
     return {
       total_Cases_Ger: coronaInfo.latest_stat_by_country[0].total_cases,
       new_Cases: coronaInfo.latest_stat_by_country[0].new_cases,
