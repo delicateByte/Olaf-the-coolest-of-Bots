@@ -117,14 +117,13 @@ class DailyFinancialStatus implements UseCase {
 
   // eslint-disable-next-line class-methods-use-this
   generateTextmessage(classicRates, bitcoinRate, requiredCurrencies): string {
-    const money = String.fromCodePoint(0x1F4B8);
     let text = '';
     text += 'Exchange rates for EUR are:\n\n';
     // this.exchangeRates.currencies.forEach((key) => {
     requiredCurrencies.forEach((key) => {
-      text += `${money}  ${key}: ${classicRates[key]}\n`;
+      text += `💸  ${key}: ${classicRates[key]}\n`;
     });
-    text += `\nBitcoin's current value: ${bitcoinRate.eur}€  ${money}`;
+    text += `\nBitcoin's current value: ${bitcoinRate.eur}€  💸`;
     return text;
   }
 

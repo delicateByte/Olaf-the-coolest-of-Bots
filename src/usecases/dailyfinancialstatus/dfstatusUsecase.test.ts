@@ -141,8 +141,7 @@ test('check for free time slots and do not send text message', async () => {
 });
 
 test('create a text message', () => {
-  const emoji = String.fromCodePoint(0x1F4B8);
-  const expected = `Exchange rates for EUR are:\n\n${emoji}  CHF: 1.1207\n${emoji}  JPY: 125.01\n${emoji}  GBP: 0.85418\n${emoji}  USD: 1.1219\n\nBitcoin's current value: 1234€  ${emoji}`;
+  const expected = 'Exchange rates for EUR are:\n\n💸  CHF: 1.1207\n💸  JPY: 125.01\n💸  GBP: 0.85418\n💸  USD: 1.1219\n\nBitcoin\'s current value: 1234€  💸';
   const actual = new DailyFinancialStatus().generateTextmessage({
     CHF: 1.1207,
     JPY: 125.01,
