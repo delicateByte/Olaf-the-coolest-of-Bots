@@ -10,8 +10,14 @@ class MessageRouter {
   }
 
   findUseCaseByTrigger(message: ProcessedTelegramMessage): UseCase {
+    // Returns Michis use case directly when a location is sent by the user
     if (message.type === TelegramMessageType.LOCATION) {
-      // TODO return Michi's use case by name
+      // eslint-disable-next-line no-restricted-syntax
+      for (const useCase of this.useCases) {
+        if (useCase.name === 'Translator') {
+          return useCase;
+        }
+      }
     }
 
     // Check if one of the trigger phrases of any use case is included in the message text

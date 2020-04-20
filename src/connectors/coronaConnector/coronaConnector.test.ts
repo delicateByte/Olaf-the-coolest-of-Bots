@@ -40,12 +40,10 @@ function getMockConnector(response) : CoronaConnector {
   return new CoronaConnector();
 }
 
-test('if formatting of Response is working', async () => {
-  const testInstance = new CoronaConnector();
-  return expect(testInstance.formatResults(mockResponseAxios)).resolves.toEqual(mockformated);
-});
+test('if formatting of Response is working', async () => expect(
+  CoronaConnector.formatResults(mockResponseAxios),
+).resolves.toEqual(mockformated));
 
 test('if getting Corona data is working', async () => {
   expect(getMockConnector(mockResponseAxios).getCoronaData()).resolves.toEqual(mockformated);
 });
-

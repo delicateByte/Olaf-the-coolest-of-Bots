@@ -22,8 +22,6 @@ app.use(express.urlencoded({
 
 app.get('/callback', Spotify.callbackRoute);
 
-app.listen(3000);
-
 const request = supertest(app);
 
 test('isAuthorized fails', () => {
@@ -112,7 +110,7 @@ test('process.env missing SPOTIFY_REDIRECT_URI', () => {
   process.env.SPOTIFY_REDIRECT_URI = SPOTIFY_REDIRECT_URI;
 });
 
-test('callback route', async (done) => {
+test('callback route', async () => {
   let accessToken;
   let refreshToken;
   // @ts-ignore
@@ -142,11 +140,11 @@ test('callback route', async (done) => {
   expect(Spotify.spotifyApi.getAccessToken()).toBe('some_access_token');
   // @ts-ignore
   expect(Spotify.spotifyApi.getRefreshToken()).toBe('some_refresh_token');
-
-  done();
+  // @ts-ignore
+  Spotify.tokenRefresher.stop();
 });
 
-test('callback route fails invalid auth', async (done) => {
+test('callback route fails invalid auth', async () => {
   // @ts-ignore
   Spotify.spotifyApi.authorizationCodeGrant.mockImplementationOnce(() => Promise.resolve({
     statusCode: 403,
@@ -158,6 +156,4 @@ test('callback route fails invalid auth', async (done) => {
   expect(Spotify.spotifyApi.getAccessToken()).toBeUndefined();
   // @ts-ignore
   expect(Spotify.spotifyApi.getRefreshToken()).toBeUndefined();
-
-  done();
 });

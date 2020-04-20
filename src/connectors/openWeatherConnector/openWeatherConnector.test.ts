@@ -2,7 +2,6 @@ import axios from 'axios';
 import OpenWeatherConnector from './openWeatherConnector';
 
 
-
 const responseMock = {
   coord: { lon: 8.25, lat: 49.99 },
   weather: [
@@ -53,7 +52,7 @@ function getMockConnector(response) : OpenWeatherConnector {
   axios.create.mockReturnValue({
     get: () => Promise.resolve({ data: response }),
   });
-  return new OpenWeatherConnector(3,4);
+  return new OpenWeatherConnector(3, 4);
 }
 
 test('reseting Coordinates is working', async () => {
@@ -63,8 +62,7 @@ test('reseting Coordinates is working', async () => {
   expect(testInstance.position.long).toEqual(11);
 });
 test('if reformatting of WeatherResponse is working', async () => {
-  const testInstance = new OpenWeatherConnector(29, 4);
-  expect(testInstance.extractRelevantInformation(responseMock)).toEqual(shouldResolveTo);
+  expect(OpenWeatherConnector.extractRelevantInformation(responseMock)).toEqual(shouldResolveTo);
 });
 test('if getting Weather from API is working', async () => {
   expect(getMockConnector(responseMock).getCurrentWeather()).resolves.toEqual(shouldResolveTo);
