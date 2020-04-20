@@ -19,7 +19,7 @@ test('get bitcoin price from coingecko API', async () => {
     bitcoin: {
       eur: expected.eur,
     },
-  }).getCurrentStatus('/simple/price?ids=bitcoin&vs_currencies=eur');
+  }).getCurrentStatus();
 
   expect(actual).toEqual(expected);
 });

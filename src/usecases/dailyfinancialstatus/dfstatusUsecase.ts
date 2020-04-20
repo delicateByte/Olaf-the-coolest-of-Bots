@@ -17,7 +17,6 @@ class DailyFinancialStatus implements UseCase {
 
   private exchangeRates = new ExchangeRatesConnector();
   private coinGecko = new CoinGeckoConnector();
-  private coinGeckoPath = '/simple/price?ids=bitcoin&vs_currencies=eur';
   private classicRates;
   private bitcoinRate;
   private requiredCurrencies;
@@ -31,7 +30,7 @@ class DailyFinancialStatus implements UseCase {
   async* receiveMessage(message: ProcessedTelegramMessage): AsyncGenerator<UseCaseResponse> {
     const allClassicRates = await this.exchangeRates.getCurrentStatus();
     this.classicRates = this.exchangeRates.getCurrencies(allClassicRates);
-    this.bitcoinRate = await this.coinGecko.getCurrentStatus(this.coinGeckoPath);
+    this.bitcoinRate = await this.coinGecko.getCurrentStatus();
 
     if (message) {
       yield new TextResponse('Here\'s your financial update: ');
