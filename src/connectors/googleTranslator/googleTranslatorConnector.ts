@@ -6,7 +6,7 @@ class GoogleTranslatorConnector {
 
   constructor() {
     this.axios = axios.create({
-      baseURL: `https://translation.googleapis.com/language/translate/v2?key=${process.env.GOOGLE_KEY}`,
+      baseURL: `https://translation.googleapis.com/language/translate/v2?key=${process.env.GOOGLE_TOKEN}`,
     });
   }
 

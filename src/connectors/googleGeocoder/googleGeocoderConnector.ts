@@ -8,7 +8,7 @@ class GoogleGeocoderConnector {
 
     // Optional depending on the providers
     httpAdapter: 'https', // Default
-    apiKey: process.env.GOOGLE_KEY, // for Mapquest, OpenCage, Google Premier
+    apiKey: process.env.GOOGLE_TOKEN, // for Mapquest, OpenCage, Google Premier
     formatter: null, // 'gpx', 'string', ...
   };
 

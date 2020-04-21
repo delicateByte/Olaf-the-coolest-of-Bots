@@ -2,14 +2,14 @@ import GoogleGeocoderConnector from './googleGeocoderConnector';
 
 const NodeGeocoder = require('node-geocoder');
 
-process.env.GOOGLE_KEY = null;
+process.env.GOOGLE_TOKEN = null;
 
 const geocoderOptions = {
   provider: 'google',
 
   // Optional depending on the providers
   httpAdapter: 'https', // Default
-  apiKey: process.env.GOOGLE_KEY, // for Mapquest, OpenCage, Google Premier
+  apiKey: process.env.GOOGLE_TOKEN, // for Mapquest, OpenCage, Google Premier
   formatter: null, // 'gpx', 'string', ...
 };
 
