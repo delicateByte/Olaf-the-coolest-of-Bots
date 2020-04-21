@@ -115,6 +115,15 @@ describe('sending command', () => {
     expect((await responses.next()).value).toBeDefined();
   });
 
+  test('help', async () => {
+    const olaf = new Olaf();
+
+    // @ts-ignore
+    const responses = olaf.getResponses({ text: '/settings' });
+
+    expect((await responses.next()).value.text.includes('Personalize Olaf')).toBeTruthy();
+  });
+
   test('stop when there is an active one', async () => {
     const olaf = new Olaf();
     // @ts-ignore

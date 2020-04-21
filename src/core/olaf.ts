@@ -130,12 +130,15 @@ End the active use case by texting /stop`;
     switch (command) {
       case 'start':
         yield new TextResponse(
-          'Say Hi to Olaf, your personal assistant! You can let him help you by sending voice or text messages. Personalize him under http://olaf-host:3000/',
+          'Say Hi to Olaf, your personal assistant! You can let him help you by sending voice or text messages.',
         );
         yield new TextResponse(helpText);
         break;
       case 'help':
         yield new TextResponse(helpText);
+        break;
+      case 'settings':
+        yield new TextResponse('Personalize Olaf under http://olaf-host:3000/');
         break;
       case 'stop':
         if (this.activeUseCase) {
