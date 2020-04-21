@@ -1,5 +1,5 @@
-# Modest-Ninja
-PDA for ASE
+# Olaf
+PDA Project for ASE
 
 ## Setup
 1.  Install dependencies using `npm i`
@@ -9,27 +9,29 @@ PDA for ASE
 
 3.  Create a file named `.env` and insert the following:  
     ```conf
-    # App settings
-    PORT=3000
-
     # Telegram bot settings
     BOT_TOKEN=<TELEGRAM-BOT-TOKEN>
 
     # Dashboard password
     DASHBOARD_PASSWORD=$2a$10$KqDExovM4hv8cAtuxWkzSOWko6RIG.uRbS2g9hPH9UqYOxNDWsV/6
-    
-    # Unsplash API token
-    UNSPLASH_TOKEN=<UNSPLASH-ACCESS-TOKEN>
-    
-    # Google API tokens
+
+    # Google tokens
     GOOGLE_MAPS_STATIC_TOKEN=<GOOGLE-MAPS-STATIC-ACCESS-TOKEN>
     GOOGLE_TOKEN=<GOOGLE-OTHER-ACCESS-TOKEN>
     
-    #Watson Token 
+    # Watson tokens
     SPEECH_TO_TEXT_APIKEY=<STT-APIKEY>
     SPEECH_TO_TEXT_URL=<STT-URL>
     TEXT_TO_SPEECH_APIKEY=<TTS-APIKEY>
     TEXT_TO_SPEECH_URL=<TTS-URL>
+    
+    # Spotify config
+    SPOTIFY_CLIENT_ID=<SPOTIFY-CLIENT-ID>
+    SPOTIFY_CLIENT_SECRET=<SPOTIFY-CLIENT-SECRET>
+    SPOTIFY_REDIRECT_URI=<SPOTIFY-REDIRECT-URI>
+    
+    # Other tokens
+    UNSPLASH_TOKEN=<UNSPLASH-ACCESS-TOKEN>
     OPEN_WEATHER_API=<OPENWATHER-APIKEY>
     NEWSAPI_KEY=<NEWSAPIORG-APIKEY>
     CORONA=<CORONA-APIKEY>
@@ -38,9 +40,11 @@ PDA for ASE
     ```
     
     
-4.  Run the application using one of the following scripts  
+4.  Use one of the following scripts  
     `npm start`: Compiles and starts the PDA  
     `npm run dev`: Same as start but also re-compiles on changes
+    `npm test`: Run unit tests
+    `npm run lint`: Run ESLint
 
 
 ## Folder Structure

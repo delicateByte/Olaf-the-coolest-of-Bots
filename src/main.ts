@@ -7,6 +7,6 @@ Preferences.initialize();
 const app = new Olaf();
 app.start();
 
-preferencesDashboard.listen(process.env.PORT, () => {
-  console.log(`Dashboard is running in http://localhost:${process.env.PORT}`);
+preferencesDashboard.listen(3000, () => {
+  console.log('Dashboard is running in http://localhost:3000');
 });

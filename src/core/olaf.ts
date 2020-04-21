@@ -33,6 +33,11 @@ class Olaf {
   };
 
   constructor() {
+    if (!('BOT_TOKEN' in process.env)) {
+      console.log('Please set up the .env file according to the README');
+      process.exit(1);
+    }
+
     this.telegramBot = new TelegramBot(process.env.BOT_TOKEN, { polling: true });
     this.messageHandler = new IncomingMessageHandler(this.telegramBot);
     this.messageRouter = new MessageRouter();
