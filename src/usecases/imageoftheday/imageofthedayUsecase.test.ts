@@ -43,7 +43,7 @@ beforeEach(() => {
 });
 
 process.env.UNSPLASH_TOKEN = null;
-process.env.GOOGLE_TOKEN = null;
+process.env.GOOGLE_MAPS_STATIC_TOKEN = null;
 
 test('receiving a message works', async () => {
   const responses = await new ImageofthedayUsecase().receiveMessage({

@@ -98,14 +98,8 @@ class Olaf {
 
   private async* getResponses(message: ProcessedTelegramMessage): AsyncGenerator<UseCaseResponse> {
     // Cancel active use case if user sends stop phrase
-    if (message && 'text' in message
-      && ['stop', 'cancel'].some((phrase) => message.text?.toLowerCase().includes(phrase))) {
-      if (this.activeUseCase) {
-        yield new TextResponse('Use case stopped');
-        yield new EndUseCaseResponse();
-      } else {
-        yield new TextResponse('No active use case');
-      }
+    if (message && message.text?.startsWith('/')) {
+      yield* this.handleCommand(message.text.substr(1).toLowerCase());
       return;
     }
 
@@ -117,7 +111,43 @@ class Olaf {
     yield* this.activeUseCase.receiveMessage(message);
   }
 
-  private scheduleProactivity(service: string): void {
+  private async* handleCommand(command: string): AsyncGenerator<UseCaseResponse> {
+    const helpText = `Available use cases:
+💰 Daily Financial Status: Get up-to-date exchange rates (financial, finance)
+🎭 Entertainment: Discover memes, jokes and music (meme, joke, chuck norris, song, track, music, playlist)
+📸 Image of the Day: Discover an image and learn more about it (image, photo, picture)
+📰 News: Get the latest news and weather updates (news flash, news, flash me)
+🌐 Translator: Retrieve local information and get translations (send your location)
+
+End the active use case by texting /stop`;
+
+    switch (command) {
+      case 'start':
+        yield new TextResponse(
+          'Say Hi to Olaf, your personal assistant! ☃️ \n\nYou can let him help you by sending voice or text messages.',
+        );
+        yield new TextResponse(helpText);
+        break;
+      case 'help':
+        yield new TextResponse(helpText);
+        break;
+      case 'settings':
+        yield new TextResponse('Personalize Olaf under http://olaf-host:3000/');
+        break;
+      case 'stop':
+        if (this.activeUseCase) {
+          yield new TextResponse('Use case stopped');
+          yield new EndUseCaseResponse();
+        } else {
+          yield new TextResponse('No active use case');
+        }
+        break;
+      default:
+        throw new Error('Unrecognized command');
+    }
+  }
+
+  private scheduleProactivity(service: string) {
     if (this.proactiveJobs[service]) {
       this.proactiveJobs[service].stop();
       this.proactiveJobs[service] = null;

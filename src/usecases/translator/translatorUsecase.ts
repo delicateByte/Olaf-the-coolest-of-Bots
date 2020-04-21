@@ -8,7 +8,6 @@ import GoogleGeocoderConnector from '../../connectors/googleGeocoder/googleGeoco
 import ProcessedTelegramMessage from '../../classes/ProcessedTelegramMessage';
 import EmergencyNumbersConnector from '../../connectors/emergencyNumbers/emergencyNumbersConnector';
 import GoogleKnowledgeBaseConnector from '../../connectors/googleKnowledgeBase/googleKnowledgeBaseConnector';
-import EndUseCaseResponse from '../../classes/EndUseCaseResponse';
 import GoogleTranslatorConnector from '../../connectors/googleTranslator/googleTranslatorConnector';
 
 
@@ -33,7 +32,7 @@ class TranslatorUsecase implements UseCase {
 
   async* receiveMessage(message: ProcessedTelegramMessage):
   AsyncGenerator<UseCaseResponse, any, unknown> {
-    if (!('GOOGLE_KEY' in process.env)) {
+    if (!('GOOGLE_TOKEN' in process.env)) {
       throw new Error('Missing API key for Google');
     }
 
@@ -55,20 +54,14 @@ class TranslatorUsecase implements UseCase {
 
       yield new TextResponse('Your following (English) messages will be '
       + 'translated to the language of your location. To stop the translator, '
-      + 'please type "!STOP" (without quotes).');
+      + 'please type "/stop" (without quotes).');
+    } if (this.countryCode === null) {
+      // This should never happen, but just in case ... ;-)
+      yield new TextResponse('Please let me know where you are by sending your location.');
     } else {
-      if (message.text === '!STOP') {
-        return new EndUseCaseResponse();
-      }
-      if (this.countryCode === null) {
-        // This should never happen, but just in case ... ;-)
-        yield new TextResponse('Please let me know where you are by sending your location.');
-      } else {
-        const translation = await this.translator.translate(message.text, this.countryCode);
-        yield new TextResponse(translation);
-      }
+      const translation = await this.translator.translate(message.text, this.countryCode);
+      yield new TextResponse(translation);
     }
-
 
     return null;
   }
@@ -76,7 +69,6 @@ class TranslatorUsecase implements UseCase {
   reset(): void {
     this.countryCode = null;
   }
-
 
   private async getEmergencyInfo(countryCode : string) : Promise<string> {
     const emergencyNumbers : {} = await this.emergencyNumbers.getEmergencyNumber(countryCode);

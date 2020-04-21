@@ -95,26 +95,63 @@ describe('run use case', () => {
   });
 });
 
-describe('stopping usecase', () => {
-  test('when there is an active one', async () => {
+describe('sending command', () => {
+  test('start', async () => {
+    const olaf = new Olaf();
+
+    // @ts-ignore
+    const responses = olaf.getResponses({ text: '/start' });
+
+    expect((await responses.next()).value.text.includes('Say Hi to Olaf')).toBeTruthy();
+    expect((await responses.next()).value).toBeDefined();
+  });
+
+  test('help', async () => {
+    const olaf = new Olaf();
+
+    // @ts-ignore
+    const responses = olaf.getResponses({ text: '/help' });
+
+    expect((await responses.next()).value).toBeDefined();
+  });
+
+  test('help', async () => {
+    const olaf = new Olaf();
+
+    // @ts-ignore
+    const responses = olaf.getResponses({ text: '/settings' });
+
+    expect((await responses.next()).value.text.includes('Personalize Olaf')).toBeTruthy();
+  });
+
+  test('stop when there is an active one', async () => {
     const olaf = new Olaf();
     // @ts-ignore
     olaf.activeUseCase = {};
 
     // @ts-ignore
-    const responses = olaf.getResponses({ text: 'stop' });
+    const responses = olaf.getResponses({ text: '/stop' });
 
     expect((await responses.next()).value).toEqual(new TextResponse('Use case stopped'));
     expect((await responses.next()).value).toEqual(new EndUseCaseResponse());
   });
 
-  test('when there is an active one', async () => {
+  test('stop when there is an active one', async () => {
     const olaf = new Olaf();
 
     // @ts-ignore
-    const responses = olaf.getResponses({ text: 'stop' });
+    const responses = olaf.getResponses({ text: '/stop' });
 
     expect((await responses.next()).value).toEqual(new TextResponse('No active use case'));
+  });
+
+  test('help', async () => {
+    const olaf = new Olaf();
+
+    // @ts-ignore
+    const responses = olaf.getResponses({ text: '/unrecognized' });
+
+    expect(responses.next()).rejects.toEqual(new Error('Unrecognized command'));
   });
 });
 

@@ -20,7 +20,7 @@ jest.mock('../../connectors/googleKnowledgeBase/googleKnowledgeBaseConnector', (
 }));
 
 
-process.env.GOOGLE_KEY = null;
+process.env.GOOGLE_TOKEN = null;
 
 
 test('Receiving message works', async () => {
@@ -49,7 +49,7 @@ test('Receiving message works', async () => {
 
   expect((await responses.next()).value).toEqual(new TextResponse(
     'Your following (English) messages will be translated to the language of your '
-    + 'location. To stop the translator, please type "!STOP" (without quotes).',
+    + 'location. To stop the translator, please type "/stop" (without quotes).',
   ));
 });
 

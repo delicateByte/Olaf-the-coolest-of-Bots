@@ -1,5 +1,6 @@
 /* eslint-disable array-callback-return */
 /* eslint-disable consistent-return */
+/* istanbul ignore file */
 //
 // CODE PROVIDED BY GOOGLE:
 // https://developers.google.com/calendar/quickstart/nodejs

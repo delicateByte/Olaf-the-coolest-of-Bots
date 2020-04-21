@@ -7,8 +7,8 @@
     "start": "node -r ts-node/register -r dotenv/config src/main.ts",
     "dev": "nodemon",
     "build": "tsc",
-    "lint": "eslint ./src/**/*.ts",
-    "test": "jest --config config/jest.config.json"
+    "lint": "eslint -c config/eslint.json ./src/**/*.ts",
+    "test": "jest -c config/jest.json"
   },
   "author": "",
   "license": "ISC",
