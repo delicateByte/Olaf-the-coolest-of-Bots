@@ -62,8 +62,7 @@ test('reseting Coordinates is working', async () => {
   expect(testInstance.position.long).toEqual(11);
 });
 test('if reformatting of WeatherResponse is working', async () => {
-  const testInstance = new OpenWeatherConnector(29, 4);
-  expect(testInstance.extractRelevantInformation(responseMock)).toEqual(shouldResolveTo);
+  expect(OpenWeatherConnector.extractRelevantInformation(responseMock)).toEqual(shouldResolveTo);
 });
 test('if getting Weather from API is working', async () => {
   expect(getMockConnector(responseMock).getCurrentWeather()).resolves.toEqual(shouldResolveTo);
