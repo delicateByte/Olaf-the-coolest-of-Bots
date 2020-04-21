@@ -20,7 +20,7 @@ jest.mock('../../connectors/googleKnowledgeBase/googleKnowledgeBaseConnector', (
 }));
 
 
-process.env.GOOGLE_KEY = null;
+process.env.GOOGLE_TOKEN = null;
 
 
 test('Receiving message works', async () => {

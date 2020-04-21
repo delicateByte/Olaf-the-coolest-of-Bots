@@ -26,7 +26,7 @@ const mockResponse = {
   ],
 };
 
-process.env.GOOGLE_KEY = null;
+process.env.GOOGLE_TOKEN = null;
 
 
 function getMockConnector(response) {

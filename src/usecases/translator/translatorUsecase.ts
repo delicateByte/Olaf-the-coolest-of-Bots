@@ -33,7 +33,7 @@ class TranslatorUsecase implements UseCase {
 
   async* receiveMessage(message: ProcessedTelegramMessage):
   AsyncGenerator<UseCaseResponse, any, unknown> {
-    if (!('GOOGLE_KEY' in process.env)) {
+    if (!('GOOGLE_TOKEN' in process.env)) {
       throw new Error('Missing API key for Google');
     }
 

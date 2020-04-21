@@ -5,7 +5,7 @@ class GoogleKnowledgeBaseConnector {
   private axios;
   private knowledgeOptions = {
     host: 'https://kgsearch.googleapis.com',
-    path: `v1/entities:search?key=${process.env.GOOGLE_KEY}&limit=1&types=City&types=Place`,
+    path: `v1/entities:search?key=${process.env.GOOGLE_TOKEN}&limit=1&types=City&types=Place`,
   };
 
   constructor() {
