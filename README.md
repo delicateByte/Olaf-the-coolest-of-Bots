@@ -42,8 +42,8 @@ PDA Project for ASE
     
 4.  Use one of the following scripts  
     `npm start`: Compiles and starts the PDA  
-    `npm run dev`: Same as start but also re-compiles on changes
-    `npm test`: Run unit tests
+    `npm run dev`: Same as start but also re-compiles on changes  
+    `npm test`: Run unit tests  
     `npm run lint`: Run ESLint
 
 
