@@ -18,14 +18,14 @@ class ImageofthedayUsecase implements UseCase {
 
   private unsplash = new UnsplashConnector(process.env.UNSPLASH_TOKEN);
   private wikipedia = new WikipediaConnector();
-  private maps = new GoogleMapsStaticConnector(process.env.GOOGLE_TOKEN);
+  private maps = new GoogleMapsStaticConnector(process.env.GOOGLE_MAPS_STATIC_TOKEN);
 
   async* receiveMessage(message: ProcessedTelegramMessage): AsyncGenerator<UseCaseResponse> {
     if (!('UNSPLASH_TOKEN' in process.env)) {
       throw new Error('Missing API key for Unsplash');
     }
-    if (!('GOOGLE_TOKEN' in process.env)) {
-      throw new Error('Missing API key for Google');
+    if (!('GOOGLE_MAPS_STATIC_TOKEN' in process.env)) {
+      throw new Error('Missing API key for Google Maps Static');
     }
 
     if (message) {
