@@ -15,7 +15,7 @@ PDA Project for ASE
     # Dashboard password
     DASHBOARD_PASSWORD=$2a$10$KqDExovM4hv8cAtuxWkzSOWko6RIG.uRbS2g9hPH9UqYOxNDWsV/6
 
-    # Google tokens
+    # Google tokens (can be the same)
     GOOGLE_MAPS_STATIC_TOKEN=<GOOGLE-MAPS-STATIC-ACCESS-TOKEN>
     GOOGLE_TOKEN=<GOOGLE-OTHER-ACCESS-TOKEN>
     
