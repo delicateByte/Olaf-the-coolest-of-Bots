@@ -14,6 +14,8 @@ jest.mock('./messageRouter');
 jest.mock('./messageSender');
 jest.mock('./preferences');
 
+process.env.BOT_TOKEN = null;
+
 
 beforeEach(() => {
   jest.resetModules();

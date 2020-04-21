@@ -15,7 +15,7 @@ PDA Project for ASE
     # Dashboard password
     DASHBOARD_PASSWORD=$2a$10$KqDExovM4hv8cAtuxWkzSOWko6RIG.uRbS2g9hPH9UqYOxNDWsV/6
 
-    # Google tokens
+    # Google tokens (can be the same)
     GOOGLE_MAPS_STATIC_TOKEN=<GOOGLE-MAPS-STATIC-ACCESS-TOKEN>
     GOOGLE_TOKEN=<GOOGLE-OTHER-ACCESS-TOKEN>
     
@@ -42,8 +42,8 @@ PDA Project for ASE
     
 4.  Use one of the following scripts  
     `npm start`: Compiles and starts the PDA  
-    `npm run dev`: Same as start but also re-compiles on changes
-    `npm test`: Run unit tests
+    `npm run dev`: Same as start but also re-compiles on changes  
+    `npm test`: Run unit tests  
     `npm run lint`: Run ESLint
 
 
