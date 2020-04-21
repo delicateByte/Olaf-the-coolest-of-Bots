@@ -113,12 +113,20 @@ class Olaf {
 
   private async* handleCommand(command: string): AsyncGenerator<UseCaseResponse> {
     const helpText = `Available use cases:
+• Daily Financial Status: Get up-to-date exchange rates
+  Triggers: financial, finance
+• Entertainment: Discover memes, jokes and music
+  Triggers: meme, joke, chuck norris, song, track, music, playlist
 • Image of the Day: Discover an image, read its subject's Wikipedia article and show the location
   Triggers: image, photo, picture
   Proactivity possible
-• Entertainment: Discover memes, jokes and music
-  Triggers: meme, joke, chuck norris, song, track, music, playlist
-`;
+• News: Get the latest news and weather updates
+  Triggers: news flash, news, flash me
+• Translator: Retrieve local information and get translations
+  Triggers: send your location
+
+End the active use case by texting /stop`;
+
     switch (command) {
       case 'start':
         yield new TextResponse(
