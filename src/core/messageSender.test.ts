@@ -7,19 +7,23 @@ import VoiceResponse from '../classes/VoiceResponse';
 import ImageResponse from '../classes/ImageResponse';
 
 jest.mock('../connectors/textToSpeech/textToSpeechConnector', () => ({
-  default: jest.fn().mockImplementation(() => ({
+  default: jest.fn().mockReturnValue({
     synthesize: () => 'path/to/audio.ogg',
-  })),
+  }),
 }));
+
 jest.mock('node-telegram-bot-api');
-// @ts-ignore
-const telegramBot = new TelegramBot();
+let telegramBot;
 
 function fakeGenerateAsync(array: any[]): any[] {
   // jest does not seem to support AsyncGenerators
   return array.map((e) => Promise.resolve(e));
 }
 
+beforeEach(() => {
+  // @ts-ignore
+  telegramBot = new TelegramBot();
+});
 
 test('set chat id', async () => {
   const sender = new MessageSender(telegramBot);

@@ -15,6 +15,7 @@ import EntertainmentUsecase from '../usecases/entertainment/entertainment';
 import DailyFinancialStatus from '../usecases/dailyfinancialstatus/dfstatusUsecase';
 import ImageofthedayUsecase from '../usecases/imageoftheday/imageofthedayUsecase';
 import TranslatorUsecase from '../usecases/translator/translatorUsecase';
+import NewsFlashUsecase from '../usecases/news/newsFlashUseCase';
 
 
 class Olaf {
@@ -22,11 +23,12 @@ class Olaf {
   private readonly messageHandler;
   private readonly messageRouter;
   private readonly messageSender;
+
   private activeUseCase: UseCase;
   private proactiveQueue: UseCase[];
-  // TODO register all proactive use cases here
   private proactiveJobs: { [key: string]: CronJob } = {
     imageoftheday: null,
+    news: null,
     dfstatus: null,
   };
 
@@ -37,12 +39,12 @@ class Olaf {
     this.messageSender = new MessageSender(this.telegramBot);
     this.activeUseCase = null;
     this.proactiveQueue = [];
-    // TODO register all use cases here
-    // this.messageRouter.registerUseCase(new XUseCase())
+
     this.messageRouter.registerUseCase(new EntertainmentUsecase());
     this.messageRouter.registerUseCase(new DailyFinancialStatus());
     this.messageRouter.registerUseCase(new ImageofthedayUsecase());
     this.messageRouter.registerUseCase(new TranslatorUsecase());
+    this.messageRouter.registerUseCase(new NewsFlashUsecase());
   }
 
   start() {
@@ -85,7 +87,7 @@ class Olaf {
         // Run enqueued proactive use cases
         if (this.proactiveQueue.length) {
           this.activeUseCase = this.proactiveQueue.pop();
-          this.runUseCase(null);
+          await this.runUseCase(null);
         }
       }
     } catch (err) {

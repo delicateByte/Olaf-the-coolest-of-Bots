@@ -1,4 +1,4 @@
-/* eslint-disable import/order, import/first */
+import Preferences from '../../core/preferences';
 import ImageofthedayUsecase from './imageofthedayUsecase';
 import TelegramMessageType from '../../classes/TelegramMessageType';
 import UnsplashImage from '../../connectors/unsplash/unsplashImage';
@@ -32,7 +32,6 @@ jest.mock('../../connectors/googleMapsStatic/googleMapsStaticConnector', () => (
 }));
 
 jest.mock('../../core/preferences');
-import Preferences from '../../core/preferences';
 
 beforeEach(() => {
   jest.resetModules();

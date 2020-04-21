@@ -14,13 +14,13 @@ class TwitterConnector {
 
   async getTwitterTrends() {
     return this.axios.get('', {
-      params: {
-        id: 698064,
-      },
-    }).then((res) => this.formatTwitterTrendResults(res.data)).catch((err) => { console.log(err); });
+      params: { id: 698064 },
+    }).then((res) => TwitterConnector.formatTwitterTrendResults(res.data)).catch(
+      (err) => { console.log(err); throw err; },
+    );
   }
 
-  async formatTwitterTrendResults(unformattedTrends) {
+  static async formatTwitterTrendResults(unformattedTrends) {
     const formattedTrendArray = [];
     const preformattedTrendArray = await unformattedTrends[0].trends;
     await preformattedTrendArray.forEach((trendObject) => {
