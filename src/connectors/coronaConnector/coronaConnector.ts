@@ -14,15 +14,24 @@ class CoronaConnector {
     });
   }
 
+  /** @function getCoronaData
+   * Requests latest available Information on Corona Pandemic for Germany
+   * @returns  beautified Information on the Corona Pandemic
+   */
   async getCoronaData() {
-    const a = await this.axios.get('', {
+    const apiResults = await this.axios.get('', {
       params: {
         country: 'Germany',
       },
     }).then((result) => result);
-    return CoronaConnector.formatResults(a.data);
+    return CoronaConnector.formatResults(apiResults.data);
   }
 
+  /** @function formatResults
+   * Requests latest available Information on Corona Pandemic for Germany
+   * @param coronaInfo Information of a request to the RapidApi-CoronaAPI
+   * @returns  beautified Information of the Input ( meant for Corona requests)
+   */
   static async formatResults(coronaInfo) {
     return {
       total_Cases_Ger: coronaInfo.latest_stat_by_country[0].total_cases,

@@ -4,7 +4,7 @@ import { IamAuthenticator } from 'ibm-watson/auth';
 
 class SpeechToTextConnector {
   private api;
-
+  // initiate SpeechToText Instance & logon the Watson service
   constructor() {
     this.api = new SpeechToTextV1({
       authenticator: new IamAuthenticator({ apikey: process.env.SPEECH_TO_TEXT_APIKEY }),
@@ -12,6 +12,11 @@ class SpeechToTextConnector {
     });
   }
 
+  /** @function recognize
+   * recognizes spoken words in Voice stream
+   * @param voiceRecordingStream  Stream einer audio Datei, die gesprochenes wort beinhaltet
+   * @returns  String der die erkannten Wörter des streams enthält (Promise)
+   */
   recognize(voiceRecordingStream): Promise<string> {
     return new Promise((resolve, reject) => {
       let result = '';

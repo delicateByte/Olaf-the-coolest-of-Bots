@@ -14,9 +14,14 @@ class NewsApiConnector {
     });
   }
 
-  // any because Mock would reauire full axios Response Mocking
+  /** @function getHeadlines
+   * Requests the latest News stories of german press (collected by NewsAPI.org)
+   * @params tags Tags supplied in the Dashboard
+   * @returns  unaltered data of the axios Request
+   */
   async getHeadlines(tags:string[]):Promise<any> {
     if (tags.length === 0) {
+      // Brach if no tags are supplied
       return this.axiosNewsInstance.get('/top-headlines', {
         params: {
           country: 'de',
@@ -27,6 +32,7 @@ class NewsApiConnector {
         return Promise.resolve({ articles: [{ title: 'ERROR IN TRANSMISSION' }] });
       });
     }
+    // Branch if tags are supplied
     return this.axiosNewsInstance.get('/top-headlines', {
       params: {
         country: 'de',
