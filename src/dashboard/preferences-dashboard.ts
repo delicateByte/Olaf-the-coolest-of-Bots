@@ -1,13 +1,13 @@
+/* eslint-disable import/no-unresolved, import/extensions */
 import * as express from 'express';
 import * as session from 'express-session';
 import * as mustache from 'mustache-express';
-import { LocalStorage } from 'node-localstorage';
+import Preferences from '../core/preferences';
 
-// eslint-disable-next-line import/no-unresolved, import/extensions
 import Auth from './auth';
+import Spotify from '../connectors/spotify/spotify';
 
 const app = express();
-const localStorage = new LocalStorage('./localstorage/settings');
 
 app.use(session({
   secret: 'keyboard cat',
@@ -27,32 +27,169 @@ app.set('views', `${__dirname}/views`);
 
 // Routes
 // Dashboard
-app.get('/', Auth.isAuthenticated, (req, res) => {
+app.get('/', Auth.isAuthenticated, async (req, res) => {
   // Get saved values
-  const unsplash = JSON.parse(localStorage.getItem('unsplashValues'));
+  // Unsplash
+  const imageoftheday = {
+    imageofthedayProactive: Preferences.get('imageoftheday', 'imageofthedayProactive'),
+    imageofthedayProactiveTime: Preferences.get('imageoftheday', 'imageofthedayProactiveTime'),
+    imageofthedayRandom: Preferences.get('imageoftheday', 'imageofthedayRandom'),
+    imageofthedayTags: Preferences.get('imageoftheday', 'imageofthedayTags'),
+  };
 
-  // Parse values for check/radiobox display
-  unsplash.isRandom = (unsplash.imgSource === 'random') ? 'checked' : '';
-  unsplash.isKeywords = (unsplash.imgSource === 'keywords') ? 'checked' : '';
+  // Reddit Memes
+  const redditMemes = {
+    redditMemesSubName: {
+      selected: Preferences.get('redditMemes', 'redditMemesSubName'),
+      all: [
+        { id: 'r/memes', name: 'r/memes' },
+        { id: 'r/ProgrammerHumor', name: 'r/ProgrammerHumor' },
+        { id: 'r/funny', name: 'r/funny' },
+        { id: 'r/ich_iel', name: 'r/ich_iel' },
+        { id: 'r/me_irl', name: 'r/me_irl' },
+        { id: 'r/dankmemes', name: 'r/dankmemes' },
+        { id: 'r/PewdiepieSubmissions', name: 'r/PewdiepieSubmissions' },
+      ],
+    },
+  };
+
+  redditMemes.redditMemesSubName.all = redditMemes.redditMemesSubName.all.map((s) => ({
+    id: s.id,
+    name: s.name,
+    selected: (s.id === redditMemes.redditMemesSubName.selected),
+  }));
+
+  // Spotify
+  const spotify = {
+    userInfo: undefined,
+    spotifyCategory: {
+      selected: Preferences.get('spotify', 'spotifyCategory'),
+      all: [
+        { id: 'toplists', name: 'Top-Listen' },
+        { id: 'pop', name: 'Pop' },
+        { id: 'mood', name: 'Stimmung' },
+        { id: 'hiphop', name: 'Hip Hop' },
+        { id: 'rock', name: 'Rock' },
+        { id: 'chill', name: 'Chill' },
+        { id: 'edm_dance', name: 'Electronic/Dance' },
+        { id: 'party', name: 'Party' },
+        { id: 'decades', name: 'Jahrzehnte' },
+        { id: 'indie_alt', name: 'Indie/Alternative' },
+        { id: 'popculture', name: 'Trending' },
+        { id: 'roots', name: 'Folk & Akustik' },
+        { id: 'soul', name: 'Soul' },
+        { id: 'workout', name: 'Fitness' },
+        { id: 'jazz', name: 'Jazz' },
+        { id: 'latin', name: 'Latin' },
+        { id: 'focus', name: 'Konzentration' },
+        { id: 'dinner', name: 'Dinner' },
+        { id: 'sleep', name: 'Schlaf' },
+        { id: 'classical', name: 'Klassik' },
+        { id: 'gaming', name: 'Gaming' },
+        { id: 'metal', name: 'Metal' },
+        { id: 'rnb', name: 'RnB' },
+        { id: 'country', name: 'Country' },
+        { id: 'travel', name: 'Reise' },
+        { id: 'blues', name: 'Blues' },
+        { id: 'punk', name: 'Punk' },
+        { id: 'romance', name: 'Romantik' },
+        { id: 'funk', name: 'Funk' },
+        { id: 'reggae', name: 'Reggae' },
+        { id: 'kpop', name: 'K-pop' },
+        { id: 'afro', name: 'Afro' },
+        { id: 'arab', name: 'Arabisch' },
+        { id: 'desi', name: 'Desi' },
+      ],
+    },
+  };
+
+  spotify.spotifyCategory.all = spotify.spotifyCategory.all.map((c) => ({
+    id: c.id,
+    name: c.name,
+    selected: (c.id === spotify.spotifyCategory.selected),
+  }));
+
+  if (Spotify.isAuthorized()) {
+    spotify.userInfo = await Spotify.getUserInfo();
+  }
+
+  const dfstatus = {
+    dfstatusProactive: Preferences.get('dfstatus', 'dfstatusProactive'),
+    dfstatusProactiveTime: Preferences.get('dfstatus', 'dfstatusProactiveTime'),
+    dfstatusCalendarID: Preferences.get('dfstatus', 'dfstatusCalendarID'),
+  };
+
+  const news = {
+    newsProactive: Preferences.get('news', 'newsProactive'),
+    newsProactiveTime: Preferences.get('news', 'newsProactiveTime'),
+    newsKeywords: Preferences.get('news', 'newsKeywords'),
+  };
 
   // Return all values
   const options = {
-    unsplash,
+    imageoftheday,
+    redditMemes,
+    spotify,
+    dfstatus,
+    news,
   };
+
   res.render('index', options);
 });
 
 // Get dashboard data
-app.get('/json/dashboard', Auth.isAuthenticated, (req, res) => {
-  res.json({ test: true });
-});
+app.post('/data/imageoftheday', Auth.isAuthenticated, (req, res) => {
+  const data = JSON.parse(req.body.data);
 
-app.post('/data/unsplash', (req, res) => {
-  console.log('POST', req.body);
+  Preferences.set('imageoftheday', 'imageofthedayProactive', data.imageofthedayProactive);
+  Preferences.set('imageoftheday', 'imageofthedayProactiveTime', data.imageofthedayProactiveTime);
+  Preferences.set('imageoftheday', 'imageofthedayRandom', data.imageofthedayRandom);
+  Preferences.set('imageoftheday', 'imageofthedayTags', data.imageofthedayTags);
 
-  localStorage.setItem('unsplashValues', JSON.stringify(req.body));
   res.sendStatus(200);
 });
+
+// Reddit Memes
+app.post('/data/redditMemes', Auth.isAuthenticated, (req, res) => {
+  const data = JSON.parse(req.body.data);
+
+  Preferences.set('redditMemes', 'redditMemesSubName', data.redditMemesSubName);
+
+  res.sendStatus(200);
+});
+
+// Spotify
+app.post('/data/spotify', Auth.isAuthenticated, (req, res) => {
+  const data = JSON.parse(req.body.data);
+
+  Preferences.set('spotify', 'spotifyCategory', data.spotifyCategory);
+
+  res.sendStatus(200);
+});
+
+// Daily Financial Status
+app.post('/data/dfstatus', Auth.isAuthenticated, (req, res) => {
+  const data = JSON.parse(req.body.data);
+
+  Preferences.set('dfstatus', 'dfstatusProactive', data.dfstatusProactive);
+  Preferences.set('dfstatus', 'dfstatusProactiveTime', data.dfstatusProactiveTime);
+  Preferences.set('dfstatus', 'dfstatusCalendarID', data.dfstatusCalendarID);
+  res.sendStatus(200);
+});
+
+// News
+app.post('/data/news', Auth.isAuthenticated, (req, res) => {
+  const data = JSON.parse(req.body.data);
+
+  Preferences.set('news', 'newsProactive', data.newsProactive);
+  Preferences.set('news', 'newsProactiveTime', data.newsProactiveTime);
+  Preferences.set('news', 'newsKeywords', data.newsKeywords);
+  res.sendStatus(200);
+});
+
+// Authentications
+app.get('/auth/spotify', Spotify.authRoute);
+app.get('/callback/spotify', Spotify.callbackRoute);
 
 // Login
 app.get('/login', (req, res) => {
