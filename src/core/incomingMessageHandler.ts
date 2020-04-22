@@ -11,6 +11,12 @@ class IncomingMessageHandler {
   constructor(private telegramBot: TelegramBot) {
   }
 
+  /** @function extractAndProcessMessage
+   * Erkennt eingehende Nachrichten, klassifiziert diese und startet relevante
+   * Bearbeitung für jede Nachricht
+   * @param originalMessage Originale unformatierte Telegram Message inkl. Overhead
+   * @returns  Telegram Message mit den wichtigsten Informationen für die Use cases
+   */
   async extractAndProcessMessage(originalMessage): Promise<ProcessedTelegramMessage> {
     const telegramMessage = new ProcessedTelegramMessage(originalMessage);
     if ('voice' in originalMessage) {
@@ -30,6 +36,11 @@ class IncomingMessageHandler {
     return telegramMessage;
   }
 
+  /** @function convertAudioStreamToText
+   * Übersetzt Sprachnachricht von Telegram in Text (nutzt STT)
+   * @param telegramMessage (telegramVoiceMessage)
+   * @returns  erkannten Text aus der Sprachnachricht
+   */
   private async convertAudioStreamToText(telegramMessage) {
     const audioStream = this.telegramBot.getFileStream(telegramMessage.voice.file_id);
     return this.speechToText.recognize(audioStream);

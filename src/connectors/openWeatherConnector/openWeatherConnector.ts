@@ -16,11 +16,20 @@ class OpenWeatherConnector {
     this.position.long = longitude;
   }
 
+  /** @function resetLocation
+   * setzt aktuelle position in der Instaz
+   * @param lattitude Längengrad
+   * @param longitude Breitengrad
+   */
   resetLocation(lattitude:number, longitude:number) {
     this.position.lat = lattitude;
     this.position.long = longitude;
   }
 
+  /** @function getCurrentWeather
+   * Requests latest available local weather forecast (next 3 hours)
+   * @returns  beautified Information on the Weather forcast
+   */
   async getCurrentWeather() {
     const openWeatherAPIResponse = await this.axios.get('', {
       params: {
@@ -35,6 +44,11 @@ class OpenWeatherConnector {
     return OpenWeatherConnector.extractRelevantInformation(openWeatherAPIResponse.data);
   }
 
+  /** @function extractRelevantInformation
+   * Extracts / beautifies Weather API response
+   * @param weatherData WeatherAPI Response
+   * @returns  beautified Weather forecast
+   */
   static extractRelevantInformation(weatherData:any) {
     return {
       position: weatherData.coord,

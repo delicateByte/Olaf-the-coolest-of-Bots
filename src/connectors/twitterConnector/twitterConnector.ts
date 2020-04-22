@@ -12,6 +12,10 @@ class TwitterConnector {
     });
   }
 
+  /** @function getTwitterTrends
+   * Fragt die aktuellen Twitter trends für Deutschland ab
+   * @returns  Beautified Twitter Trends
+   */
   async getTwitterTrends() {
     return this.axios.get('', {
       params: { id: 698064 },
@@ -20,6 +24,11 @@ class TwitterConnector {
     );
   }
 
+  /** @function formatTwitterTrendResults
+   * Formatiert TwitterTrendResults
+   * @param unformattedTrends Unformatierte Twitter Trends
+   * @returns  Beautified Array mit den aktuellen Trends
+   */
   static async formatTwitterTrendResults(unformattedTrends) {
     const formattedTrendArray = [];
     const preformattedTrendArray = await unformattedTrends[0].trends;
